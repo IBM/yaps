@@ -1,7 +1,8 @@
 import graphviz
 import ast
 import inspect
-
+import functools
+import pystan
 
 def parse_model(python_function):
     dot = graphviz.Digraph()
@@ -171,3 +172,23 @@ def parse_model(python_function):
     tree = ast.parse(source)
     visitor = PythonAstVisitor()
     return dot, visitor.visit(tree)
+
+class yaps(object):
+    def __init__(self, func):
+        self.func = func
+        functools.update_wrapper(self, func)
+        self.viz, self.compiled_model = parse_model(func) 
+
+    def __call__ (self, *args, **kwargs):
+        return pystan.stan(model_code=self.compiled_model, *args, **kwargs)
+    
+    @property
+    def graph(self):
+        return self.viz
+        
+    @property
+    def model(self):
+        return self.compiled_model
+
+    def __repr__(self):
+        return self.func
