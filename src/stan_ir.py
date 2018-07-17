@@ -51,31 +51,21 @@ class GeneratedQuantities(ProgramBlock):
         self.vdecls = vdecls
         self.stmts = stmts
 
-
-# Functions (Section 7)
-# TODO
-
 # stmts (Section 5)
-
 class Statement(IR):
     pass
 
-
 class AssignStmt(Statement):
-    # TODO add +=, /=, *=, ...
-    def __init__(self, lval, exp):
+    def __init__(self, lval, op, exp):
         self.lval = lval
+        self.op = op
         self.exp = exp
 
-
 class SamplingStmt(Statement):
-    # TODO add `x += f(g | x)`
-    def __init__(self, lval, density, args, truncation=None):
+    def __init__(self, lval, op, exp):
         self.lval = lval
-        self.density = density
-        self.args = args
-        self.truncation = truncation
-
+        self.op = op
+        self.exp = exp
 
 class ForStmt(Statement):
     def __init__(self, id, bounds, stmt):
@@ -98,11 +88,14 @@ class WhileStmt(Statement):
 
 
 class Block(Statement):
-    pass
-
+    def __init__(self, vdecls=[], stmts=[]):
+        self.vdecls = vdecls
+        self.stmts = stmts
 
 class CallStmt(Statement):
-    pass
+    def __init__(self, id, args):
+        self.id = id
+        self.args = args
 
 
 class BreakStmt(Statement):
@@ -114,94 +107,17 @@ class ContinueStmt(Statement):
 
 
 # expessions (Section 4)
-class expession(IR):
-    pass
+class Expession(IR):
+    def __init__(self, value):
+        self.value = value
 
 
-class Literal(expession):
-    pass
+# Declarations
 
-
-class Variable(expession):
-    pass
-
-
-class Vector(expession):
-    pass
-
-
-class Matrix(expession):
-    pass
-
-
-class Array(expession):
-    pass
-
-
-class Conditionalexp(expession):
-    pass
-
-
-class Indexing(expession):
-    pass
-
-
-class Callexp(expession):
-    pass
-
-
-class BinOp(expession):
-    pass
-
-
-# Operators
-class Operator(IR):
-    pass
-
-
-class Plus(Operator):
-    pass
-
-
-class Minus(Operator):
-    pass
-
-
-class Pow(Operator):
-    pass
-
-
-class Mult(Operator):
-    pass
-
-
-class Div(Operator):
-    pass
-
-
-class And(Operator):
-    pass
-
-
-class Or(Operator):
-    pass
-
-
-class LE(Operator):
-    pass
-
-
-class GE(Operator):
-    pass
-
-
-class LT(Operator):
-    pass
-
-
-class GT(Operator):
-    pass
-
-
-class EQ(Operator):
-    pass
+class VariableDecl(IR):
+    def __init__(self, id, ty, cstr=[], dims=None, exp=None):
+        self.id = id
+        self.ty = ty
+        self.cstr = cstr
+        self.dims = dims
+        self.exp = exp
