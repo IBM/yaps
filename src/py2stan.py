@@ -111,6 +111,3 @@ def parse_model(model):
     tree = ast.parse(source)
     visitor = PythonVisitor()
     visitor.visit(tree)
-    print('*****************************')
-    visitor.print_parameters()
-    visitor.print_data()
