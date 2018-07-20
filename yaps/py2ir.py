@@ -65,20 +65,26 @@ class PythonVisitor(ast.NodeVisitor):
                 print('Data:', id)
                 self.data.append(data)
         elif kind == 'transformed_data':
-            assert False, 'Not yet implemented'
+            for stmt in node.body:
+                print('T_Data:\n', astor.to_source(stmt))
+                self.transformed_data.append(self.visit(stmt))
         elif kind == 'parameters':
             for stmt in node.body:
                 param = self.visit(stmt)
                 print('Param:', param.id)
                 self.parameters.append(param)
         elif kind == 'transformed_parameters':
-            assert False, 'Not yet implemented'
+            for stmt in node.body:
+                print('T_Param:\n', astor.to_source(stmt))
+                self.transformed_parameters.append(self.visit(stmt))
         elif kind == 'model':
             for stmt in node.body:
                 print('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
         elif kind == 'generated_quantities':
-            assert False, 'Not yet implemented'
+            for stmt in node.body:
+                print('G_Quant:\n', astor.to_source(stmt))
+                self.generated_quantities.append(self.visit(stmt))
         else:
             assert False, 'Unknown block statement'
 
@@ -115,7 +121,9 @@ class PythonVisitor(ast.NodeVisitor):
             dims = node.slice.value.n
         else:
             type_ast = node
-        if isinstance(type_ast, ast.Call):
+        if isinstance(type_ast, ast.Name):
+            kind = type_ast.id
+        elif isinstance(type_ast, ast.Call):
             kind = type_ast.func.id
             for c in type_ast.keywords:
                 cstrts.append(self.visit_constraint(c))
@@ -131,10 +139,11 @@ class PythonVisitor(ast.NodeVisitor):
     # Python visitor
 
     def visit_AnnAssign(self, node):
-        assert node.value is None and node.simple == 1
+        assert node.simple == 1
         id = node.target.id
         ty = self.visit_type(node.annotation)
-        return IR.VariableDecl(id, ty)
+        val = self.visit(node.value)
+        return IR.VariableDecl(id, ty, val)
 
     def visit_Expr(self, node):
         return self.visit(node.value)
@@ -174,6 +183,14 @@ class PythonVisitor(ast.NodeVisitor):
         else:
             op = self.visit(op)
             return IR.Binop(op, lhs, rhs)
+
+    def visit_UnaryOp(self, node):
+        op = self.visit(node.op)
+        expr = self.visit(node.operand)
+        return IR.Unop(op, expr)
+
+    def visit_USub(self, node):
+        return IR.SUB()
 
     def visit_For(self, node):
         var = self.visit(node.target)

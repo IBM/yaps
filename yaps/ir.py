@@ -151,6 +151,12 @@ class Binop(Expression):
         self.rhs = rhs
 
 
+class Unop(Expression):
+    def __init__(self, op, expr):
+        self.op = op
+        self.rhs = expr
+
+
 class Call(Expression):
     def __init__(self, id, args):
         self.id = id
@@ -170,3 +176,33 @@ class Type(IR):
         self.kind = kind
         self.cstrts = cstrts
         self.dims = dims
+
+# Operator
+
+
+class Operator(IR):
+    pass
+
+
+class EQ(Operator):
+    pass
+
+
+class NEQ(Operator):
+    pass
+
+
+class SUB(Operator):
+    pass
+
+
+class PLUS(Operator):
+    pass
+
+
+class MULT(Operator):
+    pass
+
+
+class DIV(Operator):
+    pass

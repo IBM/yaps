@@ -79,3 +79,11 @@ def uniform(x, y):
 
 def bernoulli(p):
     pass
+
+
+def gamma(x, y):
+    pass
+
+
+def normal(x, y):
+    pass
