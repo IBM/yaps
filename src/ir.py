@@ -52,8 +52,11 @@ class GeneratedQuantities(ProgramBlock):
         self.stmts = stmts
 
 # stmts (Section 5)
+
+
 class Statement(IR):
     pass
+
 
 class AssignStmt(Statement):
     def __init__(self, lval, op, exp):
@@ -61,17 +64,18 @@ class AssignStmt(Statement):
         self.op = op
         self.exp = exp
 
+
 class SamplingStmt(Statement):
-    def __init__(self, lval, op, exp):
-        self.lval = lval
-        self.op = op
-        self.exp = exp
+    def __init__(self, lhs, rhs):
+        self.lhs = lhs
+        self.rhs = rhs
+
 
 class ForStmt(Statement):
-    def __init__(self, id, bounds, stmt):
-        self.id = id
-        self.bounds = bounds
-        self.stmt = stmt
+    def __init__(self, var, iter, body):
+        self.var = var
+        self.iter = iter
+        self.body = body
 
 
 class ConditionalStmt(Statement):
@@ -92,6 +96,7 @@ class Block(Statement):
         self.vdecls = vdecls
         self.stmts = stmts
 
+
 class CallStmt(Statement):
     def __init__(self, id, args):
         self.id = id
@@ -107,17 +112,62 @@ class ContinueStmt(Statement):
 
 
 # expessions (Section 4)
-class Expession(IR):
+class Expression(IR):
     def __init__(self, value):
         self.value = value
 
 
-# Declarations
+class Atom(Expression):
+    pass
 
+
+class Constant(Atom):
+    def __init__(self, value):
+        self.value = value
+
+
+class Variable(Atom):
+    def __init__(self, id):
+        self.id = id
+
+
+class VectorExpr(Atom):
+    pass
+
+
+class ArrayExpr(Atom):
+    pass
+
+
+class Subscript(Atom):
+    def __init__(self, val, slice):
+        self.val = val
+        self.slice = slice
+
+
+class Binop(Expression):
+    def __init__(self, op, lhs, rhs):
+        self.op = op
+        self.lhs = lhs
+        self.rhs = rhs
+
+
+class Call(Expression):
+    def __init__(self, id, args):
+        self.id = id
+        self.args = args
+
+
+# Declarations
 class VariableDecl(IR):
-    def __init__(self, id, ty, cstr=[], dims=None, exp=None):
+    def __init__(self, id, ty, exp=None):
         self.id = id
         self.ty = ty
-        self.cstr = cstr
-        self.dims = dims
         self.exp = exp
+
+
+class Type(IR):
+    def __init__(self, kind, cstrts=None, dims=None):
+        self.kind = kind
+        self.cstrts = cstrts
+        self.dims = dims
