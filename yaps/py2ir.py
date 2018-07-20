@@ -44,12 +44,15 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_Model(self, node):
         for arg in node.args.args:
-            data = self.visit_DataDecl(arg)
-            print('Adding data', data.id)
-            self.data.append(data)
+            self.visit_DataDecl(arg)
         for stmt in node.body:
-            assert isinstance(stmt, ast.With), 'Blocks must be With statements'
-            self.visit_Block(stmt)
+            if isinstance(stmt, ast.With):
+                self.visit_Block(stmt)
+            elif isinstance(stmt, ast.AnnAssign):
+                self.visit_parameter(stmt)
+            else:
+                print('Model:\n', astor.to_source(stmt))
+                self.model.append(self.visit(stmt))
 
     def visit_Block(self, node):
         assert len(node.items) == 1
@@ -59,19 +62,20 @@ class PythonVisitor(ast.NodeVisitor):
         elif kind == 'data':
             for stmt in node.body:
                 data = self.visit(stmt)
-                print('Adding data', id)
+                print('Data:', id)
                 self.data.append(data)
         elif kind == 'transformed_data':
             assert False, 'Not yet implemented'
         elif kind == 'parameters':
             for stmt in node.body:
                 param = self.visit(stmt)
-                print('Adding parameter', param.id)
+                print('Param:', param.id)
                 self.parameters.append(param)
         elif kind == 'transformed_parameters':
             assert False, 'Not yet implemented'
         elif kind == 'model':
             for stmt in node.body:
+                print('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
         elif kind == 'generated_quantities':
             assert False, 'Not yet implemented'
@@ -81,7 +85,26 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_DataDecl(self, node):
         id = node.arg
         ty = self.visit_type(node.annotation)
-        return IR.VariableDecl(id, ty)
+        print('Data:', id)
+        self.data.append(IR.VariableDecl(id, ty))
+
+    def visit_parameter(self, node):
+        id = node.target.id
+        print('Param:', id)
+        type_ast = node.annotation
+        if isinstance(type_ast, ast.Compare):
+            assert len(type_ast.ops) == 1
+            assert isinstance(type_ast.ops[0], ast.Is)
+            assert len(type_ast.comparators) == 1
+            ty = self.visit_type(type_ast.left)
+            sval = self.visit(type_ast.comparators[0])
+            self.parameters.append(IR.VariableDecl(id, ty))
+            print('Model:\n', id, 'is', astor.to_source(
+                type_ast.comparators[0]))
+            self.model.append(IR.SamplingStmt(IR.Variable(id), sval))
+        else:
+            ty = self.visit(node.annotation)
+            self.parameters.append(IR.VariableDecl(id, ty))
 
     def visit_type(self, node):
         kind = None
@@ -114,14 +137,16 @@ class PythonVisitor(ast.NodeVisitor):
         return IR.VariableDecl(id, ty)
 
     def visit_Expr(self, node):
-        v = self.visit(node.value)
-        return IR.Expression(v)
+        return self.visit(node.value)
 
     def visit_Num(self, node):
         return IR.Constant(node.n)
 
     def visit_Name(self, node):
         return IR.Variable(node.id)
+
+    def visit_NoneType(self, node):
+        return None
 
     def visit_Subscript(self, node):
         val = self.visit(node.value)
@@ -145,7 +170,6 @@ class PythonVisitor(ast.NodeVisitor):
         rhs = self.visit(node.comparators[0])
         # Is is the sampling operator
         if isinstance(op, ast.Is):
-            print('Sample', astor.to_source(node).strip())
             return IR.SamplingStmt(lhs, rhs)
         else:
             op = self.visit(op)

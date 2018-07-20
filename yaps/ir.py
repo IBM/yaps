@@ -113,8 +113,7 @@ class ContinueStmt(Statement):
 
 # expessions (Section 4)
 class Expression(IR):
-    def __init__(self, value):
-        self.value = value
+    pass
 
 
 class Atom(Expression):
@@ -160,10 +159,10 @@ class Call(Expression):
 
 # Declarations
 class VariableDecl(IR):
-    def __init__(self, id, ty, exp=None):
+    def __init__(self, id, ty, val=None):
         self.id = id
         self.ty = ty
-        self.exp = exp
+        self.val = val
 
 
 class Type(IR):
