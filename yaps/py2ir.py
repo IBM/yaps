@@ -1,6 +1,6 @@
 import ast
 import inspect
-from . import stan_ir as IR
+from . import ir as IR
 import astor
 import re
 

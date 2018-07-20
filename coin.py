@@ -1,5 +1,5 @@
-import src.py2ir as p2ir
-from src.lib import *
+from yaps import parse_model
+from yaps.lib import *
 
 
 def coin_model_py(x: int(lower=0, upper=1)[10]):
@@ -11,4 +11,4 @@ def coin_model_py(x: int(lower=0, upper=1)[10]):
             x[i] < ~ bernoulli(theta)
 
 
-p2ir.parse_model(coin_model_py)
+parse_model(coin_model_py)
