@@ -33,14 +33,14 @@ class PythonVisitor(ast.NodeVisitor):
         model = node.body[0]
         assert isinstance(model, ast.FunctionDef), 'Model must be FunctionDecl'
         self.visit_Model(model)
-        return IR.Program([
-            IR.FunctionsBlock(self.functions),
-            IR.DataBlock(self.data),
-            IR.TransformedDataBlock(self.transformed_data),
-            IR.ParametersBlock(self.parameters),
-            IR.TransformedParametersBlock(self.transformed_parameters),
-            IR.GeneratedQuantities(self.generated_quantities)
-        ])
+        return IR.Program({
+            "functions": IR.FunctionsBlock(self.functions),
+            "data": IR.DataBlock(self.data),
+            "transformed_data": IR.TransformedDataBlock(self.transformed_data),
+            "parameters": IR.ParametersBlock(self.parameters),
+            "transformed_parameters": IR.TransformedParametersBlock(self.transformed_parameters),
+            "generated_quantities": IR.GeneratedQuantities(self.generated_quantities)
+        })
 
     def visit_Model(self, node):
         for arg in node.args.args:
@@ -205,4 +205,4 @@ def parse_model(model):
     source = re.sub(r"<\s*~", "is", source, re.X)
     tree = ast.parse(source)
     visitor = PythonVisitor()
-    visitor.visit(tree)
+    return visitor.visit(tree)
