@@ -1,15 +1,18 @@
 # Types
 
+class dummy_type(object):
+    def __getitem__(self, key):
+        return None
 
-def dummy_type(**kwargs):
-    class DummyList:
-        def __getitem__(self, key):
-            return None
-    return DummyList()
+    def __init__(self):
+        pass
+
+    def __call__ (self, *args, **kwargs):
+        return dummy_type()
 
 
-int = dummy_type
-real = dummy_type
+int = dummy_type()
+real = dummy_type()
 
 
 # Blocks
