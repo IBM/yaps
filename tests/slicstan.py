@@ -13,10 +13,10 @@ def slicstan(N: int[10], y: real(lower=0, upper=1)[10]):
         sigma: real = pow(tau, -0.5)
     y is normal(mu, sigma)
     with generated_quantities:
-        v: real = pow(sigma, 2)
+        v: real = pow(sigmap, 2)
 
 
-print(str(slicstan))
+print(slicstan.stan_code)
 fit = yaps.infer(slicstan(N=[0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
                 ,y=[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]),
                 iter=1000)

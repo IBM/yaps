@@ -16,8 +16,7 @@ class model(object):
         return self
     
     def infer(self, **kwargs):
-        ret = pystan.stan(model_code=str(self), data=self.data, **kwargs)
-        return ret
+        return pystan.stan(model_code=str(self), data=self.data, **kwargs)
 
     @property
     def graph(self):
@@ -30,6 +29,11 @@ class model(object):
     @property
     def source_map(self):
         return self.model_string
+
+    
+    @property
+    def stan_code(self):
+        return str(self)
 
     def __str__(self):
         return str(self.model_string)
