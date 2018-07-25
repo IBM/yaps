@@ -99,7 +99,7 @@ class PythonVisitor(ast.NodeVisitor):
         id = node.arg
         ty = self.visit_type(node.annotation)
         log('Data:', id)
-        self.data.append(IR.VariableDecl(id, ty))
+        self.data.append(IR.VariableDecl(id, ty).set_map(node))
 
     def visit_parameter(self, node):
         id = node.target.id
@@ -111,12 +111,13 @@ class PythonVisitor(ast.NodeVisitor):
             assert len(type_ast.comparators) == 1
             ty = self.visit_type(type_ast.left)
             sval = self.visit(type_ast.comparators[0])
-            self.parameters.append(IR.VariableDecl(id, ty))
+            self.parameters.append(IR.VariableDecl(id, ty).set_map(node))
             log('Model:\n', id, 'is', astor.to_source(type_ast.comparators[0]))
-            self.model.append(IR.SamplingStmt(IR.Variable(id), sval))
+            self.model.append(IR.SamplingStmt(
+                IR.Variable(id), sval).set_map(node))
         else:
             ty = self.visit(node.annotation)
-            self.parameters.append(IR.VariableDecl(id, ty))
+            self.parameters.append(IR.VariableDecl(id, ty).set_map(node))
 
     def visit_type(self, node):
         kind = None
@@ -135,7 +136,7 @@ class PythonVisitor(ast.NodeVisitor):
                 cstrts.append(self.visit_constraint(c))
         else:
             assert False, 'Wrong type format'
-        return IR.Type(kind, cstrts, dims)
+        return IR.Type(kind, cstrts, dims).set_map(node)
 
     def visit_constraint(self, node):
         lhs = node.arg
@@ -149,16 +150,16 @@ class PythonVisitor(ast.NodeVisitor):
         id = node.target.id
         ty = self.visit_type(node.annotation)
         val = self.visit(node.value)
-        return IR.VariableDecl(id, ty, val)
+        return IR.VariableDecl(id, ty, val).set_map(node)
 
     def visit_Expr(self, node):
         return self.visit(node.value)
 
     def visit_Num(self, node):
-        return IR.Constant(node.n)
+        return IR.Constant(node.n).set_map(node)
 
     def visit_Name(self, node):
-        return IR.Variable(node.id)
+        return IR.Variable(node.id).set_map(node)
 
     def visit_NoneType(self, node):
         return None
@@ -166,7 +167,7 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_Subscript(self, node):
         val = self.visit(node.value)
         slice = self.visit(node.slice)
-        return IR.Subscript(val, slice)
+        return IR.Subscript(val, slice).set_map(node)
 
     def visit_Index(self, node):
         return self.visit(node.value)
@@ -174,7 +175,7 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_Call(self, node):
         id = node.func.id
         args = self.visit(node.args)
-        return IR.Call(id, args)
+        return IR.Call(id, args).set_map(node)
 
     def visit_Compare(self, node):
         # No chaining
@@ -185,15 +186,15 @@ class PythonVisitor(ast.NodeVisitor):
         rhs = self.visit(node.comparators[0])
         # Is is the sampling operator
         if isinstance(op, ast.Is):
-            return IR.SamplingStmt(lhs, rhs)
+            return IR.SamplingStmt(lhs, rhs).set_map(node)
         else:
             op = self.visit(op)
-            return IR.Binop(op, lhs, rhs)
+            return IR.Binop(op, lhs, rhs).set_map(node)
 
     def visit_UnaryOp(self, node):
         op = self.visit(node.op)
         expr = self.visit(node.operand)
-        return IR.Unop(op, expr)
+        return IR.Unop(op, expr).set_map(node)
 
     def visit_USub(self, node):
         return IR.SUB()
@@ -202,7 +203,7 @@ class PythonVisitor(ast.NodeVisitor):
         var = self.visit(node.target)
         iter = self.visit(node.iter)
         body = self.visit(node.body)
-        return IR.ForStmt(var, iter, body)
+        return IR.ForStmt(var, iter, body).set_map(node)
 
 
 def parse_model(model):

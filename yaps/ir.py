@@ -73,6 +73,10 @@ class LabeledRope(object):
 
 
 class IR(object):
+    def set_map(self, ast):
+        self.lineno = ast.lineno
+        self.col_offset = ast.col_offset
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("NOT YET IMPLEMENTED: " + str(self), indent)
 
@@ -86,12 +90,6 @@ class IR(object):
     def end_block(self, acc, indent=0):
         acc += self.mkString("}", indent)
         acc.newline()
-
-
-class IR(object):
-    def __init__(self, lineno, col_offset):
-        self.lineno = lineno
-        self.col_offset = col_offset
 
 
 class Program(IR):
