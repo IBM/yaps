@@ -39,7 +39,8 @@ class PythonVisitor(ast.NodeVisitor):
             "transformed_data": IR.TransformedDataBlock(self.transformed_data),
             "parameters": IR.ParametersBlock(self.parameters),
             "transformed_parameters": IR.TransformedParametersBlock(self.transformed_parameters),
-            "generated_quantities": IR.GeneratedQuantities(self.generated_quantities)
+            "generated_quantities": IR.GeneratedQuantities(self.generated_quantities),
+            "model": IR.ModelBlock(self.model),
         })
 
     def visit_Model(self, node):
