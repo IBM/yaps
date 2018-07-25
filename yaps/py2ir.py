@@ -4,7 +4,13 @@ from . import ir as IR
 import astor
 import re
 
-# kind = astor.to_source(node.items[0])
+
+debug = True
+
+
+def log(*args):
+    if debug:
+        print(*args)
 
 
 class PythonVisitor(ast.NodeVisitor):
@@ -19,7 +25,7 @@ class PythonVisitor(ast.NodeVisitor):
 
     def generic_visit(self, node):
         kind = type(node).__name__
-        print("Missing visit method for {}".format(kind))
+        log("Missing visit method for {}".format(kind))
 
     def visit_list(self, list):
         res = []
@@ -52,7 +58,7 @@ class PythonVisitor(ast.NodeVisitor):
             elif isinstance(stmt, ast.AnnAssign):
                 self.visit_parameter(stmt)
             else:
-                print('Model:\n', astor.to_source(stmt))
+                log('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
 
     def visit_Block(self, node):
@@ -63,28 +69,28 @@ class PythonVisitor(ast.NodeVisitor):
         elif kind == 'data':
             for stmt in node.body:
                 data = self.visit(stmt)
-                print('Data:', id)
+                log('Data:', id)
                 self.data.append(data)
         elif kind == 'transformed_data':
             for stmt in node.body:
-                print('T_Data:\n', astor.to_source(stmt))
+                log('T_Data:\n', astor.to_source(stmt))
                 self.transformed_data.append(self.visit(stmt))
         elif kind == 'parameters':
             for stmt in node.body:
                 param = self.visit(stmt)
-                print('Param:', param.id)
+                log('Param:', param.id)
                 self.parameters.append(param)
         elif kind == 'transformed_parameters':
             for stmt in node.body:
-                print('T_Param:\n', astor.to_source(stmt))
+                log('T_Param:\n', astor.to_source(stmt))
                 self.transformed_parameters.append(self.visit(stmt))
         elif kind == 'model':
             for stmt in node.body:
-                print('Model:\n', astor.to_source(stmt))
+                log('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
         elif kind == 'generated_quantities':
             for stmt in node.body:
-                print('G_Quant:\n', astor.to_source(stmt))
+                log('G_Quant:\n', astor.to_source(stmt))
                 self.generated_quantities.append(self.visit(stmt))
         else:
             assert False, 'Unknown block statement'
@@ -92,12 +98,12 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_DataDecl(self, node):
         id = node.arg
         ty = self.visit_type(node.annotation)
-        print('Data:', id)
+        log('Data:', id)
         self.data.append(IR.VariableDecl(id, ty))
 
     def visit_parameter(self, node):
         id = node.target.id
-        print('Param:', id)
+        log('Param:', id)
         type_ast = node.annotation
         if isinstance(type_ast, ast.Compare):
             assert len(type_ast.ops) == 1
@@ -106,8 +112,7 @@ class PythonVisitor(ast.NodeVisitor):
             ty = self.visit_type(type_ast.left)
             sval = self.visit(type_ast.comparators[0])
             self.parameters.append(IR.VariableDecl(id, ty))
-            print('Model:\n', id, 'is', astor.to_source(
-                type_ast.comparators[0]))
+            log('Model:\n', id, 'is', astor.to_source(type_ast.comparators[0]))
             self.model.append(IR.SamplingStmt(IR.Variable(id), sval))
         else:
             ty = self.visit(node.annotation)

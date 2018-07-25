@@ -1,4 +1,5 @@
-indent_size=2
+indent_size = 2
+
 
 class LabeledString(object):
     def __init__(self, label, str):
@@ -7,6 +8,7 @@ class LabeledString(object):
 
     def __str__(self):
         return self.str
+
 
 class LineWithSourceMap(object):
     def __init__(self, line):
@@ -23,11 +25,12 @@ class LineWithSourceMap(object):
             curChar += len(elem.str)
             if i < curChar:
                 return elem.label
-            curIndex+=1
+            curIndex += 1
         # If it is past the end of the line, just blame the last element
         if self.line:
             return self.line[-1].label
-            
+
+
 class StringWithSourceMap(object):
     def __init__(self, lines, lastData):
         self.lines = []
@@ -37,9 +40,10 @@ class StringWithSourceMap(object):
 
     def __str__(self):
         return '\n'.join(map(str, self.lines))
-    
+
     def __getitem__(self, i):
         return self.lines[i]
+
 
 class LabeledRope(object):
     def __init__(self, strings=[]):
@@ -63,9 +67,10 @@ class LabeledRope(object):
 
     def result(self):
         return StringWithSourceMap(self.lines, self.lastLine)
-    
+
     def __str__(self):
         return str(self.result())
+<<<<<<< HEAD
     
 class IR(object):
     def to_stan(self, acc, indent=0):
@@ -81,7 +86,23 @@ class IR(object):
     def end_block(self, acc, indent=0):
         acc += self.mkString("}", indent)
         acc.newline()
+=======
 
+
+class Position:
+    def __init__(line, col):
+        self.line = line
+        self.col = col
+
+    def __str__(self):
+        return str(self.line) + ":" + str(self.col)
+
+>>>>>>> Optional loging in parse
+
+class IR(object):
+    def __init__(self, lineno, col_offset):
+        self.lineno = lineno
+        self.col_offset = col_offset
 
 
 class Program(IR):
@@ -100,18 +121,20 @@ class Program(IR):
         def block_helper(name):
             if(name in self.blocks):
                 self.blocks[name].to_stan(acc, indent)
-        
+
         names = [
-            "data", 
-            "parameters", 
+            "data",
+            "parameters",
             "transformed_parameters",
-            "model", 
+            "model",
             "generated_quantities"]
 
         for n in names:
             block_helper(n)
-        
+
 # Program Blocks (Section 6)
+
+
 class ProgramBlock(IR):
     def __init__(self, body=[]):
         self.body = []
@@ -167,7 +190,6 @@ class TransformedParametersBlock(ProgramBlock):
             b.to_stan(acc, indent+1)
             acc.newline()
         self.end_block(acc, indent)
-
 
 
 class ModelBlock(ProgramBlock):
@@ -270,6 +292,7 @@ class CallStmt(Statement):
             a.to_stan(acc)
         acc += self.mkString(")")
 
+
 class BreakStmt(Statement):
     pass
 
@@ -298,6 +321,7 @@ class Constant(Atom):
 class Variable(Atom):
     def __init__(self, id):
         self.id = id
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString(self.id, indent)
 
@@ -336,7 +360,6 @@ class Unop(Expression):
         first = True
 
 
-
 class Call(Expression):
     def __init__(self, id, args):
         self.id = id
@@ -355,6 +378,8 @@ class Call(Expression):
         acc += self.mkString(")")
 
 # Declarations
+
+
 class VariableDecl(IR):
     def __init__(self, id, ty, val=None):
         self.id = id
@@ -376,10 +401,9 @@ class Type(IR):
         self.dims = dims
 
     def constraint_to_stan(self, acc, cstr, indent=0):
-        lower, upper=cstr
+        lower, upper = cstr
         acc += self.mkString(str(lower) + "=", indent)
         upper.to_stan(acc)
-
 
     def to_stan(self, acc, id, indent=0):
         acc += self.mkString(self.kind, indent)
@@ -411,14 +435,13 @@ class EQ(Operator):
         acc += self.mkString("==", indent)
 
 
-
 class NEQ(Operator):
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("!=", indent)
 
 
-class SUB(Operator):    
+class SUB(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("-", indent)
 
@@ -433,8 +456,6 @@ class MULT(Operator):
         acc += self.mkString("*", indent)
 
 
-
 class DIV(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("/", indent)
-
