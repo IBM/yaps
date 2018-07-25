@@ -70,8 +70,8 @@ class LabeledRope(object):
 
     def __str__(self):
         return str(self.result())
-<<<<<<< HEAD
-    
+
+
 class IR(object):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("NOT YET IMPLEMENTED: " + str(self), indent)
@@ -86,18 +86,7 @@ class IR(object):
     def end_block(self, acc, indent=0):
         acc += self.mkString("}", indent)
         acc.newline()
-=======
 
-
-class Position:
-    def __init__(line, col):
-        self.line = line
-        self.col = col
-
-    def __str__(self):
-        return str(self.line) + ":" + str(self.col)
-
->>>>>>> Optional loging in parse
 
 class IR(object):
     def __init__(self, lineno, col_offset):
