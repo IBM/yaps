@@ -138,11 +138,12 @@ class DataBlock(ProgramBlock):
         self.vdecls = vdecls
 
     def to_stan(self, acc, indent=0):
-        self.start_block(acc, "data", indent)
-        for b in self.vdecls:
-            b.to_stan(acc, indent+1)
-            acc.newline()
-        self.end_block(acc, indent)
+        if self.vdecls:
+            self.start_block(acc, "data", indent)
+            for b in self.vdecls:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            self.end_block(acc, indent)
 
 
 class TransformedDataBlock(ProgramBlock):
@@ -156,11 +157,12 @@ class ParametersBlock(ProgramBlock):
         self.vdecls = vdecls
 
     def to_stan(self, acc, indent=0):
-        self.start_block(acc, "parameters", indent)
-        for b in self.vdecls:
-            b.to_stan(acc, indent+1)
-            acc.newline()
-        self.end_block(acc, indent)
+        if self.vdecls:
+            self.start_block(acc, "parameters", indent)
+            for b in self.vdecls:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            self.end_block(acc, indent)
 
 
 class TransformedParametersBlock(ProgramBlock):
@@ -169,15 +171,16 @@ class TransformedParametersBlock(ProgramBlock):
         self.stmts = stmts
 
     def to_stan(self, acc, indent=0):
-        self.start_block(acc, "transformed parameters", indent)
-        for b in self.vdecls:
-            b.to_stan(acc, indent+1)
-            acc.newline()
+        if self.vdecls or self.stmts:
+            self.start_block(acc, "transformed parameters", indent)
+            for b in self.vdecls:
+                b.to_stan(acc, indent+1)
+                acc.newline()
 
-        for b in self.stmts:
-            b.to_stan(acc, indent+1)
-            acc.newline()
-        self.end_block(acc, indent)
+            for b in self.stmts:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            self.end_block(acc, indent)
 
 
 class ModelBlock(ProgramBlock):
@@ -186,14 +189,15 @@ class ModelBlock(ProgramBlock):
         self.stmts = stmts
 
     def to_stan(self, acc, indent=0):
-        self.start_block(acc, "model", indent)
-        for b in self.vdecls:
-            b.to_stan(acc, indent+1)
-            acc.newline()
-        for b in self.stmts:
-            b.to_stan(acc, indent+1)
-            acc.newline()
-        self.end_block(acc, indent)
+        if self.vdecls or self.stmts:
+            self.start_block(acc, "model", indent)
+            for b in self.vdecls:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            for b in self.stmts:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            self.end_block(acc, indent)
 
 
 class GeneratedQuantities(ProgramBlock):
@@ -202,14 +206,15 @@ class GeneratedQuantities(ProgramBlock):
         self.stmts = stmts
 
     def to_stan(self, acc, indent=0):
-        self.start_block(acc, "generated quantities", indent)
-        for b in self.vdecls:
-            b.to_stan(acc, indent+1)
-            acc.newline()
-        for b in self.stmts:
-            b.to_stan(acc, indent+1)
-            acc.newline()
-        self.end_block(acc, indent)
+        if self.vdecls or self.stmts:
+            self.start_block(acc, "generated quantities", indent)
+            for b in self.vdecls:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            for b in self.stmts:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            self.end_block(acc, indent)
 
 # stmts (Section 5)
 
@@ -243,6 +248,35 @@ class ForStmt(Statement):
         self.iter = iter
         self.body = body
 
+    def iter_to_stan(self, acc):
+        acc += self.mkString(" in ")
+        if(isinstance(self.iter, Call) and self.iter.id == "range"):
+            args = self.iter.args
+            if len(args) == 1:
+                acc += self.iter.mkString("1:")
+                args[0].to_stan(acc)
+            elif len(args) == 2:
+                args[0].to_stan(acc)
+                acc += self.iter.mkString(":")
+                args[1].to_stan(acc)
+            elif len(args) == 3:
+                raise ValueError("For loop specified using the three argument version of range.  Step values are not currently supported.")
+            else:
+                raise ValueError("For loop specified using an invalid invocation of range. range does not accept " + len(args) + " arguments")
+        else:
+            raise ValueError("For loop specified using an unknown form of iteration.")
+
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("for (", indent)
+        self.var.to_stan(acc)
+        self.iter_to_stan(acc)
+        acc += self.mkString(") {")
+        acc.newline()
+        for b in self.body:
+            b.to_stan(acc, indent+1)
+            acc.newline()
+        acc += self.mkString("}", indent)
 
 class ConditionalStmt(Statement):
     def __init__(self, cond, exp, alt):
@@ -327,12 +361,27 @@ class Subscript(Atom):
         self.val = val
         self.slice = slice
 
+    def to_stan(self, acc, indent=0):
+        self.val.to_stan(acc, indent)
+        acc += self.mkString("[")
+        self.slice.to_stan(acc)
+        acc += self.mkString("]")
+
 
 class Binop(Expression):
     def __init__(self, op, lhs, rhs):
         self.op = op
         self.lhs = lhs
         self.rhs = rhs
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("(")
+        self.lhs.to_stan(acc, indent)
+        acc += self.mkString(")")
+        self.op.to_stan(acc, indent)
+        acc += self.mkString("(")
+        self.rhs.to_stan(acc, indent)
+        acc += self.mkString(")")
 
 
 class Unop(Expression):
@@ -345,7 +394,6 @@ class Unop(Expression):
         acc += self.mkString("(")
         self.rhs.to_stan(acc, indent)
         acc += self.mkString(")")
-        first = True
 
 
 class Call(Expression):
