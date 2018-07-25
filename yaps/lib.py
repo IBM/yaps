@@ -1,3 +1,6 @@
+def infer(model, *args, **kwargs):
+    return model.infer(*args, **kwargs)
+
 # Types
 
 class dummy_type(object):
