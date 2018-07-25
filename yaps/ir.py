@@ -76,6 +76,7 @@ class IR(object):
     def set_map(self, ast):
         self.lineno = ast.lineno
         self.col_offset = ast.col_offset
+        return self
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("NOT YET IMPLEMENTED: " + str(self), indent)

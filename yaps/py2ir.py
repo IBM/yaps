@@ -5,7 +5,7 @@ import astor
 import re
 
 
-debug = True
+debug = False
 
 
 def log(*args):
