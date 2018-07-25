@@ -2,11 +2,12 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join('..', 'yaps')))
 
-from yaps import parse_model
+import yaps as yaps
 from yaps.lib import int, real, parameters, model, uniform, bernoulli
 
 
-def coin_model_py(x: int(lower=0, upper=1)[10]):
+@yaps.model
+def coin(x: int(lower=0, upper=1)[10]):
     with parameters:
         theta: real(lower=0, upper=1)
     with model:
@@ -15,4 +16,9 @@ def coin_model_py(x: int(lower=0, upper=1)[10]):
             x[i] < ~ bernoulli(theta)
 
 
-parse_model(coin_model_py)
+flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
+print(str(coin))
+
+fit = yaps.infer(coin(x=flips),
+                iter=1000)
+print(fit)
