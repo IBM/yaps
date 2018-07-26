@@ -333,7 +333,7 @@ class Binop(Expression):
 
     @property
     def precedence(self):
-        return self.op.unary_precedence
+        return self.op.binary_precedence
 
 
 class Unop(Expression):
@@ -421,7 +421,6 @@ class Operator(IR):
 
 
 class EQ(Operator):
-
     def __init__(self):
         self.binary_precedence = 7
 
