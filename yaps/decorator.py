@@ -6,6 +6,24 @@ import re as regex
 from . import py2ir
 import pystan
 
+class FitModel(object):
+    def __init__(self, fit_model):
+        self.__model = fit_model
+    
+    def __getattr__(self, key):
+        return self.__model.extract()[key]
+
+    def __getitem__(self, key):
+        return self.__model.extract()[key]
+
+    def __dir__(self):
+        return self.__model.extract()
+    
+    def __str__(self):
+        ret = ""
+        for k, v in self.__model.extract().items():
+            print("{}: {}".format(k, v))
+        return ret
 
 class model_with_args(object):
     def __init__(self, model, data):
@@ -68,7 +86,7 @@ class model_with_args(object):
 
     def infer(self, **kwargs):
         try:
-            return pystan.stan(model_code=self.model.stan_code, model_name=self.model.func.__name__, data=self.stored_data, **kwargs)
+            return FitModel(pystan.stan(model_code=self.model.stan_code, model_name=self.model.func.__name__, data=self.stored_data, **kwargs))
         except ValueError as err:
             e = ValueError(self.map_valueerror(str(err)))
             e.__traceback__ = err.__traceback__
