@@ -6,20 +6,18 @@ import re as regex
 from . import py2ir
 import pystan
 
-class model(object):
-    def __init__(self, func):
-        self.func = func
-        functools.update_wrapper(self, func)
-        self.compiled_model = py2ir.parse_model(func)
-        self.model_string = self.compiled_model.to_mapped_string()
-        self.data = {}
+class model_with_args(object):
+    def __init__(self, model, data):
+        self.model = model
+        self.stored_data = data
 
     def __call__ (self, **kwargs):
-        self.data.update(kwargs)
-        return self
+        d = self.stored_data.copy()
+        d.update(kwargs)
+        return model_with_args(self.model, d)
     
     def map_valueerror(self, err):
-        fileName = inspect.getsourcefile(self.func)
+        fileName = inspect.getsourcefile(self.model.func)
         err = str(err)
         err = err.replace("'unknown file name'", "'" + fileName + "'")
 
@@ -29,7 +27,7 @@ class model(object):
         def get_code(line, col):
             target_context_lines = 4
 
-            py_source_lines, py_source_first_line = inspect.getsourcelines(self.func)
+            py_source_lines, py_source_first_line = inspect.getsourcelines(self.model.func)
             context_lines = min(target_context_lines, len(py_source_lines))
             prefix_lines = math.ceil(context_lines // 2)
             start_line = max(line - prefix_lines, 0)
@@ -53,7 +51,7 @@ class model(object):
             py_line = ir.lineno
             py_col = ir.col_offset
 
-            py_source_lines, py_source_first_line = inspect.getsourcelines(self.func)
+            py_source_lines, py_source_first_line = inspect.getsourcelines(self.model.func)
             py_code = get_code(py_line-1, py_col)
             if not py_code.endswith("\n"):
                 py_code += "\n"
@@ -66,11 +64,55 @@ class model(object):
 
     def infer(self, **kwargs):
         try:
-            return pystan.stan(model_code=str(self), model_name=self.func.__name__, data=self.data, **kwargs)
+            return pystan.stan(model_code=self.model.stan_code, model_name=self.model.func.__name__, data=self.stored_data, **kwargs)
         except ValueError as err:
             e = ValueError(self.map_valueerror(str(err)))
             e.__traceback__ = err.__traceback__
             raise e
+
+    @property
+    def graph(self):
+        return self.model.graph
+    
+    @property
+    def ir(self):
+        return self.model.ir
+
+    @property
+    def source_map(self):
+        return self.model.source_map
+
+    @property
+    def stan_code(self):
+        return self.model.stan_code
+
+    @property
+    def data(self):
+        return self.stored_data
+
+    def __str__(self):
+        return "stan:\n{}\ndata:\n{}".format(self.model, self.data)
+        
+
+    def __repr__(self):
+        return self.model.__repr__
+
+
+class model(object):
+    def __init__(self, func):
+        self.func = func
+        functools.update_wrapper(self, func)
+        self.compiled_model = py2ir.parse_model(func)
+        self.model_string = self.compiled_model.to_mapped_string()
+
+    def __call__ (self, **kwargs):
+        if kwargs:
+            return model_with_args(self, kwargs)
+        else:
+            return self
+    
+    def infer(self, **kwargs):
+        return model_with_args(self, {}).infer(**kwargs)
 
     @property
     def graph(self):
@@ -84,10 +126,13 @@ class model(object):
     def source_map(self):
         return self.model_string
 
-    
     @property
     def stan_code(self):
         return str(self)
+
+    @property
+    def data(self):
+        return {}
 
     def __str__(self):
         return str(self.model_string)
