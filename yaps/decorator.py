@@ -49,7 +49,7 @@ class model(object):
             stan_line = int(m.group(1))
             stan_col = int(m.group(2))
 
-            ir = self.source_map[stan_line-1][stan_col-1]
+            ir = self.source_map[stan_line-1][max(0,stan_col-2)]
             py_line = ir.lineno
             py_col = ir.col_offset
 
