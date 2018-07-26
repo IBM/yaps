@@ -16,7 +16,7 @@ def slicstan(N: int[10], y: real(lower=0, upper=1)[10]):
         v: real = pow(sigma, 2)
 
 
-print(slicstan.stan_code)
+print(slicstan)
 fit = yaps.infer(slicstan(N=[0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
                 ,y=[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]),
                 iter=1000)

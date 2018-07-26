@@ -17,7 +17,7 @@ def coin(x: int(lower=0, upper=1)[10]):
 
 
 flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
-print(coin.stan_code)
+print(coin)
 
 fit = yaps.infer(coin(x=flips),
                 iter=1000)
