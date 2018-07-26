@@ -191,6 +191,12 @@ class PythonVisitor(ast.NodeVisitor):
             op = self.visit(op)
             return IR.Binop(op, lhs, rhs).set_map(node)
 
+    def visit_BinOp(self, node):
+        op = self.visit(node.op)
+        lhs = self.visit(node.left)
+        rhs = self.visit(node.right)
+        return IR.Binop(op, lhs, rhs).set_map(node)
+
     def visit_UnaryOp(self, node):
         op = self.visit(node.op)
         expr = self.visit(node.operand)
@@ -198,6 +204,21 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_USub(self, node):
         return IR.SUB()
+
+    def visit_Sub(self, node):
+        return IR.SUB()
+
+    def visit_Add(self, node):
+        return IR.ADD()
+
+    def visit_Mult(self, node):
+        return IR.MULT()
+
+    def visit_Div(self, node):
+        return IR.DIV()
+
+    def visit_Mod(self, node):
+        return IR.MOD()
 
     def visit_For(self, node):
         var = self.visit(node.target)

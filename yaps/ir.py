@@ -2,6 +2,7 @@ from . import labeled_strings as labeled_strings
 
 indent_size = 2
 
+
 class IR(object):
     def set_map(self, ast):
         self.lineno = ast.lineno
@@ -190,12 +191,14 @@ class ForStmt(Statement):
                 acc += self.iter.mkString(":")
                 args[1].to_stan(acc)
             elif len(args) == 3:
-                raise ValueError("For loop specified using the three argument version of range.  Step values are not currently supported.")
+                raise ValueError(
+                    "For loop specified using the three argument version of range.  Step values are not currently supported.")
             else:
-                raise ValueError("For loop specified using an invalid invocation of range. range does not accept " + len(args) + " arguments")
+                raise ValueError(
+                    "For loop specified using an invalid invocation of range. range does not accept " + len(args) + " arguments")
         else:
-            raise ValueError("For loop specified using an unknown form of iteration.")
-
+            raise ValueError(
+                "For loop specified using an unknown form of iteration.")
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("for (", indent)
@@ -213,6 +216,7 @@ class ForStmt(Statement):
                 b.to_stan(acc, indent+1)
                 acc.newline()
             acc += self.mkString("}", indent)
+
 
 class ConditionalStmt(Statement):
     def __init__(self, cond, exp, alt):
@@ -332,7 +336,6 @@ class Binop(Expression):
         return self.op.unary_precedence
 
 
-
 class Unop(Expression):
     def __init__(self, op, expr):
         self.op = op
@@ -412,8 +415,10 @@ class Type(IR):
 
 # Operator
 
+
 class Operator(IR):
     pass
+
 
 class EQ(Operator):
 
@@ -441,7 +446,7 @@ class SUB(Operator):
         acc += self.mkString("-", indent)
 
 
-class PLUS(Operator):
+class ADD(Operator):
     def __init__(self):
         self.binary_precedence = 5
         self.unary_precedence = 1
@@ -464,6 +469,7 @@ class DIV(Operator):
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("/", indent)
+
 
 class MOD(Operator):
     def __init__(self):
