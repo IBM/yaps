@@ -125,7 +125,11 @@ class PythonVisitor(ast.NodeVisitor):
         dims = None
         if isinstance(node, ast.Subscript):
             type_ast = node.value
-            dims = node.slice.value.n
+            v = node.slice.value
+            if isinstance(v, ast.Name):
+                dims = v.id
+            elif isinstance(v, ast.Num):
+                dims = v.n
         else:
             type_ast = node
         if isinstance(type_ast, ast.Name):
