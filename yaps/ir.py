@@ -271,12 +271,18 @@ class ForStmt(Statement):
         acc += self.mkString("for (", indent)
         self.var.to_stan(acc)
         self.iter_to_stan(acc)
-        acc += self.mkString(") {")
-        acc.newline()
-        for b in self.body:
-            b.to_stan(acc, indent+1)
+        acc += self.mkString(")")
+
+        if(len(self.body) == 1):
             acc.newline()
-        acc += self.mkString("}", indent)
+            self.body[0].to_stan(acc, indent+1)
+        else:
+            acc += self.mkString(" {")
+            acc.newline()
+            for b in self.body:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            acc += self.mkString("}", indent)
 
 class ConditionalStmt(Statement):
     def __init__(self, cond, exp, alt):
