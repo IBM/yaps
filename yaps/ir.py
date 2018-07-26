@@ -1,3 +1,4 @@
+import graphviz
 from . import labeled_strings as labeled_strings
 
 indent_size = 2
@@ -35,6 +36,25 @@ class Program(IR):
 
     def __init__(self, blocks):
         self.blocks = blocks
+        self.dot = graphviz.Digraph()
+        self.dot.attr('graph', rankdir='LR')
+
+    def viz(self):
+        def block_helper(name):
+            if (name in self.blocks):
+                if name == "parameters" or name == "data" or name == "model":
+                    self.blocks[name].viz(self.dot)
+
+        names = [
+            "data",
+            "parameters",
+            "transformed_parameters",
+            "model",
+            "generated_quantities"]
+
+        for n in names:
+            block_helper(n)
+        return self.dot
 
     def to_stan(self, acc, indent=0):
         def block_helper(name):
@@ -68,6 +88,12 @@ class DataBlock(ProgramBlock):
     def __init__(self, vdecls=[]):
         self.vdecls = vdecls
 
+    def viz(self, dot):
+        for v in self.vdecls:
+            dot.attr('node', shape='circle',
+                     style='filled', fillcolor='lightgray')
+            dot.node(v.id)
+
     def to_stan(self, acc, indent=0):
         if self.vdecls:
             self.start_block(acc, "data", indent)
@@ -78,14 +104,18 @@ class DataBlock(ProgramBlock):
 
 
 class TransformedDataBlock(ProgramBlock):
-    def __init__(self, vdecls=[], stmts=[]):
-        self.vdecls = vdecls
+    def __init__(self, stmts=[]):
         self.stmts = stmts
 
 
 class ParametersBlock(ProgramBlock):
     def __init__(self, vdecls=[]):
         self.vdecls = vdecls
+
+    def viz(self, dot):
+        for v in self.vdecls:
+            dot.attr('node', shape='circle', style='filled', fillcolor='white')
+            dot.node(v.id)
 
     def to_stan(self, acc, indent=0):
         if self.vdecls:
@@ -97,17 +127,12 @@ class ParametersBlock(ProgramBlock):
 
 
 class TransformedParametersBlock(ProgramBlock):
-    def __init__(self, vdecls=[], stmts=[]):
-        self.vdecls = vdecls
+    def __init__(self, stmts=[]):
         self.stmts = stmts
 
     def to_stan(self, acc, indent=0):
-        if self.vdecls or self.stmts:
+        if self.stmts:
             self.start_block(acc, "transformed parameters", indent)
-            for b in self.vdecls:
-                b.to_stan(acc, indent+1)
-                acc.newline()
-
             for b in self.stmts:
                 b.to_stan(acc, indent+1)
                 acc.newline()
@@ -115,16 +140,16 @@ class TransformedParametersBlock(ProgramBlock):
 
 
 class ModelBlock(ProgramBlock):
-    def __init__(self, vdecls=[], stmts=[]):
-        self.vdecls = vdecls
+    def __init__(self, stmts=[]):
         self.stmts = stmts
 
+    def viz(self, dot):
+        for stmt in self.stmts:
+            stmt.viz(dot)
+
     def to_stan(self, acc, indent=0):
-        if self.vdecls or self.stmts:
+        if self.stmts:
             self.start_block(acc, "model", indent)
-            for b in self.vdecls:
-                b.to_stan(acc, indent+1)
-                acc.newline()
             for b in self.stmts:
                 b.to_stan(acc, indent+1)
                 acc.newline()
@@ -132,16 +157,12 @@ class ModelBlock(ProgramBlock):
 
 
 class GeneratedQuantities(ProgramBlock):
-    def __init__(self, vdecls=[], stmts=[]):
-        self.vdecls = vdecls
+    def __init__(self, stmts=[]):
         self.stmts = stmts
 
     def to_stan(self, acc, indent=0):
-        if self.vdecls or self.stmts:
+        if self.stmts:
             self.start_block(acc, "generated quantities", indent)
-            for b in self.vdecls:
-                b.to_stan(acc, indent+1)
-                acc.newline()
             for b in self.stmts:
                 b.to_stan(acc, indent+1)
                 acc.newline()
@@ -166,6 +187,13 @@ class SamplingStmt(Statement):
         self.lhs = lhs
         self.rhs = rhs
 
+    def viz(self, dot):
+        lv = self.lhs.get_vars()
+        rv = self.rhs.get_vars()
+        for a in lv:
+            for b in rv:
+                dot.edge(b, a)
+
     def to_stan(self, acc, indent=0):
         self.lhs.to_stan(acc, indent)
         acc += self.mkString(" ~ ")
@@ -178,6 +206,10 @@ class ForStmt(Statement):
         self.var = var
         self.iter = iter
         self.body = body
+
+    def viz(self, dot):
+        for stmt in self.body:
+            stmt.viz(dot)
 
     def iter_to_stan(self, acc):
         acc += self.mkString(" in ")
@@ -281,12 +313,16 @@ class Expression(IR):
 
 
 class Atom(Expression):
-    pass
+    def get_vars(self):
+        return []
 
 
 class Constant(Atom):
     def __init__(self, value):
         self.value = value
+
+    def get_vars(self):
+        return []
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(str(self.value), indent)
@@ -295,6 +331,9 @@ class Constant(Atom):
 class Variable(Atom):
     def __init__(self, id):
         self.id = id
+
+    def get_vars(self):
+        return [self.id]
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(self.id, indent)
@@ -313,6 +352,9 @@ class Subscript(Atom):
         self.val = val
         self.slice = slice
 
+    def get_vars(self):
+        return self.val.get_vars()
+
     def to_stan(self, acc, indent=0):
         self.to_stan_prec(self.val, acc, indent)
         acc += self.mkString("[")
@@ -325,6 +367,11 @@ class Binop(Expression):
         self.op = op
         self.lhs = lhs
         self.rhs = rhs
+
+    def get_vars(self):
+        lv = self.lhs.get_vars()
+        rv = self.rhs.get_vars()
+        return lv + rv
 
     def to_stan(self, acc, indent=0):
         self.to_stan_prec(self.lhs, acc, indent)
@@ -341,6 +388,9 @@ class Unop(Expression):
         self.op = op
         self.rhs = expr
 
+    def get_vars(self):
+        return self.rhs.get_vars()
+
     def to_stan(self, acc, indent=0):
         self.op.to_stan(acc, indent)
         self.to_stan_prec(self.rhs, acc, indent)
@@ -354,6 +404,12 @@ class Call(Expression):
     def __init__(self, id, args):
         self.id = id
         self.args = args
+
+    def get_vars(self):
+        vars = []
+        for a in self.args:
+            vars += a.get_vars()
+        return vars
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(self.id, indent)
