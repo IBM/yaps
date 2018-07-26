@@ -13,7 +13,7 @@ def slicstan(N: int[10], y: real(lower=0, upper=1)[10]):
         sigma: real = pow(tau, -0.5)
     y is normal(mu, sigma)
     with generated_quantities:
-        v: real = pow(sigmap, 2)
+        v: real = pow(sigma, 2)
 
 
 print(slicstan.stan_code)
