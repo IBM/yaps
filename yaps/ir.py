@@ -325,7 +325,19 @@ class ContinueStmt(Statement):
 
 # expessions (Section 4)
 class Expression(IR):
-    pass
+
+    def to_stan_prec(self, sub, acc, indent):
+        needsParens = sub.precedence > self.precedence
+        if needsParens:
+            acc += sub.mkString("(", indent)
+            sub.to_stan(acc)
+            acc += sub.mkString(")")
+        else:
+            sub.to_stan(acc, indent)
+
+    @property
+    def precedence(self):
+        return 0
 
 
 class Atom(Expression):
@@ -362,7 +374,7 @@ class Subscript(Atom):
         self.slice = slice
 
     def to_stan(self, acc, indent=0):
-        self.val.to_stan(acc, indent)
+        self.to_stan_prec(self.val, acc, indent)
         acc += self.mkString("[")
         self.slice.to_stan(acc)
         acc += self.mkString("]")
@@ -375,13 +387,14 @@ class Binop(Expression):
         self.rhs = rhs
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("(")
-        self.lhs.to_stan(acc, indent)
-        acc += self.mkString(")")
+        self.to_stan_prec(self.lhs, acc, indent)
         self.op.to_stan(acc, indent)
-        acc += self.mkString("(")
-        self.rhs.to_stan(acc, indent)
-        acc += self.mkString(")")
+        self.to_stan_prec(self.rhs, acc, indent)
+
+    @property
+    def precedence(self):
+        return self.op.unary_precedence
+
 
 
 class Unop(Expression):
@@ -391,9 +404,11 @@ class Unop(Expression):
 
     def to_stan(self, acc, indent=0):
         self.op.to_stan(acc, indent)
-        acc += self.mkString("(")
-        self.rhs.to_stan(acc, indent)
-        acc += self.mkString(")")
+        self.to_stan_prec(self.rhs, acc, indent)
+
+    @property
+    def precedence(self):
+        return self.op.unary_precedence
 
 
 class Call(Expression):
@@ -461,37 +476,62 @@ class Type(IR):
 
 # Operator
 
-
 class Operator(IR):
     pass
 
-
 class EQ(Operator):
+
+    def __init__(self):
+        self.binary_precedence = 7
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("==", indent)
 
 
 class NEQ(Operator):
+    def __init__(self):
+        self.binary_precedence = 7
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("!=", indent)
 
 
 class SUB(Operator):
+    def __init__(self):
+        self.binary_precedence = 5
+        self.unary_precedence = 1
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("-", indent)
 
 
 class PLUS(Operator):
+    def __init__(self):
+        self.binary_precedence = 5
+        self.unary_precedence = 1
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("+", indent)
 
 
 class MULT(Operator):
+    def __init__(self):
+        self.binary_precedence = 4
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("*", indent)
 
 
 class DIV(Operator):
+    def __init__(self):
+        self.binary_precedence = 4
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("/", indent)
+
+class MOD(Operator):
+    def __init__(self):
+        self.binary_precedence = 4
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("/", indent)
