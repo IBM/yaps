@@ -40,7 +40,7 @@ class model(object):
             for lno in range(start_line, start_line+context_lines):
                 cur_lineno = lno + py_source_first_line
                 cur_line = py_source_lines[lno]
-                ret += "{:>4}: {}\n".format(cur_lineno, cur_line)
+                ret += "{:>4}: {}".format(cur_lineno, cur_line)
                 if lno == line:
                     ret += " "*(col+6)+ "^\n"
             return ret
@@ -55,8 +55,9 @@ class model(object):
 
             py_source_lines, py_source_first_line = inspect.getsourcelines(self.func)
             py_code = get_code(py_line-1, py_col)
-
-            return "at line {}, column {}\n{}\n{}\n{}\n".format(py_source_first_line+py_line-1, py_col+1, m.group(3), py_code, m.group(5))
+            if not py_code.endswith("\n"):
+                py_code += "\n"
+            return "at line {}, column {}\n{}\n{}{}\n".format(py_source_first_line+py_line-1, py_col+1, m.group(3), py_code, m.group(5))
 
         err = linecolre.sub(mapLines, err)
 
