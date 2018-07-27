@@ -18,6 +18,8 @@ import sys
 from antlr4 import *
 from parser.stanLexer import stanLexer
 from parser.stanParser import stanParser
+from stan_visitor import Printer
+
 
 def stream2parsetree(stream):
     lexer = stanLexer(stream)
@@ -26,27 +28,32 @@ def stream2parsetree(stream):
     tree = parser.program()
     return tree
 
+
 def parsetree2astpy(tree):
-    return tree # XXX TODO XXX
+    return tree  # XXX TODO XXX
     # stan2astpy = Stan2Astpy()
     # walker = ParseTreeWalker()
     # walker.walk(stan2astpy, tree)
     # return tree.ir
+
 
 def stan2astpy(stream):
     tree = stream2parsetree(stream)
     astpy = parsetree2astpy(tree)
     return astpy
 
+
 def stan2astpyFile(filename):
     stream = FileStream(filename)
     return stan2astpy(stream)
+
 
 def stan2astpyStr(str):
     stream = InputStream(str)
     return stan2astpy(stream)
 
-def do_compile(code_string = None, code_file = None):
+
+def do_compile(code_string=None, code_file=None):
     if not (code_string or code_file) or (code_string and code_file):
         assert False, "Either string or file but not both must be provided."
     if code_string:
@@ -54,6 +61,7 @@ def do_compile(code_string = None, code_file = None):
     else:
         ast_ = stan2astpyFile(code_file)
     return ast_
+
 
 def main(argv):
     if (len(argv) > 1):
@@ -64,4 +72,7 @@ if __name__ == '__main__':
     ast_ = main(sys.argv)
     # co = compile(ast_, "<ast>", 'exec')
     # eval(co)
-    print(ast_)
+    printer = Printer()
+    walker = ParseTreeWalker()
+    walker.walk(printer, ast_)
+    # print(ast_)

@@ -18,8 +18,8 @@ import sys
 import ast
 from ast import *
 from antlr4 import *
-from .parser.stanParser import stanParser
-from .parser.stanListener import stanListener
+from parser.stanParser import stanParser
+from parser.stanListener import stanListener
 import astor
 import astpretty
 import torch
