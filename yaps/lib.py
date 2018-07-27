@@ -92,9 +92,31 @@ def bernoulli(p):
     pass
 
 
+def bernoulli_logit(p):
+    pass
+
+
 def gamma(x, y):
     pass
 
 
 def normal(x, y):
     pass
+
+
+# Functions
+
+def qr_Q(x):
+    return x
+
+
+def qr_R(x):
+    return x
+
+
+def inverse(x):
+    return x
+
+
+def sqrt(x):
+    return x
