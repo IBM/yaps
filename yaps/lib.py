@@ -18,6 +18,7 @@ class dummy_type(object):
 int = dummy_type()
 real = dummy_type()
 vector = dummy_type()
+matrix = dummy_type()
 
 dependent_type_var = dummy_type
 
