@@ -3,6 +3,7 @@ def infer(model, *args, **kwargs):
 
 # Types
 
+
 class dummy_type(object):
     def __getitem__(self, key):
         return None
@@ -10,16 +11,18 @@ class dummy_type(object):
     def __init__(self):
         pass
 
-    def __call__ (self, *args, **kwargs):
+    def __call__(self, *args, **kwargs):
         return dummy_type()
 
 
 int = dummy_type()
 real = dummy_type()
+vector = dummy_type()
 
 dependent_type_var = dummy_type
 
 # Blocks
+
 
 class functions(object):
     def __enter__(self):
