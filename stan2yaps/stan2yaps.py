@@ -58,21 +58,69 @@ def idxFromExprList(exprList):
             ctx=Load())
 
 
+def listFromStmt(stmt):
+    if isinstance(stmt.ast, Block):
+        return stmt.ast.body
+    else:
+        return [stmt.ast]
+
+
+class Block(object):
+    # Dummy class for blocks that are not supported in python
+    def __init__(self, body):
+        self.body = body
+
+
 class Stan2Astpy(stanListener):
     def __init__(self):
         self.indentation = 0
         self.ast = None
 
+    def exitTypeConstraint(self, ctx):
+        ctx.ast = keyword(
+            arg=ctx.IDENTIFIER().getText(),
+            value=ctx.atom().ast
+        )
+
+    def exitTypeConstraintList(self, ctx):
+        ctx.ast = gatherChildrenAST(ctx)
+
+    def exitTypeConstraints(self, ctx):
+        ctx.ast = ctx.typeConstraintList().ast
+
+    def exitType_(self, ctx):
+        # TODO VectorType MatrixType
+        kind = ctx.primitiveType().getText()
+        if ctx.typeConstraints() is None:
+            ctx.ast = Name(id=kind, ctx=Load())
+        else:
+            constraints = ctx.typeConstraints().ast
+            ctx.ast = Call(
+                func=Name(id=kind, ctx=Load()),
+                args=[],
+                keywords=constraints
+            )
+
     def exitVariableDecl(self, ctx):
         vid = ctx.IDENTIFIER().getText()
-        dims = ctx.arrayDim().ast if ctx.arrayDim() is not None else []
-        ctx.ast = Assign(
-            targets=[Name(id=vid, ctx=Store())],
-            value=Call(func=Attribute(
-                value=Name(id='torch', ctx=Load()),
-                attr='zeros', ctx=Load()),
-                args=[List(elts=dims, ctx=Load())],
-                keywords=[]))
+        val = None
+        if ctx.arrayDim() is not None:
+            dims = ctx.arrayDim().ast
+            ty = Subscript(
+                value=ctx.type_().ast,
+                slice=idxFromExprList(dims),
+                ctx=Load()
+            )
+        else:
+            ty = ctx.type_().ast
+        if ctx.expression() is not None:
+            val = ctx.expression().ast
+        ctx.ast = AnnAssign(
+            target=Name(id=vid, ctx=Store()),
+            annotation=ty,
+            value=val,
+            simple=1,
+        )
 
     def exitArrayDim(self, ctx):
         ctx.ast = ctx.expressionCommaList().ast
@@ -183,33 +231,47 @@ class Stan2Astpy(stanListener):
 
     def exitSamplingStmt(self, ctx):
         lvalue = ctx.lvalueSampling().ast
+        id = ctx.IDENTIFIER()[0].getText()
+        exprList = ctx.expressionCommaList().ast
         if ctx.PLUS_EQ() is not None:
-            assert False, 'Not yet implemented'
-        elif ctx.truncation() is not None:
-            assert False, 'Not yet implemented'
+            id_cond = ctx.IDENTIFIER()[1].getText()
+            ctx.ast = AugAssign(
+                target=lvalue,
+                op=Add(),
+                value=Call(
+                    func=Name(id=id, ctx=Load()),
+                    args=[
+                        BinOp(
+                            left=Name(id=id_cond, ctx=Load()),
+                            op=BitOr(),
+                            right=idxFromExprList(exprList),
+                        ),
+                    ],
+                    keywords=[],
+                ),
+            )
         else:
-            id = ctx.IDENTIFIER()[0].getText()
-            if hasattr(torch.distributions, id.capitalize()):
-                # Check if the distribution exists in torch.distributions
-                id = id.capitalize()
-            exprList = ctx.expressionCommaList().ast
-            ctx.ast = Assign(
-                targets=[lvalue],
-                value=Call(func=Attribute(
-                    value=Call(
-                        func=Name(id=id, ctx=Load()),
-                        args=exprList,
-                        keywords=[]),
-                    attr='sample',
-                    ctx=Load()),
-                    args=[],
-                    keywords=[]))
+            if ctx.truncation() is not None:
+                assert False, 'Not yet implemented'
+            ctx.ast = Expr(
+                Compare(
+                    left=lvalue,
+                    ops=[Is()],
+                    comparators=[
+                        Call(
+                            func=Name(id=id, ctx=Load()),
+                            args=exprList,
+                            keywords=[],
+                        ),
+                    ],
+                )
+            )
 
     # For loops (section 5.4)
 
     def exitForStmt(self, ctx):
         id = ctx.IDENTIFIER().getText()
-        body = ctx.statement().ast if hasattr(ctx.statement(), 'ast') else []
+        body = listFromStmt(ctx.statement())
         if len(ctx.atom()) > 1:
             # Index in Stan start at 1...
             lbound = BinOp(
@@ -223,17 +285,18 @@ class Stan2Astpy(stanListener):
                     id='range', ctx=Load()),
                     args=[lbound, ubound],
                     keywords=[]),
-                body=[body],
+                body=body,
                 orelse=[])
 
     # Conditional statements (section 5.5)
 
     def exitConditionalStmt(self, ctx):
         expr = ctx.expression().ast
-        orstmt = [ctx.s2.ast] if ctx.s2 is not None else []
+        body = listFromStmt(ctx.s1)
+        orstmt = listFromStmt(ctx.s2)
         ctx.ast = If(
             test=expr,
-            body=[ctx.s1.ast],
+            body=body,
             orelse=orstmt,
         )
 
@@ -241,10 +304,10 @@ class Stan2Astpy(stanListener):
 
     def exitWhileStmt(self, ctx):
         expr = ctx.expression().ast
-        stmt = ctx.statement().ast
+        body = listFromStmt(ctx.statement())
         ctx.ast = While(
             test=expr,
-            body=[stmt],
+            body=body,
             orelse=[],
         )
 
@@ -252,11 +315,7 @@ class Stan2Astpy(stanListener):
 
     def exitBlockStmt(self, ctx):
         body = gatherChildrenASTList(ctx)
-        # Hack: Blocks do not exist in python, replaced by `if True: ...`
-        ctx.ast = If(
-            test=NameConstant(value=True),
-            body=body,
-            orelse=[],)
+        ctx.ast = Block(body=body)
 
     # Functions calls (sections 5.9 and 5.10)
 
@@ -309,23 +368,74 @@ class Stan2Astpy(stanListener):
     # Program blocks (section 6)
 
     def exitDataBlock(self, ctx):
-        ctx.ast = gatherChildrenASTList(ctx)
+        body = gatherChildrenASTList(ctx)
+        ctx.ast = With(items=[
+            withitem(
+                context_expr=Name(id='data', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)
+
+    def exitTransformedDataBlock(self, ctx):
+        body = gatherChildrenASTList(ctx)
+        ctx.ast = With(items=[
+            withitem(
+                context_expr=Name(id='transformed_data', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)
 
     def exitParametersBlock(self, ctx):
-        ctx.ast = gatherChildrenASTList(ctx)
+        body = gatherChildrenASTList(ctx)
+        ctx.ast = With(items=[
+            withitem(
+                context_expr=Name(id='parameters', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)
+
+    def exitTransformedParametersBlock(self, ctx):
+        body = gatherChildrenASTList(ctx)
+        ctx.ast = With(items=[
+            withitem(
+                context_expr=Name(id='transformed_parameters', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)
 
     def exitModelBlock(self, ctx):
-        ctx.ast = gatherChildrenASTList(ctx)
+        body = gatherChildrenASTList(ctx)
+        ctx.ast = With(items=[
+            withitem(
+                context_expr=Name(id='model', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)
+
+    def exitGeneratedQuantitiesBlock(self, ctx):
+        body = gatherChildrenASTList(ctx)
+        ctx.ast = With(items=[
+            withitem(
+                context_expr=Name(id='generated_quantities', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)
 
     def exitProgram(self, ctx):
-        ctx.ast = Module()
-        ctx.ast.body = [
-            Import(names=[alias(name='torch', asname=None)]),
-            ImportFrom(
-                module='torch.distributions',
-                names=[alias(name='*', asname=None)],
-                level=0)]
-        ctx.ast.body += gatherChildrenASTList(ctx)
+        body = gatherChildrenAST(ctx)
+        ctx.ast = Module(body=[
+            FunctionDef(
+                name='model',
+                args=arguments(args=[],
+                               vararg=None,
+                               kwonlyargs=[],
+                               kw_defaults=[],
+                               kwarg=None,
+                               defaults=[]),
+                body=body,
+                decorator_list=[Name(id='yaps.model', ctx=Load())],
+                returns=None
+            )])
         ast.fix_missing_locations(ctx.ast)
         self.ast = ctx.ast
 
@@ -343,6 +453,7 @@ def parsetree2astpy(tree):
     walker = ParseTreeWalker()
     walker.walk(stan2astpy, tree)
     return stan2astpy.ast
+
 
 def stan2astpy(stream):
     tree = stream2parsetree(stream)
@@ -374,11 +485,11 @@ def main(argv):
     if (len(argv) <= 1):
         assert False, "File name expected"
     astpy = stan2astpyFile(argv[1])
-    astpretty.pprint(astpy)
+    # astpretty.pprint(astpy)
     print('\n-----------------\n')
     print(astor.to_source(astpy))
     print('\n-----------------\n')
-    exec(compile(astpy, filename="<ast>", mode="exec"))
+    # exec(compile(astpy, filename="<ast>", mode="exec"))
 
 
 if __name__ == '__main__':
