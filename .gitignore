@@ -2,3 +2,8 @@ __pycache__/
 .ipynb_checkpoints/
 .vscode/
 .antlr/
+*.interp
+*.tokens
+stanLexer.py
+stanListener.py
+stanParser.py
