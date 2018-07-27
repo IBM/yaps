@@ -260,13 +260,16 @@ class Printer(stanListener):
     # Functions calls (sections 5.9 and 5.10)
 
     def exitCallStmt(self, ctx):
+        call = ctx.callExpr().ast
+        ctx.ast = Expr(value=call)
+
+    def exitCallExpr(self, ctx):
         id = ctx.IDENTIFIER().getText()
         args = ctx.expressionOrStringCommaList().ast
-        ctx.ast = Expr(
-            value=Call(
-                func=Name(id=id, ctx=Load()),
-                args=args,
-                keywords=[],))
+        ctx.ast = Call(
+            func=Name(id=id, ctx=Load()),
+            args=args,
+            keywords=[])
 
     def exitExpressionOrString(self, ctx):
         if ctx.expression() is not None:

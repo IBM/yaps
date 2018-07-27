@@ -24,4 +24,5 @@ model {
   theta ~ Uniform(0.0,1.0);
   for (i in 1:10)
     x[i] ~ Bernoulli(theta);
+  print(x);
 }
