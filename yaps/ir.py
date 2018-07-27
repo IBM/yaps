@@ -433,7 +433,13 @@ class VariableDecl(IR):
         self.val = val
 
     def to_stan(self, acc, indent=0):
-        self.ty.to_stan(acc, self.mkString(self.id), indent)
+        if isinstance(self.ty, Type):
+            self.ty.to_stan(acc, self.mkString(self.id), indent)
+        else:
+            acc += self.mkString(self.id, indent)
+            acc += self.mkString(" ")
+            self.ty.to_stan(acc)
+
         if self.val is not None:
             acc += self.mkString(" = ")
             self.val.to_stan(acc)
