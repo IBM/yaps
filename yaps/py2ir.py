@@ -25,7 +25,7 @@ class PythonVisitor(ast.NodeVisitor):
 
     def generic_visit(self, node):
         kind = type(node).__name__
-        log("Missing visit method for {}".format(kind))
+        print("Missing visit method for {}".format(kind))
 
     def visit_list(self, list):
         res = []
@@ -125,11 +125,7 @@ class PythonVisitor(ast.NodeVisitor):
         dims = None
         if isinstance(node, ast.Subscript):
             type_ast = node.value
-            v = node.slice.value
-            if isinstance(v, ast.Name):
-                dims = v.id
-            elif isinstance(v, ast.Num):
-                dims = v.n
+            dims = self.visit(node.slice.value)
         else:
             type_ast = node
         if isinstance(type_ast, ast.Name):
@@ -156,6 +152,12 @@ class PythonVisitor(ast.NodeVisitor):
         val = self.visit(node.value)
         return IR.VariableDecl(id, ty, val).set_map(node)
 
+    def visit_For(self, node):
+        var = self.visit(node.target)
+        iter = self.visit(node.iter)
+        body = self.visit(node.body)
+        return IR.ForStmt(var, iter, body).set_map(node)
+
     def visit_Expr(self, node):
         return self.visit(node.value)
 
@@ -167,6 +169,12 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_NoneType(self, node):
         return None
+
+    def visit_Tuple(self, node):
+        elts = []
+        for e in node.elts:
+            elts.append(self.visit(e))
+        return IR.Tuple(elts)
 
     def visit_Subscript(self, node):
         val = self.visit(node.value)
@@ -223,12 +231,6 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_Mod(self, node):
         return IR.MOD()
-
-    def visit_For(self, node):
-        var = self.visit(node.target)
-        iter = self.visit(node.iter)
-        body = self.visit(node.body)
-        return IR.ForStmt(var, iter, body).set_map(node)
 
 
 def parse_model(model):

@@ -362,6 +362,17 @@ class Subscript(Atom):
         acc += self.mkString("]")
 
 
+class Tuple(Expression):
+    def __init__(self, elts):
+        self.elts = elts
+
+    def get_vars(self):
+        vars = []
+        for e in self.elts:
+            vars += e.get_vars()
+        return vars
+
+
 class Binop(Expression):
     def __init__(self, op, lhs, rhs):
         self.op = op
