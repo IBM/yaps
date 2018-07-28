@@ -58,9 +58,10 @@ def idxFromExprList(exprList):
             ctx=Load())
 
 
-class Printer(stanListener):
+class Stan2Astpy(stanListener):
     def __init__(self):
         self.indentation = 0
+        self.ast = None
 
     def exitVariableDecl(self, ctx):
         vid = ctx.IDENTIFIER().getText()
@@ -326,12 +327,7 @@ class Printer(stanListener):
                 level=0)]
         ctx.ast.body += gatherChildrenASTList(ctx)
         ast.fix_missing_locations(ctx.ast)
-
-        astpretty.pprint(ctx.ast)
-        print('\n-----------------\n')
-        print(astor.to_source(ctx.ast))
-        print('\n-----------------\n')
-        exec(compile(ctx.ast, filename="<ast>", mode="exec"))
+        self.ast = ctx.ast
 
 
 def stream2parsetree(stream):
@@ -343,12 +339,10 @@ def stream2parsetree(stream):
 
 
 def parsetree2astpy(tree):
-    return tree  # XXX TODO XXX
-    # stan2astpy = Stan2Astpy()
-    # walker = ParseTreeWalker()
-    # walker.walk(stan2astpy, tree)
-    # return tree.ir
-
+    stan2astpy = Stan2Astpy()
+    walker = ParseTreeWalker()
+    walker.walk(stan2astpy, tree)
+    return stan2astpy.ast
 
 def stan2astpy(stream):
     tree = stream2parsetree(stream)
@@ -377,15 +371,15 @@ def do_compile(code_string=None, code_file=None):
 
 
 def main(argv):
-    if (len(argv) > 1):
-        return stan2astpyFile(argv[1])
+    if (len(argv) <= 1):
+        assert False, "File name expected"
+    astpy = stan2astpyFile(argv[1])
+    astpretty.pprint(astpy)
+    print('\n-----------------\n')
+    print(astor.to_source(astpy))
+    print('\n-----------------\n')
+    exec(compile(astpy, filename="<ast>", mode="exec"))
 
 
 if __name__ == '__main__':
     ast_ = main(sys.argv)
-    # co = compile(ast_, "<ast>", 'exec')
-    # eval(co)
-    printer = Printer()
-    walker = ParseTreeWalker()
-    walker.walk(printer, ast_)
-    # print(ast_)
