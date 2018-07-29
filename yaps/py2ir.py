@@ -141,7 +141,7 @@ class PythonVisitor(ast.NodeVisitor):
         else:
             assert False, 'Wrong type format'
 
-        if kind in ["int", "float"]:
+        if kind in ["int", "real"]:
             assert not inner_dims, ('Wrong type format {} does not take a dimension'.format(kind))
             t = IR.AtomicType(kind, cstrts)
             if dims:
