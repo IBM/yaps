@@ -123,9 +123,13 @@ class PythonVisitor(ast.NodeVisitor):
         kind = None
         cstrts = []
         dims = None
+        inner_dims = None
         if isinstance(node, ast.Subscript):
-            type_ast = node.value
             dims = self.visit(node.slice.value)
+            type_ast = node.value
+            if isinstance(type_ast, ast.Subscript):
+                inner_dims = self.visit(type_ast.slice.value)
+                type_ast = type_ast.value
         else:
             type_ast = node
         if isinstance(type_ast, ast.Name):
@@ -136,7 +140,21 @@ class PythonVisitor(ast.NodeVisitor):
                 cstrts.append(self.visit_constraint(c))
         else:
             assert False, 'Wrong type format'
-        return IR.Type(kind, cstrts, dims).set_map(node)
+
+        if kind in ["int", "float"]:
+            assert not inner_dims, ('Wrong type format {} does not take a dimension'.format(kind))
+            t = IR.AtomicType(kind, cstrts)
+            if dims:
+                return IR.ArrayType(t, dims)
+            else:
+                return t
+        else:
+            assert dims, ('Wrong type format; {} requires a dimension'.format(kind))
+
+            if inner_dims:
+                return IR.ArrayType(IR.DimType(kind, inner_dims, cstrts), dims)
+            else:
+                return IR.DimType(kind, dims, cstrts)
 
     def visit_constraint(self, node):
         lhs = node.arg

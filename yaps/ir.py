@@ -372,6 +372,18 @@ class Tuple(Expression):
             vars += e.get_vars()
         return vars
 
+    def to_stan(self, acc, indent=0):
+        # Do we sometime need parens?
+        # is this an operator precedence issue?
+        first = True
+        for e in self.elts:
+            if first:
+                first = False
+                e.to_stan(acc, indent)
+
+            else:
+                acc += self.mkString(", ")
+                e.to_stan(acc)
 
 class Binop(Expression):
     def __init__(self, op, lhs, rhs):
@@ -445,33 +457,38 @@ class VariableDecl(IR):
 
     def to_stan(self, acc, indent=0):
         if isinstance(self.ty, Type):
-            self.ty.to_stan(acc, self.mkString(self.id), indent)
+            self.ty.decl_to_stan(acc, self.mkString(self.id), indent)
         else:
-            acc += self.mkString(self.id, indent)
+            self.ty.to_stan(acc, indent)
             acc += self.mkString(" ")
-            self.ty.to_stan(acc)
+            acc += self.mkString(self.id)
 
         if self.val is not None:
             acc += self.mkString(" = ")
             self.val.to_stan(acc)
         acc += self.mkString(";")
 
-
 class Type(IR):
-    def __init__(self, kind, cstrts=None, dims=None):
-        self.kind = kind
-        self.cstrts = cstrts
-        self.dims = dims
+    # All types can print typed variable Declarations
+    # ArrayTypes will override this with a custom approach
+    def decl_to_stan(self, acc, id, indent=0):
+        self.to_stan(acc, indent)
+        acc += self.mkString(" ")
+        acc += id
+
+
+class ConstrainedType(Type):
+    def __init__(self, cstrts):
+            self.cstrts = cstrts
 
     def constraint_to_stan(self, acc, cstr, indent=0):
         lower, upper = cstr
         acc += self.mkString(str(lower) + "=", indent)
         upper.to_stan(acc)
 
-    def to_stan(self, acc, id, indent=0):
-        acc += self.mkString(self.kind, indent)
+    def constraints_to_stan(self, acc, indent=0):
         if self.cstrts:
-            acc += self.mkString("<")
+            acc += self.mkString("<", indent)
             first = True
             for cstr in self.cstrts:
                 if first:
@@ -481,10 +498,46 @@ class Type(IR):
                 self.constraint_to_stan(acc, cstr)
 
             acc += self.mkString(">")
+
+
+class AtomicType(ConstrainedType):
+    def __init__(self, kind, cstrts=None):
+        ConstrainedType.__init__(self, cstrts)
+        self.kind = kind
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(self.kind, indent)
+        self.constraints_to_stan(acc)
+
+class DimType(ConstrainedType):
+    def __init__(self, kind, dims, cstrts=None):
+        ConstrainedType.__init__(self, cstrts)
+        self.kind = kind
+        self.dims = dims
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(self.kind, indent)
+        self.constraints_to_stan(acc)
+
+        if self.dims is not None:
+            acc += self.mkString("[")
+            self.dims.to_stan(acc)
+            acc += self.mkString("]")
+
+class ArrayType(Type):
+    def __init__(self, base, dims):
+        self.base = base
+        self.dims = dims
+
+    # emit a stan typed variable declaration
+    def decl_to_stan(self, acc, id, indent=0):
+        self.base.to_stan(acc, indent)
         acc += self.mkString(" ")
         acc += id
         if self.dims is not None:
-            acc += self.mkString("[" + str(self.dims) + "]")
+            acc += self.mkString("[")
+            self.dims.to_stan(acc)
+            acc += self.mkString("]")
 
 # Operator
 
