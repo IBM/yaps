@@ -25,6 +25,8 @@ import astor
 import astpretty
 import torch
 
+verbose = False
+
 
 def parseExpr(expr):
     node = ast.parse(expr).body[0].value
@@ -65,6 +67,15 @@ def listFromStmt(stmt):
         return [stmt.ast]
 
 
+def argsFromVardecl(vdecls):
+    args = []
+    for v in vdecls:
+        assert (v.value is None)
+        assert isinstance(v.target, Name)
+        args.append(arg(arg=v.target.id, annotation=v.annotation))
+    return args
+
+
 class Block(object):
     # Dummy class for blocks that are not supported in python
     def __init__(self, body):
@@ -73,8 +84,7 @@ class Block(object):
 
 class Stan2Astpy(stanListener):
     def __init__(self):
-        self.indentation = 0
-        self.ast = None
+        self.data = []
 
     def exitTypeConstraint(self, ctx):
         ctx.ast = keyword(
@@ -98,7 +108,7 @@ class Stan2Astpy(stanListener):
             kind = ctx.matrixType().getText()
         else:
             assert False, "Internal error"
-        ty =  None
+        ty = None
         if ctx.typeConstraints() is None:
             ty = Name(id=kind, ctx=Load())
         else:
@@ -117,7 +127,6 @@ class Stan2Astpy(stanListener):
             )
         else:
             ctx.ast = ty
-
 
     def exitVariableDecl(self, ctx):
         vid = ctx.IDENTIFIER().getText()
@@ -387,64 +396,73 @@ class Stan2Astpy(stanListener):
 
     def exitDataBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        ctx.ast = With(items=[
-            withitem(
-                context_expr=Name(id='data', ctx=Load()),
-                optional_vars=None,
-            ),
-        ], body=body)
+        if verbose:
+            ctx.ast = [With(items=[
+                withitem(
+                    context_expr=Name(id='data', ctx=Load()),
+                    optional_vars=None,
+                ),
+            ], body=body)]
+        else:
+            self.data += body
 
     def exitTransformedDataBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        ctx.ast = With(items=[
+        ctx.ast = [With(items=[
             withitem(
                 context_expr=Name(id='transformed_data', ctx=Load()),
                 optional_vars=None,
             ),
-        ], body=body)
+        ], body=body)]
 
     def exitParametersBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        ctx.ast = With(items=[
-            withitem(
-                context_expr=Name(id='parameters', ctx=Load()),
-                optional_vars=None,
-            ),
-        ], body=body)
+        if verbose:
+            ctx.ast = [With(items=[
+                withitem(
+                    context_expr=Name(id='parameters', ctx=Load()),
+                    optional_vars=None,
+                ),
+            ], body=body)]
+        else:
+            ctx.ast = body
 
     def exitTransformedParametersBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        ctx.ast = With(items=[
+        ctx.ast = [With(items=[
             withitem(
                 context_expr=Name(id='transformed_parameters', ctx=Load()),
                 optional_vars=None,
             ),
-        ], body=body)
+        ], body=body)]
 
     def exitModelBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        ctx.ast = With(items=[
-            withitem(
-                context_expr=Name(id='model', ctx=Load()),
-                optional_vars=None,
-            ),
-        ], body=body)
+        if verbose:
+            ctx.ast = [With(items=[
+                withitem(
+                    context_expr=Name(id='model', ctx=Load()),
+                    optional_vars=None,
+                ),
+            ], body=body)]
+        else:
+            ctx.ast = body
 
     def exitGeneratedQuantitiesBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        ctx.ast = With(items=[
+        ctx.ast = [With(items=[
             withitem(
                 context_expr=Name(id='generated_quantities', ctx=Load()),
                 optional_vars=None,
             ),
-        ], body=body)
+        ], body=body)]
 
     def exitProgram(self, ctx):
-        body = gatherChildrenAST(ctx)
+        body = gatherChildrenASTList(ctx)
         ctx.ast = Module(body=[
             FunctionDef(
                 name='model',
-                args=arguments(args=[],
+                args=arguments(args=argsFromVardecl(self.data),
                                vararg=None,
                                kwonlyargs=[],
                                kw_defaults=[],
