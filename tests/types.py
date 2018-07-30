@@ -18,7 +18,7 @@ def test(AA: int[5],
          E: simplex[5]):
     F: simplex(lower=0)[5][5, 6]
     G: simplex[5]
-    H: simplex(lower=0)[5]
+    H: simplex(lower=0)[()]
     I: int(upper=5)[3]
     J: int(upper=5)
     K: int

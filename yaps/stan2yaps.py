@@ -51,6 +51,8 @@ def gatherChildrenAST(ctx):
 
 
 def idxFromExprList(exprList):
+    if exprList is None:
+        exprList = []
     if len(exprList) == 1:
         return exprList[0]
     else:
