@@ -23,7 +23,6 @@ from .stanParser import stanParser
 from .stanListener import stanListener
 import astor
 import astpretty
-import torch
 
 verbose = False
 
