@@ -18,9 +18,9 @@ import sys
 import ast
 from ast import *
 from antlr4 import *
-from parser.stanLexer import stanLexer
-from parser.stanParser import stanParser
-from parser.stanListener import stanListener
+from .stanLexer import stanLexer
+from .stanParser import stanParser
+from .stanListener import stanListener
 import astor
 import astpretty
 import torch
@@ -517,16 +517,17 @@ def do_compile(code_string=None, code_file=None):
     return ast_
 
 
+def from_stan(code_string=None, code_file=None):
+    ast_ = do_compile(code_string, code_file)
+    return astor.to_source(ast_)
+
+
 def main(argv):
     if (len(argv) <= 1):
         assert False, "File name expected"
-    astpy = stan2astpyFile(argv[1])
-    # astpretty.pprint(astpy)
-    print('\n-----------------\n')
-    print(astor.to_source(astpy))
-    print('\n-----------------\n')
-    # exec(compile(astpy, filename="<ast>", mode="exec"))
+    code = from_stan(code_file=argv[1])
+    print(code)
 
 
 if __name__ == '__main__':
-    ast_ = main(sys.argv)
+    main(sys.argv)
