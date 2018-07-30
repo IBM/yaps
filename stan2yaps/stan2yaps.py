@@ -89,17 +89,35 @@ class Stan2Astpy(stanListener):
         ctx.ast = ctx.typeConstraintList().ast
 
     def exitType_(self, ctx):
-        # TODO VectorType MatrixType
-        kind = ctx.primitiveType().getText()
+        kind = None
+        if ctx.primitiveType() is not None:
+            kind = ctx.primitiveType().getText()
+        elif ctx.vectorType() is not None:
+            kind = ctx.vectorType().getText()
+        elif ctx.matrixType() is not None:
+            kind = ctx.matrixType().getText()
+        else:
+            assert False, "Internal error"
+        ty =  None
         if ctx.typeConstraints() is None:
-            ctx.ast = Name(id=kind, ctx=Load())
+            ty = Name(id=kind, ctx=Load())
         else:
             constraints = ctx.typeConstraints().ast
-            ctx.ast = Call(
+            ty = Call(
                 func=Name(id=kind, ctx=Load()),
                 args=[],
                 keywords=constraints
             )
+        if ctx.arrayDim() is not None:
+            dims = ctx.arrayDim().ast
+            ctx.ast = Subscript(
+                value=ty,
+                slice=idxFromExprList(dims),
+                ctx=Load()
+            )
+        else:
+            ctx.ast = ty
+
 
     def exitVariableDecl(self, ctx):
         vid = ctx.IDENTIFIER().getText()
@@ -123,7 +141,7 @@ class Stan2Astpy(stanListener):
         )
 
     def exitArrayDim(self, ctx):
-        ctx.ast = ctx.expressionCommaList().ast
+        ctx.ast = ctx.expressionCommaListOpt().ast
 
     def exitVariableDeclsOpt(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)

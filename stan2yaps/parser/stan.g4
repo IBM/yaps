@@ -308,9 +308,9 @@ matrixType
     ;
 
 type_
-    : primitiveType typeConstraints? ('[' ']')?
-    | vectorType typeConstraints? ('[' expression ']')?
-    | matrixType typeConstraints? ('[' expression (',' expression)? ']')?
+    : primitiveType typeConstraints? arrayDim?
+    | vectorType typeConstraints? arrayDim?
+    | matrixType typeConstraints? arrayDim?
     ;
 
 typeConstraints
@@ -331,7 +331,7 @@ variableDecl
     ;
 
 arrayDim
-    : '[' expressionCommaList ']'
+    : '[' expressionCommaListOpt ']'
     ;
 
 variableDeclsOpt
