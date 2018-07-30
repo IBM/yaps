@@ -364,7 +364,8 @@ atom
     | variable
     | vectorExpr
     | arrayExpr
-    | atom '[' indexExpression ']'
+    | atom '[' indexExpressionCommaListOpt ']'
+    | callExpr
     | '(' expression ')'
     ;
 
@@ -374,7 +375,6 @@ callExpr
 
 expression
     : atom
-    | callExpr
     | expression TRANSPOSE_OP
     | <assoc=right> e1=expression POW_OP e2=expression
     | op=(NOT_OP|PLUS_OP|MINUS_OP) expression
@@ -390,7 +390,7 @@ expression
     ;
 
 indexExpression
-    : expressionCommaListOpt
+    : expression
     | e1=expression? ':' e2=expression?
     ;
 
@@ -400,6 +400,10 @@ expressionCommaList
 
 expressionCommaListOpt
     : expressionCommaList?
+    ;
+
+indexExpressionCommaListOpt
+    : indexExpression? (',' indexExpression?)*
     ;
 
 
