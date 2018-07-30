@@ -1,17 +1,16 @@
 /*
  * Copyright 2018 IBM Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 grammar stan;
@@ -20,99 +19,71 @@ grammar stan;
 
 // XXX TODO: #include file.stan XXX
 
-
 /** Comments (section 2.3) */
 
-COMMENT
-    :   '/*' .*? '*/' -> channel(3) // COMMENTS
-    ;
+COMMENT:
+	'/*' .*? '*/' -> channel(3) ; // COMMENTS
 
-LINE_COMMENT
-    :   '//' ~[\r\n]* -> channel(3) //COMMENTS
-    ;
-
+LINE_COMMENT:
+	'//' ~[\r\n]* -> channel(3) ; //COMMENTS
 
 /** Whitespaces (section 2.4) */
 
-WS  :  [ \t\r\n\u000C]+ -> channel(1) // WHITESPACES
-    ;
+WS:
+	[ \t\r\n\u000C]+ -> channel(1) ; // WHITESPACES
 
 /** Numeric literals (section 4.1) */
 
-IntegerLiteral
-    :  DecimalNumeral
-    ;
+IntegerLiteral: DecimalNumeral;
 
 RealLiteral:
-      Digits '.' Digits? ExponentPart?
-    | '.' Digits ExponentPart?
-    | Digits ExponentPart
-    ;
+	Digits '.' Digits? ExponentPart?
+	| '.' Digits ExponentPart?
+	| Digits ExponentPart;
 
-fragment
-ExponentPart:
-      ('e'|'E') ('+'|'-')? Digits
-    ;
+fragment ExponentPart: ('e' | 'E') ('+' | '-')? Digits;
 
-fragment
-DecimalNumeral
-    :   '0'
-    |   NonZeroDigit Digits?
-    ;
+fragment DecimalNumeral: '0' | NonZeroDigit Digits?;
 
-fragment
-Digits
-    :   Digit+
-    ;
+fragment Digits: Digit+;
 
-fragment
-Digit
-    :   '0'
-    |   NonZeroDigit
-    ;
+fragment Digit: '0' | NonZeroDigit;
 
-fragment
-NonZeroDigit
-    :   [1-9]
-    ;
+fragment NonZeroDigit: [1-9];
 
-StringLiteral
-    : '"' ([a-z]|[A-Z]|[0-9]|Symbol)* '"'
-    ;
+StringLiteral: '"' ([a-z] | [A-Z] | [0-9] | Symbol)* '"';
 
-fragment
-Symbol
-    : '~'
-    | '@'
-    | '#'
-    | '%'
-    | '^'
-    | '&'
-    | '*'
-    | '_'
-    | '\''
-    | '`'
-    | '-'
-    | '+'
-    | '='
-    | '{'
-    | ' '
-    | '}'
-    | '['
-    | ']'
-    | '('
-    | ')'
-    | '<'
-    | '>'
-    | '|'
-    | '/'
-    | '!'
-    | '?'
-    | '.'
-    | ','
-    | ';'
-    | ':'
-    ;
+fragment Symbol:
+	'~'
+	| '@'
+	| '#'
+	| '%'
+	| '^'
+	| '&'
+	| '*'
+	| '_'
+	| '\''
+	| '`'
+	| '-'
+	| '+'
+	| '='
+	| '{'
+	| ' '
+	| '}'
+	| '['
+	| ']'
+	| '('
+	| ')'
+	| '<'
+	| '>'
+	| '|'
+	| '/'
+	| '!'
+	| '?'
+	| '.'
+	| ','
+	| ';'
+	| ':';
 
 /** Variables and keywords (section 4.2) */
 
@@ -241,17 +212,11 @@ WCHAR_T: 'wchar_t';
 XOR: 'xor';
 XOR_EQ: 'xor_eq';
 
-
 /* Variables */
 
-BAD_IDENTIFIER
-    : [a-zA-Z] [a-zA-Z0-9_]* '__'
-    ;
+BAD_IDENTIFIER: [a-zA-Z] [a-zA-Z0-9_]* '__';
 
-IDENTIFIER
-    : [a-zA-Z] [a-zA-Z0-9_]*
-    ;
-
+IDENTIFIER: [a-zA-Z] [a-zA-Z0-9_]*;
 
 /* Operators (figure 4.1) */
 
@@ -282,75 +247,53 @@ DIV_EQ: '/=';
 DOT_MULT_EQ: '.*=';
 DOT_DIV_EQ: './=';
 
-
 /* Types (section 3.1) */
 
-primitiveType
-    : REAL
-    | INT
-    ;
+primitiveType: REAL | INT;
 
-vectorType
-    : VECTOR
-    | SIMPLEX
-    | UNIT_VECTOR
-    | ORDERED
-    | POSITIVE_ORDERED
-    | ROW_VECTOR
-    ;
+vectorType:
+	VECTOR
+	| SIMPLEX
+	| UNIT_VECTOR
+	| ORDERED
+	| POSITIVE_ORDERED
+	| ROW_VECTOR;
 
-matrixType
-    : MATRIX
-    | CORR_MATRIX
-    | COV_MATRIX
-    | CHOLESKY_FACTOR_COV
-    | CHOLESKY_FACTOR_CORR
-    ;
+matrixType:
+	MATRIX
+	| CORR_MATRIX
+	| COV_MATRIX
+	| CHOLESKY_FACTOR_COV
+	| CHOLESKY_FACTOR_CORR;
 
-type_
-    : primitiveType typeConstraints? arrayDim?
-    | vectorType typeConstraints? arrayDim?
-    | matrixType typeConstraints? arrayDim?
-    ;
+type_:
+	primitiveType typeConstraints? arrayDim?
+	| vectorType typeConstraints? arrayDim?
+	| matrixType typeConstraints? arrayDim?;
 
-typeConstraints
-    : '<' typeConstraintList '>'
-    ;
+typeConstraints: '<' typeConstraintList '>';
 
-typeConstraintList
-    :  typeConstraint (',' typeConstraint)*
-    ;
+typeConstraintList: typeConstraint (',' typeConstraint)*;
 
-typeConstraint
-    : IDENTIFIER '=' atom
-    ;
+typeConstraint: IDENTIFIER '=' atom;
 
-variableDecl
-    : type_ IDENTIFIER arrayDim? ';'
-    | type_ IDENTIFIER arrayDim? '=' expression ';'
-    ;
+variableDecl:
+	type_ IDENTIFIER arrayDim? ';'
+	| type_ IDENTIFIER arrayDim? '=' expression ';';
 
-arrayDim
-    : '[' expressionCommaListOpt ']'
-    ;
+arrayDim: '[' expressionCommaListOpt ']';
 
-variableDeclsOpt
-    : variableDecl*
-    ;
+variableDeclsOpt: variableDecl*;
 
 /** Numeric Litterals (section 4.1) */
-constant
-    : IntegerLiteral
-    | RealLiteral
-    ;
+constant: IntegerLiteral | RealLiteral;
 
 /** Variable (section 4.2) */
-variable
-    : IDENTIFIER
-    ;
+variable: IDENTIFIER;
 
 /** Vector, matrix and array expressions (section 4.2) */
 
+<<<<<<< HEAD
 vectorExpr
     : '[' expressionCommaList ']'
     ;
@@ -406,172 +349,158 @@ indexExpressionCommaListOpt
     : indexExpression? (',' indexExpression?)*
     ;
 
+=======
+vectorExpr: '[' expressionCommaList ']';
+
+arrayExpr: '{' expressionCommaList '}';
+
+atom:
+	constant
+	| variable
+	| vectorExpr
+	| arrayExpr
+	| atom '[' indexExpression ']'
+	| '(' expression ')';
+
+callExpr: IDENTIFIER '(' expressionOrStringCommaList ')';
+
+expression:
+	atom
+	| callExpr
+	| expression TRANSPOSE_OP
+	| <assoc = right> e1 = expression POW_OP e2 = expression
+	| op = (NOT_OP | PLUS_OP | MINUS_OP) expression
+	| e1 = expression op = (DOT_MULT_OP | DOT_DIV_OP) e2 = expression
+	| e1 = expression LEFT_DIV_OP e2 = expression
+	| e1 = expression op = (MULT_OP | DIV_OP | MOD_OP) e2 = expression
+	| e1 = expression op = (PLUS_OP | MINUS_OP) e2 = expression
+	| e1 = expression op = (LT_OP | LE_OP | GT_OP | GE_OP) e2 = expression
+	| e1 = expression op = (EQ_OP | NEQ_OP) e2 = expression
+	| e1 = expression AND_OP e2 = expression
+	| e1 = expression OR_OP e2 = expression
+	| <assoc = right> e1 = expression '?' e2 = expression ':' e3 = expression;
+
+indexExpression:
+	expressionCommaListOpt
+	| e1 = expression? ':' e2 = expression?;
+
+expressionCommaList: expression (',' expression)*;
+
+expressionCommaListOpt: expressionCommaList?;
+>>>>>>> Adding truncation
 
 /** Statements (section 5) */
 
 /** Assignment (section 5.1) */
 
-lvalue
-    : IDENTIFIER
-    | IDENTIFIER '[' expressionCommaList ']'
-    ;
-assignStmt
-    : lvalue '=' expression ';'
-    | lvalue op=(PLUS_EQ|MINUS_EQ|MULT_EQ|DIV_EQ|DOT_MULT_EQ|DOT_DIV_EQ) expression ';'
-    ;
+lvalue: IDENTIFIER | IDENTIFIER '[' expressionCommaList ']';
+assignStmt:
+	lvalue '=' expression ';'
+	| lvalue op = (
+		PLUS_EQ
+		| MINUS_EQ
+		| MULT_EQ
+		| DIV_EQ
+		| DOT_MULT_EQ
+		| DOT_DIV_EQ
+	) expression ';';
 
 /** Sampling (section 5.3) */
 
-lvalueSampling
-    : lvalue
-    | expression
-    ;
+lvalueSampling: lvalue | expression;
 
-samplingStmt
-    : lvalueSampling '~' IDENTIFIER '(' expressionCommaList ')' truncation? ';'
-    | lvalueSampling PLUS_EQ IDENTIFIER '(' IDENTIFIER '|' expressionCommaList ')' ';'
-    ;
+samplingStmt:
+	lvalueSampling '~' IDENTIFIER '(' expressionCommaList ')' truncation? ';'
+	| lvalueSampling PLUS_EQ IDENTIFIER '(' IDENTIFIER '|' expressionCommaList ')' ';';
 
-truncation
-    : 'T' '['  e1=expression? ',' e1=expression? ']'
-    ;
+truncation: 'T' '[' e1 = expression? ',' e2 = expression? ']';
 
 /** For loops (section 5.4) */
 
-forStmt
-    : FOR '(' IDENTIFIER IN atom ':' atom ')' statement
-    | FOR '(' IDENTIFIER IN atom ')' statement
-    ;
-
+forStmt:
+	FOR '(' IDENTIFIER IN atom ':' atom ')' statement
+	| FOR '(' IDENTIFIER IN atom ')' statement;
 
 /** Conditional statements (section 5.5) */
 
-conditionalStmt
-    : IF '(' expression ')' s1=statement (ELSE s2=statement)?
-    ;
-
+conditionalStmt:
+	IF '(' expression ')' s1 = statement (ELSE s2 = statement)?;
 
 /** While loops (section 5.6) */
 
-whileStmt
-    : WHILE '(' expression ')' statement
-    ;
-
+whileStmt: WHILE '(' expression ')' statement;
 
 /** Blocks (section 5.7) */
-blockStmt
-    : '{' variableDeclsOpt statementsOpt '}'
-    ;
-
+blockStmt: '{' variableDeclsOpt statementsOpt '}';
 
 /** Functions calls (sections 5.9 and 5.10) */
 
-callStmt
-    : callExpr ';'
-    ;
+callStmt: callExpr ';';
 
-expressionOrString
-    : expression
-    | StringLiteral
-    ;
+expressionOrString: expression | StringLiteral;
 
 expressionOrStringCommaList:
-    | expressionOrString (',' expressionOrString)*
-    ;
+	| expressionOrString (',' expressionOrString)*;
 
 /** statements */
 
-statement
-    : assignStmt
-    | samplingStmt
-    | forStmt
-    | conditionalStmt
-    | whileStmt
-    | blockStmt
-    | callStmt
-    | BREAK ';'
-    | CONTINUE ';'
-    ;
+statement:
+	assignStmt
+	| samplingStmt
+	| forStmt
+	| conditionalStmt
+	| whileStmt
+	| blockStmt
+	| callStmt
+	| BREAK ';'
+	| CONTINUE ';';
 
-statementsOpt
-    : statement*
-    ;
-
+statementsOpt: statement*;
 
 /** Functions (section 7) */
 
-functionType
-    : type_ IDENTIFIER '(' parameterCommaListopt ')'
-    | VOID IDENTIFIER '(' parameterCommaListopt ')'
-    ;
+functionType:
+	type_ IDENTIFIER '(' parameterCommaListopt ')'
+	| VOID IDENTIFIER '(' parameterCommaListopt ')';
 
-parameterDecl
-    : type_ IDENTIFIER
-    ;
+parameterDecl: type_ IDENTIFIER;
 
-parameterCommaList
-    : parameterDecl (',' parameterDecl)*
-    ;
+parameterCommaList: parameterDecl (',' parameterDecl)*;
 
-parameterCommaListopt
-    : parameterCommaList?
-    ;
+parameterCommaListopt: parameterCommaList?;
 
-functionStatement
-    : statement
-    | RETURN expression ';'
-    | RETURN ';'
-    ;
+functionStatement:
+	statement
+	| RETURN expression ';'
+	| RETURN ';';
 
-functionStatementsOpt
-    : functionStatement*
-    ;
+functionStatementsOpt: functionStatement*;
 
-functionDecl
-    : functionType '{' variableDeclsOpt functionStatementsOpt '}'
-    | functionType ';'
-    ;
+functionDecl:
+	functionType '{' variableDeclsOpt functionStatementsOpt '}'
+	| functionType ';';
 
-functionDeclsOpt
-    : functionDecl*
-    ;
+functionDeclsOpt: functionDecl*;
 
 /** Program blocks (section 6) */
 
-functionBlock
-    : FUNCTIONS '{'  functionDeclsOpt '}'
-    ;
+functionBlock: FUNCTIONS '{' functionDeclsOpt '}';
 
-dataBlock
-    : DATA '{' variableDeclsOpt '}'
-    ;
+dataBlock: DATA '{' variableDeclsOpt '}';
 
-transformedDataBlock
-    : TRANSFORMED DATA '{' variableDeclsOpt statementsOpt '}'
-    ;
+transformedDataBlock:
+	TRANSFORMED DATA '{' variableDeclsOpt statementsOpt '}';
 
-parametersBlock
-    : PARAMETERS '{' variableDeclsOpt '}'
-    ;
+parametersBlock: PARAMETERS '{' variableDeclsOpt '}';
 
-transformedParametersBlock
-    : TRANSFORMED PARAMETERS '{' variableDeclsOpt statementsOpt '}'
-    ;
+transformedParametersBlock:
+	TRANSFORMED PARAMETERS '{' variableDeclsOpt statementsOpt '}';
 
-modelBlock
-    : MODEL '{' variableDeclsOpt statementsOpt '}'
-    ;
+modelBlock: MODEL '{' variableDeclsOpt statementsOpt '}';
 
-generatedQuantitiesBlock
-    : GENERATED QUANTITIES '{' variableDeclsOpt statementsOpt '}'
-    ;
+generatedQuantitiesBlock:
+	GENERATED QUANTITIES '{' variableDeclsOpt statementsOpt '}';
 
-program
-    : functionBlock?
-        dataBlock?
-        transformedDataBlock?
-        parametersBlock?
-        transformedParametersBlock?
-        modelBlock?
-        generatedQuantitiesBlock?
-    ;
+program:
+	functionBlock? dataBlock? transformedDataBlock? parametersBlock? transformedParametersBlock?
+		modelBlock? generatedQuantitiesBlock?;

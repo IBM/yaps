@@ -110,14 +110,23 @@ class PythonVisitor(ast.NodeVisitor):
             assert isinstance(type_ast.ops[0], ast.Is)
             assert len(type_ast.comparators) == 1
             ty = self.visit_type(type_ast.left)
-            sval = self.visit(type_ast.comparators[0])
             self.parameters.append(IR.VariableDecl(id, ty).set_map(node))
-            log('Model:\n', id, 'is', astor.to_source(type_ast.comparators[0]))
+            dist, trunc = self.visit_distribution(type_ast.comparators[0])
             self.model.append(IR.SamplingStmt(
-                IR.Variable(id), sval).set_map(node))
+                IR.Variable(id), dist, trunc).set_map(node))
         else:
             ty = self.visit_type(node.annotation)
             self.parameters.append(IR.VariableDecl(id, ty).set_map(node))
+
+    def visit_distribution(self, node):
+        if isinstance(node, ast.Subscript):
+            assert isinstance(node.value, ast.Attribute)
+            assert node.value.attr == 'T'
+            dist = self.visit(node.value.value)
+            trunc = self.visit(node.slice)
+            return dist, trunc
+        else:
+            return self.visit(node), None
 
     def visit_type(self, node):
         kind = None
@@ -210,7 +219,6 @@ class PythonVisitor(ast.NodeVisitor):
             upper = self.visit(node.upper)
         return IR.Slice(lower, upper).set_map(node)
 
-
     def visit_ExtSlice(self, node):
         dims = []
         for e in node.dims:
@@ -236,11 +244,12 @@ class PythonVisitor(ast.NodeVisitor):
         assert len(node.comparators) == 1
         op = node.ops[0]
         lhs = self.visit(node.left)
-        rhs = self.visit(node.comparators[0])
         # Is is the sampling operator
         if isinstance(op, ast.Is):
-            return IR.SamplingStmt(lhs, rhs).set_map(node)
+            dist, trunc = self.visit_distribution(node.comparators[0])
+            return IR.SamplingStmt(lhs, dist, trunc).set_map(node)
         else:
+            rhs = self.visit(node.comparators[0])
             op = self.visit(op)
             return IR.Binop(op, lhs, rhs).set_map(node)
 

@@ -77,6 +77,13 @@ def argsFromVardecl(vdecls):
     return args
 
 
+def sliceFromExpr(e):
+    if e is None:
+        return Slice(lower=None, upper=None, step=None)
+    else:
+        return Index(value=e.ast)
+
+
 class Block(object):
     # Dummy class for blocks that are not supported in python
     def __init__(self, body):
@@ -278,9 +285,29 @@ class Stan2Astpy(stanListener):
                     keywords=[],
                 ),
             )
+        elif ctx.truncation() is not None:
+            trunc = ctx.truncation().ast
+            ctx.ast = Expr(
+                Compare(
+                    left=lvalue,
+                    ops=[Is()],
+                    comparators=[Subscript(
+                        value=Attribute(
+                            value=Call(
+                                func=Name(id=id, ctx=Load()),
+                                args=exprList,
+                                keywords=[],
+                            ),
+                            attr='T',
+                            ctx=Load(),
+                        ),
+                        slice=trunc,
+                        ctx=Load(),
+                    ),
+                    ],
+                )
+            )
         else:
-            if ctx.truncation() is not None:
-                assert False, 'Not yet implemented'
             ctx.ast = Expr(
                 Compare(
                     left=lvalue,
@@ -292,6 +319,25 @@ class Stan2Astpy(stanListener):
                             keywords=[],
                         ),
                     ],
+                )
+            )
+
+    def exitTruncation(self, ctx):
+        if ctx.e1 is None or ctx.e2 is None:
+            ctx.ast = ExtSlice(
+                dims=[
+                    sliceFromExpr(ctx.e1),
+                    sliceFromExpr(ctx.e2),
+                ],
+            )
+        else:
+            ctx.ast = Index(
+                value=Tuple(
+                    elts=[
+                        ctx.e1.ast,
+                        ctx.e2.ast,
+                    ],
+                    ctx=Load(),
                 )
             )
 

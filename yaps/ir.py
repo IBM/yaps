@@ -3,9 +3,10 @@ from . import labeled_strings as labeled_strings
 
 indent_size = 2
 
+
 class IR(object):
-    last_parsed_lineno=0
-    last_parse_col_offset=0
+    last_parsed_lineno = 0
+    last_parse_col_offset = 0
 
     def set_map(self, ast):
         if hasattr(ast, 'lineno'):
@@ -18,7 +19,7 @@ class IR(object):
             IR.last_parsed_col_offset = ast.col_offset
         else:
             self.col_offset = IR.last_parsed_col_offset
-        
+
         return self
 
     def to_stan(self, acc, indent=0):
@@ -129,7 +130,6 @@ class TransformedDataBlock(ProgramBlock):
             self.end_block(acc, indent)
 
 
-
 class ParametersBlock(ProgramBlock):
     def __init__(self, vdecls=[]):
         self.vdecls = vdecls
@@ -210,22 +210,29 @@ class AssignStmt(Statement):
         self.rhs.to_stan(acc)
         acc += self.mkString(";")
 
+
 class SamplingStmt(Statement):
-    def __init__(self, lhs, rhs):
+    def __init__(self, lhs, dist, trunc=None):
         self.lhs = lhs
-        self.rhs = rhs
+        self.dist = dist
+        self.trunc = trunc
 
     def viz(self, dot):
         lv = self.lhs.get_vars()
-        rv = self.rhs.get_vars()
+        dist = self.dist.get_vars()
         for a in lv:
-            for b in rv:
+            for b in dist:
                 dot.edge(b, a)
 
     def to_stan(self, acc, indent=0):
         self.lhs.to_stan(acc, indent)
         acc += self.mkString(" ~ ")
-        self.rhs.to_stan(acc)
+        self.dist.to_stan(acc)
+        if self.trunc is not None:
+            acc += self.mkString(" T")
+            acc += self.mkString("[")
+            self.trunc.to_stan(acc)
+            acc += self.mkString("]")
         acc += self.mkString(";")
 
 
@@ -389,10 +396,12 @@ class Subscript(Atom):
         self.slice.to_stan(acc)
         acc += self.mkString("]")
 
+
 class Slice(Expression):
     def __init__(self, lower, upper):
         self.lower = lower
         self.upper = upper
+
     def to_stan(self, acc, indent=0):
         # Do we sometime need parens?
         # is this an operator precedence issue?
@@ -407,7 +416,6 @@ class Slice(Expression):
         # not sure
         return 0
 
-    
 
 class Tuple(Expression):
     def __init__(self, elts):
@@ -431,6 +439,7 @@ class Tuple(Expression):
             else:
                 acc += self.mkString(", ")
                 e.to_stan(acc)
+
 
 class Binop(Expression):
     def __init__(self, op, lhs, rhs):
@@ -515,6 +524,7 @@ class VariableDecl(IR):
             self.val.to_stan(acc)
         acc += self.mkString(";")
 
+
 class Type(IR):
     # All types can print typed variable Declarations
     # ArrayTypes will override this with a custom approach
@@ -526,7 +536,7 @@ class Type(IR):
 
 class ConstrainedType(Type):
     def __init__(self, cstrts):
-            self.cstrts = cstrts
+        self.cstrts = cstrts
 
     def constraint_to_stan(self, acc, cstr, indent=0):
         lower, upper = cstr
@@ -556,6 +566,7 @@ class AtomicType(ConstrainedType):
         acc += self.mkString(self.kind, indent)
         self.constraints_to_stan(acc)
 
+
 class DimType(ConstrainedType):
     def __init__(self, kind, dims, cstrts=None):
         ConstrainedType.__init__(self, cstrts)
@@ -570,6 +581,7 @@ class DimType(ConstrainedType):
             acc += self.mkString("[")
             self.dims.to_stan(acc)
             acc += self.mkString("]")
+
 
 class ArrayType(Type):
     def __init__(self, base, dims):
