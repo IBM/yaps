@@ -163,6 +163,11 @@ class PythonVisitor(ast.NodeVisitor):
         return lhs, rhs
 
     # Python visitor
+    def visit_Assign(self, node):
+        assert len(node.targets) == 1
+        lhs = self.visit(node.targets[0])
+        rhs = self.visit(node.value)
+        return IR.AssignStmt(lhs, None, rhs).set_map(node)
 
     def visit_AnnAssign(self, node):
         assert node.simple == 1
@@ -194,6 +199,23 @@ class PythonVisitor(ast.NodeVisitor):
         for e in node.elts:
             elts.append(self.visit(e))
         return IR.Tuple(elts)
+
+    def visit_Slice(self, node):
+        assert not node.step, "slices with a step not currently supported"
+        lower = None
+        upper = None
+        if node.lower:
+            lower = self.visit(node.lower)
+        if node.upper:
+            upper = self.visit(node.upper)
+        return IR.Slice(lower, upper).set_map(node)
+
+
+    def visit_ExtSlice(self, node):
+        dims = []
+        for e in node.dims:
+            dims.append(self.visit(e))
+        return IR.Tuple(dims).set_map(node)
 
     def visit_Subscript(self, node):
         val = self.visit(node.value)

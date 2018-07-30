@@ -3,11 +3,22 @@ from . import labeled_strings as labeled_strings
 
 indent_size = 2
 
-
 class IR(object):
+    last_parsed_lineno=0
+    last_parse_col_offset=0
+
     def set_map(self, ast):
-        self.lineno = ast.lineno
-        self.col_offset = ast.col_offset
+        if hasattr(ast, 'lineno'):
+            self.lineno = ast.lineno
+            IR.last_parsed_lineno = ast.lineno
+        else:
+            self.lineno = IR.last_parsed_lineno
+        if hasattr(ast, 'col_offset'):
+            self.col_offset = ast.col_offset
+            IR.last_parsed_col_offset = ast.col_offset
+        else:
+            self.col_offset = IR.last_parsed_col_offset
+        
         return self
 
     def to_stan(self, acc, indent=0):
@@ -47,6 +58,7 @@ class Program(IR):
 
         names = [
             "data",
+            "transformed_data",
             "parameters",
             "transformed_parameters",
             "model",
@@ -63,6 +75,7 @@ class Program(IR):
 
         names = [
             "data",
+            "transformed_data",
             "parameters",
             "transformed_parameters",
             "model",
@@ -106,6 +119,15 @@ class DataBlock(ProgramBlock):
 class TransformedDataBlock(ProgramBlock):
     def __init__(self, stmts=[]):
         self.stmts = stmts
+
+    def to_stan(self, acc, indent=0):
+        if self.stmts:
+            self.start_block(acc, "transformed data", indent)
+            for b in self.stmts:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            self.end_block(acc, indent)
+
 
 
 class ParametersBlock(ProgramBlock):
@@ -176,11 +198,17 @@ class Statement(IR):
 
 
 class AssignStmt(Statement):
-    def __init__(self, lval, op, exp):
-        self.lval = lval
+    def __init__(self, lhs, op, rhs):
+        self.lhs = lhs
         self.op = op
-        self.exp = exp
+        self.rhs = rhs
 
+    def to_stan(self, acc, indent=0):
+        self.lhs.to_stan(acc, indent)
+        assert not self.op, "TODO: handle this"
+        acc += self.mkString(" = ")
+        self.rhs.to_stan(acc)
+        acc += self.mkString(";")
 
 class SamplingStmt(Statement):
     def __init__(self, lhs, rhs):
@@ -361,6 +389,25 @@ class Subscript(Atom):
         self.slice.to_stan(acc)
         acc += self.mkString("]")
 
+class Slice(Expression):
+    def __init__(self, lower, upper):
+        self.lower = lower
+        self.upper = upper
+    def to_stan(self, acc, indent=0):
+        # Do we sometime need parens?
+        # is this an operator precedence issue?
+        if self.lower:
+            self.to_stan_prec(self.lower, acc, indent)
+        acc += self.mkString(":")
+        if self.upper:
+            self.to_stan_prec(self.upper, acc, indent)
+
+    @property
+    def precedence(self):
+        # not sure
+        return 0
+
+    
 
 class Tuple(Expression):
     def __init__(self, elts):
