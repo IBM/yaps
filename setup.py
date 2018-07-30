@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='Yaps',
+    name='yaps',
     version='0.1dev',
     packages=['yaps', ],
     license=open('LICENSE.txt').read(),
