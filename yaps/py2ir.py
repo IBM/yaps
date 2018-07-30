@@ -116,7 +116,7 @@ class PythonVisitor(ast.NodeVisitor):
             self.model.append(IR.SamplingStmt(
                 IR.Variable(id), sval).set_map(node))
         else:
-            ty = self.visit(node.annotation)
+            ty = self.visit_type(node.annotation)
             self.parameters.append(IR.VariableDecl(id, ty).set_map(node))
 
     def visit_type(self, node):
@@ -142,7 +142,8 @@ class PythonVisitor(ast.NodeVisitor):
             assert False, 'Wrong type format'
 
         if kind in ["int", "real"]:
-            assert not inner_dims, ('Wrong type format {} does not take a dimension'.format(kind))
+            assert not inner_dims, ('Wrong type format {} does not take a dimension'.format(
+                kind))
             t = IR.AtomicType(kind, cstrts)
             if dims:
                 return IR.ArrayType(t, dims)
