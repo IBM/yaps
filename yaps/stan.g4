@@ -5,6 +5,8 @@
  * in compliance with the License. You may obtain a copy of the License at
  * 
  *
+ * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License
@@ -21,16 +23,13 @@ grammar stan;
 
 /** Comments (section 2.3) */
 
-COMMENT:
-	'/*' .*? '*/' -> channel(3) ; // COMMENTS
+COMMENT: '/*' .*? '*/' -> channel(3); // COMMENTS
 
-LINE_COMMENT:
-	'//' ~[\r\n]* -> channel(3) ; //COMMENTS
+LINE_COMMENT: '//' ~[\r\n]* -> channel(3); //COMMENTS
 
 /** Whitespaces (section 2.4) */
 
-WS:
-	[ \t\r\n\u000C]+ -> channel(1) ; // WHITESPACES
+WS: [ \t\r\n\u000C]+ -> channel(1); // WHITESPACES
 
 /** Numeric literals (section 4.1) */
 
@@ -293,63 +292,6 @@ variable: IDENTIFIER;
 
 /** Vector, matrix and array expressions (section 4.2) */
 
-<<<<<<< HEAD
-vectorExpr
-    : '[' expressionCommaList ']'
-    ;
-
-arrayExpr
-    : '{' expressionCommaList '}'
-    ;
-
-atom
-    : constant
-    | variable
-    | vectorExpr
-    | arrayExpr
-    | atom '[' indexExpressionCommaListOpt ']'
-    | callExpr
-    | '(' expression ')'
-    ;
-
-callExpr
-    : IDENTIFIER '(' expressionOrStringCommaList ')'
-    ;
-
-expression
-    : atom
-    | expression TRANSPOSE_OP
-    | <assoc=right> e1=expression POW_OP e2=expression
-    | op=(NOT_OP|PLUS_OP|MINUS_OP) expression
-    | e1=expression op=(DOT_MULT_OP|DOT_DIV_OP) e2=expression
-    | e1=expression LEFT_DIV_OP e2=expression
-    | e1=expression op=(MULT_OP|DIV_OP|MOD_OP) e2=expression
-    | e1=expression op=(PLUS_OP|MINUS_OP) e2=expression
-    | e1=expression op=(LT_OP|LE_OP|GT_OP|GE_OP) e2=expression
-    | e1=expression op=(EQ_OP|NEQ_OP) e2=expression
-    | e1=expression AND_OP e2=expression
-    | e1=expression OR_OP e2=expression
-    | <assoc=right> e1=expression '?' e2=expression ':' e3=expression
-    ;
-
-indexExpression
-    : expression
-    | e1=expression? ':' e2=expression?
-    ;
-
-expressionCommaList
-    : expression (',' expression)*
-    ;
-
-expressionCommaListOpt
-    : expressionCommaList?
-    ;
-
-indexExpressionCommaListOpt
-    : indexExpression? (',' indexExpression?)*
-    ;
-
-=======
 vectorExpr: '[' expressionCommaList ']';
 
 arrayExpr: '{' expressionCommaList '}';
@@ -359,14 +301,14 @@ atom:
 	| variable
 	| vectorExpr
 	| arrayExpr
-	| atom '[' indexExpression ']'
+	| atom '[' indexExpressionCommaListOpt ']'
+	| callExpr
 	| '(' expression ')';
 
 callExpr: IDENTIFIER '(' expressionOrStringCommaList ')';
 
 expression:
 	atom
-	| callExpr
 	| expression TRANSPOSE_OP
 	| <assoc = right> e1 = expression POW_OP e2 = expression
 	| op = (NOT_OP | PLUS_OP | MINUS_OP) expression
@@ -381,13 +323,15 @@ expression:
 	| <assoc = right> e1 = expression '?' e2 = expression ':' e3 = expression;
 
 indexExpression:
-	expressionCommaListOpt
+	expression
 	| e1 = expression? ':' e2 = expression?;
 
 expressionCommaList: expression (',' expression)*;
 
 expressionCommaListOpt: expressionCommaList?;
->>>>>>> Adding truncation
+
+indexExpressionCommaListOpt:
+	indexExpression? (',' indexExpression?)*;
 
 /** Statements (section 5) */
 
