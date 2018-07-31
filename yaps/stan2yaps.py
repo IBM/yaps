@@ -432,6 +432,8 @@ class Stan2Astpy(stanListener):
             )
 
     def exitTruncation(self, ctx):
+        if ctx.IDENTIFIER().getText() is not 'T':
+            assert False, 'Syntax error'
         if ctx.e1 is None or ctx.e2 is None:
             ctx.ast = ExtSlice(
                 dims=[

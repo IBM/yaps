@@ -433,7 +433,8 @@ samplingStmt
     ;
 
 truncation
-    : 'T' '['  e1=expression? ',' e2=expression? ']'
+    // : 'T' '['  e1=expression? ',' e2=expression? ']'
+    : IDENTIFIER '['  e1=expression? ',' e2=expression? ']'
     ;
 
 /** For loops (section 5.4) */
