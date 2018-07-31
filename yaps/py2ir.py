@@ -57,7 +57,7 @@ class PythonVisitor(ast.NodeVisitor):
                 self.visit_Block(stmt)
             elif isinstance(stmt, ast.AnnAssign):
                 self.visit_parameter(stmt)
-            else:
+            elif not isinstance(stmt, ast.Pass):
                 log('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
 
@@ -281,6 +281,9 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_Mod(self, node):
         return IR.MOD()
+
+    def visit_Pass(self, node):
+        return None
 
 def parse_string(s):
     # Hack to avoid weird AST with sampling op

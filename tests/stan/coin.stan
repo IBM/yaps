@@ -17,13 +17,13 @@
 data {
   int<lower=0,upper=1> x[10];
 }
-parameters {
-  real theta;
-}
-model {
-  theta ~ uniform(0.0,1.0);
-  for (i in 1:10){
-    x[i] ~ bernoulli(theta);
-  }
-  print(x);
-}
+// parameters {
+//   real theta;
+// }
+// model {
+//   theta ~ uniform(0.0,1.0);
+//   for (i in 1:10){
+//     x[i] ~ bernoulli(theta);
+//   }
+//   print(x);
+// }

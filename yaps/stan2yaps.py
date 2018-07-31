@@ -617,6 +617,8 @@ class Stan2Astpy(stanListener):
 
     def exitProgram(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         ctx.ast = Module(body=[
             FunctionDef(
                 name='stan_model',
