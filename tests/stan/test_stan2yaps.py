@@ -36,6 +36,6 @@ def run_test(dir):
         except AssertionError:
              print("ASSERT\t", path)
     print("-------------------------")
-    print("{}% of success on {} stan examples".format(nb_success/nb_test * 100, nb_test))
+    print("{}% of success ({}/{} stan examples)".format(nb_success/nb_test * 100, nb_success, nb_test))
 
 run_test('tests/stan')
