@@ -4,7 +4,7 @@ data {
 }
 parameters {
   real mu; // mean log volatility
-  real<lower=-1,upper=1> phi; // persistence of volatility
+  real<lower=(-1),upper=1> phi; // persistence of volatility
   real<lower=0> sigma; // white noise shock scale
   vector[T] h; // log volatility at time t
 }
