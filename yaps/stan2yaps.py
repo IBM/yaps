@@ -695,8 +695,12 @@ def from_stan(code_string=None, code_file=None):
 def main(argv):
     if (len(argv) <= 1):
         assert False, "File name expected"
-    code = from_stan(code_file=argv[1])
-    print(code)
+    for i in range(1, len(argv)):
+        print('# -------------')
+        print('#', argv[i])
+        print('# -------------')
+        code = from_stan(code_file=argv[i])
+        print(code)
 
 
 if __name__ == '__main__':
