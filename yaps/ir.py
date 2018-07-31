@@ -309,9 +309,16 @@ class WhileStmt(Statement):
 
 
 class Block(Statement):
-    def __init__(self, vdecls=[], stmts=[]):
-        self.vdecls = vdecls
-        self.stmts = stmts
+    def __init__(self, body=[]):
+        self.body = body
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(" {", indent)
+        acc.newline()
+        for b in self.body:
+            b.to_stan(acc, indent+1)
+            acc.newline()
+        acc += self.mkString("}", indent)
 
 
 class CallStmt(Statement):

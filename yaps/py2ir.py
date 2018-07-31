@@ -207,6 +207,10 @@ class PythonVisitor(ast.NodeVisitor):
         alt = self.visit(node.orelse)
         return IR.ConditionalStmt(cond, exp, alt).set_map(node)
 
+    def visit_With(self, node):
+        body = self.visit(node.body)
+        return IR.Block(body)
+
     def visit_Expr(self, node):
         return self.visit(node.value)
 
