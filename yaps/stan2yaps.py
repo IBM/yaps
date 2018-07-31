@@ -249,12 +249,12 @@ class Stan2Astpy(stanListener):
                 right=ctx.e2.ast)
         elif ctx.NOT_OP() is not None:
             ctx.ast = UnaryOp(
-                op=Not,
+                op=Not(),
                 operand=ctx.e.ast)
         elif ctx.PLUS_OP() is not None:
             if ctx.e1 is None:
                 ctx.ast = UnaryOp(
-                    op=UAdd,
+                    op=UAdd(),
                     operand=ctx.e.ast)
             else:
                 ctx.ast = BinOp(
@@ -264,7 +264,7 @@ class Stan2Astpy(stanListener):
         elif ctx.MINUS_OP() is not None:
             if ctx.e1 is None:
                 ctx.ast = UnaryOp(
-                    op=USub,
+                    op=USub(),
                     operand=ctx.e.ast)
             else:
                 ctx.ast = BinOp(
