@@ -305,15 +305,11 @@ class Stan2Astpy(stanListener):
 
     def exitIndexExpression(self, ctx):
         if ctx.sliceOp is not None:
-            e1 = None
-            e2 = None
-            if ctx.e1 is not None:
-                e1 = ctx.e1.ast
-            if ctx.e2 is not None:
-                e2 = ctx.e2.ast
-            ctx.ast = Slice(lower=e1, upper=e2, step=None)
-        elif ctx.expression() is not None:
-            ctx.ast = Index(value=ctx.expression().ast)
+            ctx.ast = Slice(lower=sliceFromExpr(ctx.e1.ast),
+                            upper=sliceFromExpr(ctx.e2.ast),
+                            step=None)
+        elif ctx.e is not None:
+            ctx.ast = Index(value=ctx.e.ast)
         else:
             assert False, "Internal error on " + ctx.getText()
 

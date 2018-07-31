@@ -390,7 +390,7 @@ expression
     ;
 
 indexExpression
-    : expression
+    : e=expression
     | e1=expression? sliceOp=':' e2=expression?
     ;
 
