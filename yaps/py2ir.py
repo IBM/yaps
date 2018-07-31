@@ -201,6 +201,12 @@ class PythonVisitor(ast.NodeVisitor):
         body = self.visit(node.body)
         return IR.ForStmt(var, iter, body).set_map(node)
 
+    def visit_If(self, node):
+        cond = self.visit(node.test)
+        exp = self.visit(node.body)
+        alt = self.visit(node.orelse)
+        return IR.ConditionalStmt(cond, exp, alt).set_map(node)
+
     def visit_Expr(self, node):
         return self.visit(node.value)
 
@@ -294,6 +300,9 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_BitOr(self, node):
         return IR.MID()
+
+    def visit_Eq(self, node):
+        return IR.EQ()
 
     def visit_Pass(self, node):
         return None
