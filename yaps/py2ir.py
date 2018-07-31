@@ -292,6 +292,9 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_Mod(self, node):
         return IR.MOD()
 
+    def visit_BitOr(self, node):
+        return IR.MID()
+
     def visit_Pass(self, node):
         return None
 

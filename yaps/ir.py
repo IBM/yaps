@@ -685,3 +685,11 @@ class MOD(Operator):
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("/", indent)
+
+class MID(Operator):
+    def __init__(self):
+        self.binary_precedence = 9
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("|", indent)
+
