@@ -320,7 +320,11 @@ class Stan2Astpy(stanListener):
         ctx.ast = gatherChildrenASTList(ctx)
 
     def exitIndexExpressionCommaListOpt(self, ctx):
-        ctx.ast = ExtSlice(dims=gatherIndexExpressionAST(ctx))
+        indexes = gatherIndexExpressionAST(ctx)
+        if len(indexes) == 1:
+            ctx.ast = indexes[0]
+        else:
+            ctx.ast = ExtSlice(dims=indexes)
 
     # Statements (section 5)
 
