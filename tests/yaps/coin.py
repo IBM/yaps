@@ -5,13 +5,6 @@ sys.path.append(os.path.abspath(os.path.join('..', 'yaps')))
 
 from yaps.lib import int, real, uniform, bernoulli
 import yaps as yaps
-import astor
-
-x = yaps.from_stan(code_file='tests/coin.stan')
-print(x)
-
-print("++++++++++++")
-
 
 @yaps.model
 def coin(x: int(lower=0, upper=1)[10]):
