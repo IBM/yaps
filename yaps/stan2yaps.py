@@ -212,7 +212,9 @@ class Stan2Astpy(stanListener):
         if ctx.atom() is not None:
             ctx.ast = ctx.atom().ast
         elif ctx.TRANSPOSE_OP() is not None:
-            assert False, "Not yet implemented"
+            ctx.ast = Attribute(
+                value=ctx.e.ast,
+                attr='transpose', ctx=Load())
         elif ctx.POW_OP() is not None:
             ctx.ast = BinOp(
                 left=ctx.e1.ast,

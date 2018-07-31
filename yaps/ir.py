@@ -406,6 +406,17 @@ class Subscript(Atom):
         self.slice.to_stan(acc)
         acc += self.mkString("]")
 
+class Transpose(Expression):
+    def __init__(self, val):
+        self.val = val
+
+    def get_vars(self):
+        return self.val.get_vars()
+
+    def to_stan(self, acc, indent=0):
+        self.to_stan_prec(self.val, acc, indent)
+        acc += self.mkString("'")
+
 
 class Slice(Expression):
     def __init__(self, lower, upper):

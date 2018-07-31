@@ -378,7 +378,7 @@ callExpr
 
 expression
     : atom
-    | expression TRANSPOSE_OP
+    | e=expression TRANSPOSE_OP
     | <assoc=right> e1=expression POW_OP e2=expression
     | op=(NOT_OP|PLUS_OP|MINUS_OP) e=expression
     | e1=expression op=(DOT_MULT_OP|DOT_DIV_OP) e2=expression

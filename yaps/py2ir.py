@@ -128,6 +128,11 @@ class PythonVisitor(ast.NodeVisitor):
         else:
             return self.visit(node), None
 
+    def visit_Attribute(self, node):
+        assert node.attr == 'transpose', "We only support the transpose attribute"
+        val = self.visit(node.value)
+        return IR.Transpose(val)
+
     def visit_type(self, node):
         kind = None
         cstrts = []
