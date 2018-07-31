@@ -305,8 +305,8 @@ class Stan2Astpy(stanListener):
 
     def exitIndexExpression(self, ctx):
         if ctx.sliceOp is not None:
-            ctx.ast = Slice(lower=sliceFromExpr(ctx.e1.ast),
-                            upper=sliceFromExpr(ctx.e2.ast),
+            ctx.ast = Slice(lower=sliceFromExpr(ctx.e1),
+                            upper=sliceFromExpr(ctx.e2),
                             step=None)
         elif ctx.e is not None:
             ctx.ast = Index(value=ctx.e.ast)
