@@ -638,19 +638,19 @@ class Stan2Astpy(stanListener):
 
 class MyErrorListener( ErrorListener ):
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        print(str(line) + ':' + str(column) + ': Syntax error, ' + str(msg))
+        print('Line ' + str(line) + ':' + str(column) + ': Syntax error, ' + str(msg))
         sys.exit()
 
     def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):
-        print(str(line) + ':' + str(column) + ': Ambiguity error, ' + str(configs))
+        print('Characters ' + str(startIndex) + '-' + str(stopIndex) + ': Ambiguity error, ' + str(configs))
         sys.exit()
 
     def reportAttemptingFullContext(self, recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs):
-        print(str(line) + ':' + str(column) + ': Attempting full context error, ' + str(configs))
+        print('Characters ' + str(startIndex) + '-' + str(stopIndex) + ': Attempting full context error, ' + str(configs))
         sys.exit()
 
     def reportContextSensitivity(self, recognizer, dfa, startIndex, stopIndex, prediction, configs):
-        print(str(line) + ':' + str(column) + ': Context error, ' + str(configs))
+        print('Characters ' + str(startIndex) + '-' + str(stopIndex) + ': Context error, ' + str(configs))
         sys.exit()
 
 
