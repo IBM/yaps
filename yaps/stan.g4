@@ -275,6 +275,8 @@ NOT_OP: '!';
 POW_OP: '^';
 TRANSPOSE_OP: '\'';
 
+SAMPLE: '~';
+EQ: '=';
 PLUS_EQ: '+=';
 MINUS_EQ: '-=';
 MULT_EQ: '*=';
@@ -370,7 +372,8 @@ atom
     ;
 
 callExpr
-    : IDENTIFIER '(' expressionOrStringCommaList ')'
+    : f=IDENTIFIER '(' expressionOrStringCommaList ')' truncation?
+    | id1=IDENTIFIER '(' id2=IDENTIFIER '|' expressionCommaList ')'
     ;
 
 expression
@@ -415,22 +418,14 @@ lvalue
     : IDENTIFIER
     | IDENTIFIER '[' expressionCommaList ']'
     ;
+
 assignStmt
-    : lvalue '=' expression ';'
-    | lvalue op=(PLUS_EQ|MINUS_EQ|MULT_EQ|DIV_EQ|DOT_MULT_EQ|DOT_DIV_EQ) expression ';'
+    : le=expression sample='~' re=expression ';'
+    | lvalue eq='=' e=expression ';'
+    | lvalue op=(PLUS_EQ|MINUS_EQ|MULT_EQ|DIV_EQ|DOT_MULT_EQ|DOT_DIV_EQ) e=expression ';'
     ;
 
 /** Sampling (section 5.3) */
-
-lvalueSampling
-    : lvalue
-    | expression
-    ;
-
-samplingStmt
-    : lvalueSampling '~' IDENTIFIER '(' expressionCommaList ')' truncation? ';'
-    | lvalueSampling PLUS_EQ IDENTIFIER '(' IDENTIFIER '|' expressionCommaList ')' ';'
-    ;
 
 truncation
     // : 'T' '['  e1=expression? ',' e2=expression? ']'
@@ -484,7 +479,6 @@ expressionOrStringCommaList:
 
 statement
     : assignStmt
-    | samplingStmt
     | forStmt
     | conditionalStmt
     | whileStmt

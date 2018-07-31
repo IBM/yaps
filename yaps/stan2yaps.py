@@ -360,94 +360,34 @@ class Stan2Astpy(stanListener):
             ctx.ast = Name(id=id, ctx=Store())
 
     def exitAssignStmt(self, ctx):
-        lvalue = ctx.lvalue().ast
-        expr = ctx.expression().ast
-        if ctx.op is not None:
+        if ctx.sample is not None:
+            ctx.ast = Expr(
+                Compare(
+                    left=ctx.le.ast,
+                    ops=[Is()],
+                    comparators=[ctx.re.ast]))
+        elif ctx.eq is not None:
+            ctx.ast = Assign(
+                targets=[ctx.lvalue().ast],
+                value=ctx.e.ast)
+        elif ctx.op:
             op = None
             if ctx.PLUS_EQ() is not None:
                 op = Add()
-            if ctx.MINUS_EQ() is not None:
+            elif ctx.MINUS_EQ() is not None:
                 op = Sub()
             if ctx.MULT_EQ() or ctx.DOT_MULT_EQ() is not None:
                 op = Mult()
             if ctx.DIV_EQ() or ctx.DOT_DIV_EQ() is not None:
                 op = Div()
             ctx.ast = AugAssign(
-                target=lvalue,
+                target=ctx.lvalue().ast,
                 op=op,
-                value=expr)
+                value=ctx.e.ast)
         else:
-            ctx.ast = Assign(
-                targets=[lvalue],
-                value=expr)
+            assert False, "Internal error on " + ctx.getText()
 
     # Sampling (section 5.3)
-
-    def exitLvalueSampling(self, ctx):
-        if ctx.lvalue() is not None:
-            ctx.ast = ctx.lvalue().ast
-        elif ctx.expression() is not None:
-            ctx.ast = ctx.expression().ast
-        else:
-            assert False
-
-    def exitSamplingStmt(self, ctx):
-        lvalue = ctx.lvalueSampling().ast
-        id = ctx.IDENTIFIER()[0].getText()
-        exprList = ctx.expressionCommaList().ast
-        if ctx.PLUS_EQ() is not None:
-            id_cond = ctx.IDENTIFIER()[1].getText()
-            ctx.ast = AugAssign(
-                target=lvalue,
-                op=Add(),
-                value=Call(
-                    func=Name(id=id, ctx=Load()),
-                    args=[
-                        BinOp(
-                            left=Name(id=id_cond, ctx=Load()),
-                            op=BitOr(),
-                            right=idxFromExprList(exprList),
-                        ),
-                    ],
-                    keywords=[],
-                ),
-            )
-        elif ctx.truncation() is not None:
-            trunc = ctx.truncation().ast
-            ctx.ast = Expr(
-                Compare(
-                    left=lvalue,
-                    ops=[Is()],
-                    comparators=[Subscript(
-                        value=Attribute(
-                            value=Call(
-                                func=Name(id=id, ctx=Load()),
-                                args=exprList,
-                                keywords=[],
-                            ),
-                            attr='T',
-                            ctx=Load(),
-                        ),
-                        slice=trunc,
-                        ctx=Load(),
-                    ),
-                    ],
-                )
-            )
-        else:
-            ctx.ast = Expr(
-                Compare(
-                    left=lvalue,
-                    ops=[Is()],
-                    comparators=[
-                        Call(
-                            func=Name(id=id, ctx=Load()),
-                            args=exprList,
-                            keywords=[],
-                        ),
-                    ],
-                )
-            )
 
     def exitTruncation(self, ctx):
         if ctx.IDENTIFIER().getText() is not 'T':
@@ -527,12 +467,39 @@ class Stan2Astpy(stanListener):
         ctx.ast = Expr(value=call)
 
     def exitCallExpr(self, ctx):
-        id = ctx.IDENTIFIER().getText()
-        args = ctx.expressionOrStringCommaList().ast
-        ctx.ast = Call(
-            func=Name(id=id, ctx=Load()),
-            args=args,
-            keywords=[])
+        if ctx.f is not None:
+            # f = ctx.f[0].getText()
+            f = ctx.IDENTIFIER()[0].getText()
+            args = ctx.expressionOrStringCommaList().ast
+            call = Call(
+                func=Name(id=f, ctx=Load()),
+                args=args,
+                keywords=[])
+            if ctx.truncation() is None:
+                ctx.ast = call
+            else:
+                trunc = ctx.truncation().ast
+                ctx.ast = Subscript(
+                    value=Attribute(
+                        value=call,
+                        attr='T',
+                        ctx=Load()),
+                    slice=trunc,
+                    ctx=Load())
+        elif ctx.id1 is not None:
+            id1 = ctx.id1.getText()
+            id2 = ctx.id2.getText()
+            exprList = ctx.expressionCommaList().ast
+            ctx.ast = Call(
+                func=Name(id=id1, ctx=Load()),
+                args=[
+                        BinOp(
+                            left=Name(id=id2, ctx=Load()),
+                            op=BitOr(),
+                            right=idxFromExprList(exprList),
+                        ),
+                    ],
+                    keywords=[])
 
     def exitExpressionOrString(self, ctx):
         if ctx.expression() is not None:
@@ -548,8 +515,6 @@ class Stan2Astpy(stanListener):
     def exitStatement(self, ctx):
         if ctx.assignStmt() is not None:
             ctx.ast = ctx.assignStmt().ast
-        if ctx.samplingStmt() is not None:
-            ctx.ast = ctx.samplingStmt().ast
         if ctx.forStmt() is not None:
             ctx.ast = ctx.forStmt().ast
         if ctx.conditionalStmt() is not None:
