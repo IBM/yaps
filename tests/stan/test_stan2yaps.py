@@ -33,6 +33,8 @@ def run_test(dir):
             print("SYNTAX\t", path)
         except TypeError:
              print("TYPE\t", path)
+        except AssertionError:
+             print("ASSERT\t", path)
     print("-------------------------")
     print("{}% of success on {} stan examples".format(nb_success/nb_test * 100, nb_test))
 
