@@ -211,6 +211,16 @@ class AssignStmt(Statement):
         acc += self.mkString(";")
 
 
+class AugAssignStmt(Statement):
+    def __init__(self, lhs, rhs):
+        self.lhs = lhs
+        self.rhs = rhs
+
+    def to_stan(self, acc, indent=0):
+        self.lhs.to_stan(acc, indent)
+        acc += self.mkString(" += ")
+        self.rhs.to_stan(acc)
+
 class SamplingStmt(Statement):
     def __init__(self, lhs, dist, trunc=None):
         self.lhs = lhs
