@@ -282,11 +282,14 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_Mod(self, node):
         return IR.MOD()
 
-
-def parse_model(model):
-    source = inspect.getsource(model)
+def parse_string(s):
     # Hack to avoid weird AST with sampling op
-    source = re.sub(r"<\s*~", "is", source, re.X)
+    source = re.sub(r"<\s*~", "is", s, re.X)
     tree = ast.parse(source)
     visitor = PythonVisitor()
     return visitor.visit(tree)
+
+
+def parse_model(model):
+    source = inspect.getsource(model)
+    return parse_string(source)

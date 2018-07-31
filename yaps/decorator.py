@@ -6,10 +6,13 @@ import re as regex
 from . import py2ir
 import pystan
 
+def print_stan(ir):
+    print(str(ir.to_mapped_string()))
+
 class FitModel(object):
     def __init__(self, fit_model):
         self.__model = fit_model
-    
+
     def __getattr__(self, key):
         return self.__model.extract()[key]
 
@@ -18,7 +21,7 @@ class FitModel(object):
 
     def __dir__(self):
         return self.__model.extract()
-    
+
     def __str__(self):
         ret = ""
         for k, v in self.__model.extract().items():

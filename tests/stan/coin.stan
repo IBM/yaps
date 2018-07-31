@@ -21,10 +21,9 @@ parameters {
   real theta;
 }
 model {
-  theta ~ Uniform(0.0,1.0);
+  theta ~ uniform(0.0,1.0);
   for (i in 1:10){
-    x[i] ~ Bernoulli(theta);
-    target += normal_lpdf(x | theta);
+    x[i] ~ bernoulli(theta);
   }
   print(x);
 }

@@ -484,6 +484,9 @@ class Call(Expression):
         self.id = id
         self.args = args
 
+    def viz(self, dot):
+        pass
+
     def get_vars(self):
         vars = []
         for a in self.args:

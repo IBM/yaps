@@ -619,7 +619,7 @@ class Stan2Astpy(stanListener):
         body = gatherChildrenASTList(ctx)
         ctx.ast = Module(body=[
             FunctionDef(
-                name='model',
+                name='stan_model',
                 args=arguments(args=argsFromVardecl(self.data),
                                vararg=None,
                                kwonlyargs=[],
