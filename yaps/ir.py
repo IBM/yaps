@@ -203,6 +203,9 @@ class AssignStmt(Statement):
         self.op = op
         self.rhs = rhs
 
+    def viz(self, dot):
+        pass
+
     def to_stan(self, acc, indent=0):
         self.lhs.to_stan(acc, indent)
         assert not self.op, "TODO: handle this"
@@ -311,6 +314,11 @@ class WhileStmt(Statement):
 class Block(Statement):
     def __init__(self, body=[]):
         self.body = body
+
+
+    def viz(self, dot):
+        for stmt in self.body:
+            stmt.viz(dot)
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(" {", indent)

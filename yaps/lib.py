@@ -93,6 +93,12 @@ dependent_type_var = type_var("type_var")
 
 # Blocks
 
+class block(object):
+    def __enter__(self):
+        pass
+
+    def __exit__(self, x, y, z):
+        pass
 
 class functions(object):
     def __enter__(self):

@@ -92,6 +92,8 @@ class PythonVisitor(ast.NodeVisitor):
             for stmt in node.body:
                 log('G_Quant:\n', astor.to_source(stmt))
                 self.generated_quantities.append(self.visit(stmt))
+        elif kind == 'block':
+            self.model.append(self.visit(node))
         else:
             assert False, 'Unknown block statement'
 
