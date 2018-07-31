@@ -72,10 +72,7 @@ def idxFromExprList(exprList):
 
 
 def listFromStmt(stmt):
-    if isinstance(stmt.ast, Block):
-        return stmt.ast.body
-    else:
-        return [stmt.ast]
+   return [stmt.ast]
 
 
 def argsFromVardecl(vdecls):
@@ -92,12 +89,6 @@ def sliceFromExpr(e):
         return Slice(lower=None, upper=None, step=None)
     else:
         return Index(value=e.ast)
-
-
-class Block(object):
-    # Dummy class for blocks that are not supported in python
-    def __init__(self, body):
-        self.body = body
 
 
 class Stan2Astpy(stanListener):
@@ -125,7 +116,7 @@ class Stan2Astpy(stanListener):
         elif ctx.matrixType() is not None:
             kind = ctx.matrixType().getText()
         else:
-            assert False, "Internal error"
+            assert False, "Internal error on " + ctx.getText()
         ty = None
         if ctx.typeConstraints() is None:
             ty = Name(id=kind, ctx=Load())
@@ -460,7 +451,12 @@ class Stan2Astpy(stanListener):
 
     def exitBlockStmt(self, ctx):
         body = gatherChildrenASTList(ctx)
-        ctx.ast = Block(body=body)
+        ctx.ast = With(items=[
+                withitem(
+                    context_expr=Name(id='block', ctx=Load()),
+                    optional_vars=None,
+                ),
+            ], body=body)
 
     # Functions calls (sections 5.9 and 5.10)
 
@@ -516,20 +512,23 @@ class Stan2Astpy(stanListener):
     def exitStatement(self, ctx):
         if ctx.assignStmt() is not None:
             ctx.ast = ctx.assignStmt().ast
-        if ctx.forStmt() is not None:
+        elif ctx.forStmt() is not None:
             ctx.ast = ctx.forStmt().ast
-        if ctx.conditionalStmt() is not None:
+        elif ctx.conditionalStmt() is not None:
             ctx.ast = ctx.conditionalStmt().ast
-        if ctx.whileStmt() is not None:
+        elif ctx.whileStmt() is not None:
             ctx.ast = ctx.whileStmt().ast
-        if ctx.blockStmt() is not None:
+        elif ctx.blockStmt() is not None:
             ctx.ast = ctx.blockStmt().ast
-        if ctx.callStmt() is not None:
+        elif ctx.callStmt() is not None:
             ctx.ast = ctx.callStmt().ast
-        if ctx.BREAK() is not None:
+        elif ctx.BREAK() is not None:
             ctx.ast = Break()
-        if ctx.CONTINUE() is not None:
+        elif ctx.CONTINUE() is not None:
             ctx.ast = Continue()
+        else:
+            assert False, "Internal error on " + ctx.getText()
+
 
     def exitStatementsOpt(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)
