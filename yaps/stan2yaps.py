@@ -659,7 +659,7 @@ class Stan2Astpy(stanListener):
 class MyErrorListener( ErrorListener ):
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         print('Line ' + str(line) + ':' + str(column) + ': Syntax error, ' + str(msg))
-        sys.exit()
+        raise SyntaxError
 
 
 

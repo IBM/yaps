@@ -4,7 +4,7 @@ import astor
 import sys
 from pathlib import Path
 
-def do_compile(path):
+def roundtrip(path):
     with open(path, 'r') as fin:
         print(fin.read())
     print('--------------------------------')
@@ -16,22 +16,24 @@ def do_compile(path):
     print('--------------------------------')
 
 
-
-
 def run_test(dir):
     pathlist = Path(dir).glob('**/*.stan')
+    nb_test = 0
+    nb_success = 0
     for p in pathlist:
         path = str(p)
-        print(path)
-        source = yaps.from_stan(code_file=path)
-        ast_ = yaps.from_string(source)
+        nb_test += 1
+        try:
+            source = yaps.from_stan(code_file=path)
+            ast_ = yaps.from_string(source)
+            nb_success += 1
+        except AttributeError:
+            print("ATTRIBUTE\t", path)
+        except SyntaxError:
+            print("SYNTAX\t", path)
+        except TypeError:
+             print("TYPE\t", path)
+    print("-------------------------")
+    print("{}% of success on {} stan examples".format(nb_success/nb_test * 100, nb_test))
 
-        # because path is object not string
-        # path_in_str = str(path)
-
-        # print(path_in_str)
-
-
-
-do_compile(sys.argv[1])
-# run_test('tests/stan')
+run_test('tests/stan')
