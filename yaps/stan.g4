@@ -373,7 +373,7 @@ atom
 
 callExpr
     : f=IDENTIFIER '(' expressionOrStringCommaList ')' truncation?
-    | id1=IDENTIFIER '(' id2=IDENTIFIER '|' expressionCommaList ')'
+    | id1=IDENTIFIER '(' expression '|' expressionCommaList ')'
     ;
 
 expression

@@ -470,8 +470,7 @@ class Stan2Astpy(stanListener):
 
     def exitCallExpr(self, ctx):
         if ctx.f is not None:
-            # f = ctx.f[0].getText()
-            f = ctx.IDENTIFIER()[0].getText()
+            f = ctx.IDENTIFIER().getText()
             args = ctx.expressionOrStringCommaList().ast
             call = Call(
                 func=Name(id=f, ctx=Load()),
@@ -489,14 +488,14 @@ class Stan2Astpy(stanListener):
                     slice=trunc,
                     ctx=Load())
         elif ctx.id1 is not None:
-            id1 = ctx.id1.getText()
-            id2 = ctx.id2.getText()
+            id1 = ctx.IDENTIFIER().getText()
+            expr = ctx.expression().ast
             exprList = ctx.expressionCommaList().ast
             ctx.ast = Call(
                 func=Name(id=id1, ctx=Load()),
                 args=[
                         BinOp(
-                            left=Name(id=id2, ctx=Load()),
+                            left=expr,
                             op=BitOr(),
                             right=idxFromExprList(exprList),
                         ),
