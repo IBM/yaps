@@ -641,18 +641,6 @@ class MyErrorListener( ErrorListener ):
         print('Line ' + str(line) + ':' + str(column) + ': Syntax error, ' + str(msg))
         sys.exit()
 
-    def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):
-        print('Characters ' + str(startIndex) + '-' + str(stopIndex) + ': Ambiguity error, ' + str(configs))
-        sys.exit()
-
-    def reportAttemptingFullContext(self, recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs):
-        print('Characters ' + str(startIndex) + '-' + str(stopIndex) + ': Attempting full context error, ' + str(configs))
-        sys.exit()
-
-    def reportContextSensitivity(self, recognizer, dfa, startIndex, stopIndex, prediction, configs):
-        print('Characters ' + str(startIndex) + '-' + str(stopIndex) + ': Context error, ' + str(configs))
-        sys.exit()
-
 
 
 def stream2parsetree(stream):
