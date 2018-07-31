@@ -364,9 +364,9 @@ atom
     | variable
     | vectorExpr
     | arrayExpr
-    | array=atom '[' indexExpressionCommaListOpt ']'
+    | arrayAccess=atom '[' indexExpressionCommaListOpt ']'
     | callExpr
-    | '(' expression ')'
+    | paren='(' expression ')'
     ;
 
 callExpr

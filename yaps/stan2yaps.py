@@ -175,20 +175,38 @@ class Stan2Astpy(stanListener):
 
     # Vector, matrix and array expressions (section 4.2)
 
+    def exitVectorExpr(self, ctx):
+        ctx.ast = List(elts=ctx.expressionCommaList().ast, ctx=Load())
+
+    def exitArrayExpr(self, ctx):
+        ctx.ast = List(elts=ctx.expressionCommaList().ast, ctx=Load())
+
     def exitAtom(self, ctx):
-        if ctx.array is not None:
+        if ctx.constant() is not None:
+            ctx.ast = parseExpr(ctx.getText())
+        elif ctx.variable() is not None:
+            ctx.ast = parseExpr(ctx.getText())
+        elif ctx.vectorExpr() is not None:
+            ctx.ast = ctx.vectorExpr().ast
+        elif ctx.arrayExpr() is not None:
+            ctx.ast = ctx.arrayExpr().ast
+        elif ctx.arrayAccess is not None:
             if ctx.indexExpressionCommaListOpt() is not None:
                 ctx.ast = Subscript(
-                    value=ctx.array.ast,
+                    value=ctx.arrayAccess.ast,
                     slice=ctx.indexExpressionCommaListOpt().ast,
                     ctx=Store())
             else:
                 ctx.ast = Subscript(
-                    value=ctx.array.ast,
+                    value=ctx.arrayAccess.ast,
                     slice=Slice(lower=None, upper=None, step=None),
                     ctx=Store())
+        elif ctx.callExpr() is not None:
+            ctx.ast = ctx.callExpr().ast
+        elif ctx.paren is not None:
+            ctx.ast = ctx.expression().ast
         else:
-            ctx.ast = parseExpr(ctx.getText())
+            assert False, "Internal error on " + ctx.getText()
 
     def exitExpression(self, ctx):
         if ctx.atom() is not None:
