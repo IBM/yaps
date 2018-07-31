@@ -23,9 +23,9 @@ from .stanParser import stanParser
 from .stanListener import stanListener
 import astor
 import astpretty
+from antlr4.error.ErrorListener import ErrorListener
 
 verbose = False
-
 
 def parseExpr(expr):
     node = ast.parse(expr).body[0].value
@@ -634,10 +634,32 @@ class Stan2Astpy(stanListener):
         self.ast = ctx.ast
 
 
+####################
+
+class MyErrorListener( ErrorListener ):
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        print(str(line) + ':' + str(column) + ': Syntax error, ' + str(msg))
+        sys.exit()
+
+    def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):
+        print(str(line) + ':' + str(column) + ': Ambiguity error, ' + str(configs))
+        sys.exit()
+
+    def reportAttemptingFullContext(self, recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs):
+        print(str(line) + ':' + str(column) + ': Attempting full context error, ' + str(configs))
+        sys.exit()
+
+    def reportContextSensitivity(self, recognizer, dfa, startIndex, stopIndex, prediction, configs):
+        print(str(line) + ':' + str(column) + ': Context error, ' + str(configs))
+        sys.exit()
+
+
+
 def stream2parsetree(stream):
     lexer = stanLexer(stream)
     stream = CommonTokenStream(lexer)
     parser = stanParser(stream)
+    parser._listeners = [ MyErrorListener() ]
     tree = parser.program()
     return tree
 
