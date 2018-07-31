@@ -49,6 +49,16 @@ def gatherChildrenAST(ctx):
                 ast.append(child.ast)
         return ast
 
+def gatherIndexExpressionAST(ctx):
+    ast = []
+    if ctx.children is not None:
+        for child in ctx.children:
+            if hasattr(child, 'ast') and child.ast is not None:
+                ast.append(child.ast)
+            else:
+                ast.append(Slice(lower=None, upper=None, step=None))
+        return ast
+
 
 def idxFromExprList(exprList):
     if exprList is None:
@@ -166,10 +176,24 @@ class Stan2Astpy(stanListener):
     # Vector, matrix and array expressions (section 4.2)
 
     def exitAtom(self, ctx):
-        ctx.ast = parseExpr(ctx.getText())
+        if ctx.array is not None:
+            if ctx.indexExpressionCommaListOpt() is not None:
+                ctx.ast = Subscript(
+                    value=ctx.array.ast,
+                    slice=ctx.indexExpressionCommaListOpt().ast,
+                    ctx=Store())
+            else:
+                ctx.ast = Subscript(
+                    value=ctx.array.ast,
+                    slice=Slice(lower=None, upper=None, step=None),
+                    ctx=Store())
+        else:
+            ctx.ast = parseExpr(ctx.getText())
 
     def exitExpression(self, ctx):
-        if ctx.TRANSPOSE_OP() is not None:
+        if ctx.atom() is not None:
+            ctx.ast = ctx.atom().ast
+        elif ctx.TRANSPOSE_OP() is not None:
             assert False, "Not yet implemented"
         elif ctx.POW_OP() is not None:
             ctx.ast = BinOp(
@@ -190,6 +214,75 @@ class Stan2Astpy(stanListener):
                 right=ctx.e2.ast)
         elif ctx.LEFT_DIV_OP() is not None:
             assert False, "Not yet implemented"
+        elif ctx.MULT_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Mult(),
+                right=ctx.e2.ast)
+        elif ctx.DIV_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Div(),
+                right=ctx.e2.ast)
+        elif ctx.MOD_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Mod(),
+                right=ctx.e2.ast)
+        elif ctx.NOT_OP() is not None:
+            ctx.ast = UnaryOp(
+                op=Not,
+                operand=ctx.e.ast)
+        elif ctx.PLUS_OP() is not None:
+            if ctx.e1 is None:
+                ctx.ast = UnaryOp(
+                    op=UAdd,
+                    operand=ctx.e.ast)
+            else:
+                ctx.ast = BinOp(
+                    left=ctx.e1.ast,
+                    op=Add(),
+                    right=ctx.e2.ast)
+        elif ctx.MINUS_OP() is not None:
+            if ctx.e1 is None:
+                ctx.ast = UnaryOp(
+                    op=USub,
+                    operand=ctx.e.ast)
+            else:
+                ctx.ast = BinOp(
+                    left=ctx.e1.ast,
+                    op=Sub(),
+                    right=ctx.e2.ast)
+        elif ctx.LT_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Lt(),
+                right=ctx.e2.ast)
+        elif ctx.LE_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=LtE(),
+                right=ctx.e2.ast)
+        elif ctx.GT_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Gt(),
+                right=ctx.e2.ast)
+        elif ctx.GE_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=GtE(),
+                right=ctx.e2.ast)
+        elif ctx.EQ_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Eq(),
+                right=ctx.e2.ast)
+        elif ctx.NEQ_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=NotEq(),
+                right=ctx.e2.ast)
         elif ctx.AND_OP() is not None:
             ctx.ast = BoolOp(
                 op=And(),
@@ -208,14 +301,30 @@ class Stan2Astpy(stanListener):
                 body=ctx.e2.ast,
                 orelse=ctx.e3.ast)
         else:
-            # All other cases are similar to Python syntax
-            ctx.ast = parseExpr(ctx.getText())
+            assert False, "Internal error on " + ctx.getText()
+
+    def exitIndexExpression(self, ctx):
+        if ctx.sliceOp is not None:
+            e1 = None
+            e2 = None
+            if ctx.e1 is not None:
+                e1 = ctx.e1.ast
+            if ctx.e2 is not None:
+                e2 = ctx.e2.ast
+            ctx.ast = Slice(lower=e1, upper=e2, step=None)
+        elif ctx.expression() is not None:
+            ctx.ast = Index(value=ctx.expression().ast)
+        else:
+            assert False, "Internal error on " + ctx.getText()
 
     def exitExpressionCommaList(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)
 
     def exitExpressionCommaListOpt(self, ctx):
         ctx.ast = gatherChildrenASTList(ctx)
+
+    def exitIndexExpressionCommaListOpt(self, ctx):
+        ctx.ast = ExtSlice(dims=gatherIndexExpressionAST(ctx))
 
     # Statements (section 5)
 
