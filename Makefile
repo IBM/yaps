@@ -14,4 +14,4 @@ clean:
 	-rm -rf __pycache__ yaps/__pycache__
 
 cleanall: clean
-	-rm -f *~ */*~
+	-rm -f *~ */*~ */*/*~
