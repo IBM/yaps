@@ -12,7 +12,7 @@ def roundtrip(path):
     print(source)
     print('--------------------------------')
     ast_ = yaps.from_string(source)
-    yaps.print_stan(ast_)
+    print(yaps.to_stan(ast_))
     print('--------------------------------')
 
 
@@ -26,6 +26,7 @@ def run_test(dir):
         try:
             source = yaps.from_stan(code_file=path)
             ast_ = yaps.from_string(source)
+            stan = yaps.to_stan(ast_)
             nb_success += 1
         except AttributeError:
             print("ATTRIBUTE\t", path)

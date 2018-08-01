@@ -7,7 +7,7 @@ from . import py2ir
 import pystan
 
 def print_stan(ir):
-    print(str(ir.to_mapped_string()))
+    return str(ir.to_mapped_string())
 
 class FitModel(object):
     def __init__(self, fit_model):
