@@ -697,6 +697,9 @@ class Type(IR):
         acc += self.mkString(" ")
         acc += id
 
+    def to_stan(self, acc, indent):
+        pass
+
 
 class ConstrainedType(Type):
     def __init__(self, cstrts):
