@@ -36,6 +36,22 @@ class IR(object):
         acc += self.mkString("}", indent)
         acc.newline()
 
+    def to_stan_stmt_list(self, l, acc, indent=0):
+        if isinstance(l, list):
+            if len(l) == 1:
+                acc.newline()
+                l[0].to_stan(acc, indent+1)
+            else:
+                acc += self.mkString(" {")
+                acc.newline()
+                for b in l:
+                    b.to_stan(acc, indent+1)
+                    acc.newline()
+                acc += self.mkString("}", indent)
+        else:
+            acc.newline()
+            l.to_stan(acc, indent+1)
+
 
 class Program(IR):
     # Returns an object that can be converted to a strings
@@ -285,18 +301,7 @@ class ForStmt(Statement):
         self.var.to_stan(acc)
         self.iter_to_stan(acc)
         acc += self.mkString(")")
-
-        if(len(self.body) == 1):
-            acc.newline()
-            self.body[0].to_stan(acc, indent+1)
-        else:
-            acc += self.mkString(" {")
-            acc.newline()
-            for b in self.body:
-                b.to_stan(acc, indent+1)
-                acc.newline()
-            acc += self.mkString("}", indent)
-
+        self.to_stan_stmt_list(self.body, acc, indent)
 
 class ConditionalStmt(Statement):
     def __init__(self, cond, exp, alt):
@@ -304,12 +309,29 @@ class ConditionalStmt(Statement):
         self.exp = exp
         self.alt = alt
 
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("if (", indent)
+        self.cond.to_stan(acc)
+        acc += self.mkString(")")
+        self.to_stan_stmt_list(self.exp, acc, indent)
+        if self.alt:
+            acc.newline()
+            acc += self.mkString("else", indent)
+            self.to_stan_stmt_list(self.alt, acc, indent)
+
+
 
 class WhileStmt(Statement):
     def __init__(self, cond, stmt):
         self.cond = cond
         self.stmt = stmt
 
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("while (", indent)
+        self.cond.to_stan(acc)
+        acc += self.mkString(")")
+        acc.newline()
+        self.body.to_stan(acc, indent+1)
 
 class Block(Statement):
     def __init__(self, body=[]):

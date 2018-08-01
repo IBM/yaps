@@ -194,8 +194,8 @@ class PythonVisitor(ast.NodeVisitor):
         return IR.VariableDecl(id, ty, val).set_map(node)
 
     def visit_AugAssign(self, node):
+        lhs = self.visit(node.target)
         rhs = self.visit(node.value)
-        lhs = self.visit(node.value)
         return IR.AugAssignStmt(lhs, rhs).set_map(node)
 
     def visit_For(self, node):
