@@ -586,9 +586,10 @@ class Stan2Astpy(stanListener):
         ctx.ast = gatherChildrenASTList(ctx)
 
     def exitReturnStmt(self, ctx):
-        # XXX TODO XXX
-        # assert False, "Not yet implemented"
-        ctx.ast = Pass()
+        if ctx.expression() is None:
+            ctx.ast = Return(value=None)
+        else:
+            ctx.ast = Return(value=ctx.expression().ast)
 
     def exitFunctionDecl(self, ctx):
         ctx.ast = ctx.functionType().ast
