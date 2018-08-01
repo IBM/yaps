@@ -518,7 +518,7 @@ returnStmt
     ;
 
 functionDecl
-    : functionType '{' variableDeclsOpt statementsOpt '}'
+    : functionType body='{' variableDeclsOpt statementsOpt '}'
     | functionType ';'
     ;
 

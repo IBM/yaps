@@ -38,7 +38,7 @@ def gatherChildrenASTList(ctx):
         for child in ctx.children:
             if hasattr(child, 'ast') and child.ast is not None:
                 ast += child.ast
-        return ast
+    return ast
 
 
 def gatherChildrenAST(ctx):
@@ -47,7 +47,7 @@ def gatherChildrenAST(ctx):
         for child in ctx.children:
             if hasattr(child, 'ast') and child.ast is not None:
                 ast.append(child.ast)
-        return ast
+    return ast
 
 def gatherIndexExpressionAST(ctx):
     ast = []
@@ -57,7 +57,7 @@ def gatherIndexExpressionAST(ctx):
                 ast.append(child.ast)
             else:
                 ast.append(Slice(lower=None, upper=None, step=None))
-        return ast
+    return ast
 
 
 def idxFromExprList(exprList):
@@ -550,35 +550,69 @@ class Stan2Astpy(stanListener):
     # Functions (section 7)
 
     def exitFunctionType(self, ctx):
-        # XXX TODO XXX
-        assert False, "Not yet implemented"
+        name = ctx.IDENTIFIER().getText()
+        args = ctx.parameterCommaListOpt().ast
+        returnType = None
+        if ctx.type_() is not None:
+            returnType = ctx.type_().ast
+        elif ctx.VOID() is not None:
+            returnType = Name(id='void', ctx=Load())
+        else:
+            assert False, "Internal error on " + ctx.getText()
+        ctx.ast = FunctionDef(
+                name=name,
+                args=arguments(args=args,
+                               vararg=None,
+                               kwonlyargs=[],
+                               kw_defaults=[],
+                               kwarg=None,
+                               defaults=[]),
+                body=[Pass()],
+                decorator_list=[],
+                returns=returnType)
 
     def exitParameterDecl(self, ctx):
-        # XXX TODO XXX
-        assert False, "Not yet implemented"
+        vid = ctx.IDENTIFIER().getText()
+        ty = ctx.type_().ast
+        ctx.ast = arg(arg=vid, annotation=ty)
 
     def exitParameterCommaList(self, ctx):
-        # XXX TODO XXX
-        assert False, "Not yet implemented"
+        ctx.ast = gatherChildrenAST(ctx)
 
     def exitParameterCommaListOpt(self, ctx):
-        # XXX TODO XXX
-        assert False, "Not yet implemented"
+        ctx.ast = gatherChildrenASTList(ctx)
 
     def exitReturnStmt(self, ctx):
         # XXX TODO XXX
-        assert False, "Not yet implemented"
+        # assert False, "Not yet implemented"
+        ctx.ast = Pass()
 
     def exitFunctionDecl(self, ctx):
-        # XXX TODO XXX
-        assert False, "Not yet implemented"
+        ctx.ast = ctx.functionType().ast
+        if ctx.body is not None:
+            body = []
+            if ctx.variableDeclsOpt() is not None:
+                body += ctx.variableDeclsOpt().ast
+            if ctx.statementsOpt() is not None:
+                body += ctx.statementsOpt().ast
+            if len(body) == 0:
+                body = [Pass()]
+            ctx.ast.body = body
 
     def exitFunctionDeclsOpt(self, ctx):
-        # XXX TODO XXX
-        assert False, "Not yet implemented"
+        ctx.ast = gatherChildrenAST(ctx)
 
 
     # Program blocks (section 6)
+
+    def exitFunctionBlock(self, ctx):
+        body = gatherChildrenASTList(ctx)
+        ctx.ast = [With(items=[
+            withitem(
+                context_expr=Name(id='functions', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)]
 
     def exitDataBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
