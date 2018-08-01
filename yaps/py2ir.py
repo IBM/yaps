@@ -273,6 +273,9 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_Num(self, node):
         return IR.Constant(node.n).set_map(node)
 
+    def visit_Str(self, node):
+        return IR.Constant(node.s).set_map(node)
+
     def visit_Name(self, node):
         return IR.Variable(node.id).set_map(node)
 

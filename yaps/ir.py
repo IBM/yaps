@@ -421,7 +421,8 @@ class ReturnStmt(Statement):
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("return ", indent)
-        self.val.to_stan(acc)
+        if self.val:
+            self.val.to_stan(acc)
         acc += self.mkString(";")
 
 # expessions (Section 4)
