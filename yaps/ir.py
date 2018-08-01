@@ -370,11 +370,13 @@ class CallStmt(Statement):
 
 
 class BreakStmt(Statement):
-    pass
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("break", indent)
 
 
 class ContinueStmt(Statement):
-    pass
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("continue", indent)
 
 
 # expessions (Section 4)
