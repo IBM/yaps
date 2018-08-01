@@ -28,7 +28,6 @@ def run_test(dir):
             source = yaps.from_stan(code_file=path)
             ast_ = yaps.from_string(source)
             stan = yaps.to_stan(ast_)
-            print('Processing', path)
             pystan.stanc(model_code=stan)
             nb_success += 1
         except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError) as err:
