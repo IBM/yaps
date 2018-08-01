@@ -49,16 +49,6 @@ def gatherChildrenAST(ctx):
                 ast.append(child.ast)
     return ast
 
-def gatherIndexExpressionAST(ctx):
-    ast = []
-    if ctx.children is not None:
-        for child in ctx.children:
-            if hasattr(child, 'ast') and child.ast is not None:
-                ast.append(child.ast)
-            else:
-                ast.append(Slice(lower=None, upper=None, step=None))
-    return ast
-
 
 def idxFromExprList(exprList):
     if exprList is None:
@@ -344,11 +334,8 @@ class Stan2Astpy(stanListener):
         ctx.ast = gatherChildrenASTList(ctx)
 
     def exitIndexExpressionCommaListOpt(self, ctx):
-        indexes = gatherIndexExpressionAST(ctx)
-        if len(indexes) == 1:
-            ctx.ast = indexes[0]
-        else:
-            ctx.ast = ExtSlice(dims=indexes)
+        ctx.ast = Tuple(elts=gatherChildrenAST(ctx), ctx=Load())
+
 
     # Statements (section 5)
 
