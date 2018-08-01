@@ -58,6 +58,8 @@ class PythonVisitor(ast.NodeVisitor):
                 self.visit_Block(stmt)
             elif isinstance(stmt, ast.AnnAssign):
                 self.visit_parameter(stmt)
+            elif isinstance(stmt, ast.FunctionDef):
+                self.functions.append(self.visit(stmt))
             elif not isinstance(stmt, ast.Pass):
                 log('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
