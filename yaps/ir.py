@@ -47,7 +47,14 @@ class IR(object):
                 acc += self.mkString("}", indent)
         else:
             acc.newline()
-            l.to_stan(acc, indent+1)
+            l.to_stan(acc, indent + 1)
+
+    def to_stan_arg_list(self, l, acc, indent=0):
+        acc += self.mkString("(")
+        for b in l:
+            b.to_stan(acc)
+            acc += self.mkString(", ")
+        acc += self.mkString(")")
 
 
 class Program(IR):
@@ -67,16 +74,12 @@ class Program(IR):
     def viz(self):
         def block_helper(name):
             if (name in self.blocks):
-                if name == "parameters" or name == "data" or name == "model":
                     self.blocks[name].viz(self.dot)
 
         names = [
             "data",
-            "transformed_data",
             "parameters",
-            "transformed_parameters",
-            "model",
-            "generated_quantities"]
+            "model"]
 
         for n in names:
             block_helper(n)
@@ -88,6 +91,7 @@ class Program(IR):
                 self.blocks[name].to_stan(acc, indent)
 
         names = [
+            "functions",
             "data",
             "transformed_data",
             "parameters",
@@ -109,6 +113,14 @@ class ProgramBlock(IR):
 class FunctionsBlock(ProgramBlock):
     def __init__(self, fdecls=[]):
         self.fdecls = fdecls
+
+    def to_stan(self, acc, indent=0):
+        if self.fdecls:
+            self.start_block(acc, "functions", indent)
+            for b in self.fdecls:
+                b.to_stan(acc, indent+1)
+                acc.newline()
+            self.end_block(acc, indent)
 
 
 class DataBlock(ProgramBlock):
@@ -203,11 +215,33 @@ class GeneratedQuantities(ProgramBlock):
                 acc.newline()
             self.end_block(acc, indent)
 
+
 # stmts (Section 5)
 
 
 class Statement(IR):
     pass
+
+class FunctionDef(Statement):
+    def __init__(self, id, args, ty, body):
+        self.id = id
+        self.args = args
+        self.ty = ty
+        self.body = body
+
+    def viz(self, dot):
+        pass
+
+    def to_stan(self, acc, indent=0):
+        self.ty.to_stan(acc, indent)
+        acc += self.mkString(self.id, indent)
+        self.to_stan_arg_list(self.args, acc, indent)
+        acc += self.mkString("{")
+        acc.newline()
+        for s in self.body:
+            s.to_stan(acc, indent + 1)
+            acc.newline()
+        acc += self.mkString("}", indent)
 
 
 class AssignStmt(Statement):
@@ -374,6 +408,14 @@ class ContinueStmt(Statement):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("continue", indent)
 
+
+class Return(Statement):
+    def __init__(self, val):
+        self.val = val
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("return ", indent)
+        self.val.to_stan(acc)
 
 # expessions (Section 4)
 class Expression(IR):
@@ -614,6 +656,18 @@ class Call(Expression):
 
 # Declarations
 
+class Arg(IR):
+    def __init__(self, id, ty):
+        self.id = id
+        self.ty = ty
+
+    def to_stan(self, acc, indent=0):
+        if isinstance(self.ty, Type):
+            self.ty.decl_to_stan(acc, self.mkString(self.id), indent)
+        else:
+            self.ty.to_stan(acc, indent)
+            acc += self.mkString(" ")
+            acc += self.mkString(self.id)
 
 class VariableDecl(IR):
     def __init__(self, id, ty, val=None):

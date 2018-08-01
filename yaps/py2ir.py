@@ -66,7 +66,9 @@ class PythonVisitor(ast.NodeVisitor):
         assert len(node.items) == 1
         kind = node.items[0].context_expr.id
         if kind == 'functions':
-            self.functions.append(astor.to_source(node.body))
+            for stmt in node.body:
+                f = self.visit(stmt)
+                self.functions.append(f)
         elif kind == 'data':
             for stmt in node.body:
                 data = self.visit(stmt)
@@ -180,6 +182,22 @@ class PythonVisitor(ast.NodeVisitor):
         return lhs, rhs
 
     # Python visitor
+    def visit_FunctionDef(self, node):
+        id = node.name
+        ty = self.visit_type(node.returns)
+        args = []
+        for a in node.args.args:
+            args.append(self.visit(a))
+        body = []
+        for stmt in node.body:
+            body.append(self.visit(stmt))
+        return IR.FunctionDef(id, args, ty, body)
+
+    def visit_arg(self, node):
+        id = node.arg
+        ty = self.visit_type(node.annotation)
+        return IR.Arg(id, ty).set_map(node)
+
     def visit_Assign(self, node):
         assert len(node.targets) == 1
         lhs = self.visit(node.targets[0])
@@ -213,6 +231,10 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_With(self, node):
         body = self.visit(node.body)
         return IR.Block(body)
+
+    def visit_Return(self, node):
+        val = self.visit(node.value)
+        return IR.Return(val)
 
     def visit_Expr(self, node):
         return self.visit(node.value)
