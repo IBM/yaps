@@ -22,9 +22,6 @@ class IR(object):
 
         return self
 
-    def to_stan(self, acc, indent=0):
-        acc += self.mkString("NOT YET IMPLEMENTED: " + str(self), indent)
-
     def mkString(self, str, indent=0):
         return labeled_strings.LabeledString(self, (" "*(indent*indent_size)+str))
 
@@ -322,9 +319,9 @@ class ConditionalStmt(Statement):
 
 
 class WhileStmt(Statement):
-    def __init__(self, cond, stmt):
+    def __init__(self, cond, body):
         self.cond = cond
-        self.stmt = stmt
+        self.body = body
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("while (", indent)
@@ -336,7 +333,6 @@ class WhileStmt(Statement):
 class Block(Statement):
     def __init__(self, body=[]):
         self.body = body
-
 
     def viz(self, dot):
         for stmt in self.body:
