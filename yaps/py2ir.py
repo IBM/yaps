@@ -232,6 +232,13 @@ class PythonVisitor(ast.NodeVisitor):
             elts.append(self.visit(e))
         return IR.Tuple(elts)
 
+    def visit_List(self, node):
+        elts = []
+        for e in node.elts:
+            elts.append(self.visit(e))
+        return IR.List(elts)
+
+
     def visit_Slice(self, node):
         assert not node.step, "slices with a step not currently supported"
         lower = None
