@@ -275,6 +275,12 @@ class PythonVisitor(ast.NodeVisitor):
             op = self.visit(op)
             return IR.Binop(op, lhs, rhs).set_map(node)
 
+    def visit_IfExp(self, node):
+        test = self.visit(node.test)
+        body = self.visit(node.body)
+        orelse = self.visit(node.orelse)
+        return IR.IfExp(test, body, orelse).set_map(node)
+
     def visit_BinOp(self, node):
         op = self.visit(node.op)
         lhs = self.visit(node.left)

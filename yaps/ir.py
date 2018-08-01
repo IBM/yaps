@@ -477,6 +477,33 @@ class Tuple(Expression):
                 e.to_stan(acc)
 
 
+class IfExp(Expression):
+    def __init__(self, test, body, orelse):
+        self.test = test
+        self.body = body
+        self.orelse = orelse
+
+    def get_vars(self):
+        tv = self.test.get_vars()
+        bv = self.body.get_vars()
+        ov = self.orelse.get_vars()
+        return tv + bv + ov
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("((")
+        self.to_stan_prec(self.test, acc, indent)
+        acc += self.mkString(") ? ")
+        self.to_stan_prec(self.body, acc, indent)
+        acc += self.mkString(" ? ")
+        self.to_stan_prec(self.orelse, acc, indent)
+        acc += self.mkString(")")
+
+    @property
+    def precedence(self):
+        # XXX TODO: check what to do XXX
+        return 0
+
+
 class Binop(Expression):
     def __init__(self, op, lhs, rhs):
         self.op = op
