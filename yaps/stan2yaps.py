@@ -71,8 +71,21 @@ def idxFromExprList(exprList):
             ctx=Load())
 
 
+def isBlock(stmt):
+    if isinstance(stmt.ast, With):
+        expr = stmt.ast.items[0].context_expr
+        if isinstance(expr, Name):
+            return expr.id == 'block'
+        else:
+            return False
+    else:
+        return False
+
 def listFromStmt(stmt):
-   return [stmt.ast]
+    if isBlock(stmt):
+        return stmt.ast.body
+    else:
+        return [stmt.ast]
 
 
 def argsFromVardecl(vdecls):
