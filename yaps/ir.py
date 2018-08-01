@@ -667,7 +667,7 @@ class Arg(IR):
         self.ty = ty
 
     def to_stan(self, acc, indent=0):
-        if isinstance(self.ty, Type):
+        if isinstance(self.ty, DataType):
             self.ty.decl_to_stan(acc, self.mkString(self.id), indent)
         else:
             self.ty.to_stan(acc, indent)
@@ -681,7 +681,7 @@ class VariableDecl(IR):
         self.val = val
 
     def to_stan(self, acc, indent=0):
-        if isinstance(self.ty, Type):
+        if isinstance(self.ty, DataType):
             self.ty.decl_to_stan(acc, self.mkString(self.id), indent)
         else:
             self.ty.to_stan(acc, indent)
@@ -693,10 +693,25 @@ class VariableDecl(IR):
             self.val.to_stan(acc)
         acc += self.mkString(";")
 
-
 class Type(IR):
+    def __init__(self, kind, dims):
+        self.kind = kind
+        self.dims = dims
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(self.kind, indent)
+
+        if self.dims is not None:
+            acc += self.mkString("[")
+            if isinstance(self.dims, tuple):
+                acc += self.mkString(",".join(" "*len(self.dims)))
+
+            self.dims.to_stan(acc)
+            acc += self.mkString("]")
+
+class DataType(IR):
     # All types can print typed variable Declarations
-    # ArrayTypes will override this with a custom approach
+    # ArrayDataTypes will override this with a custom approach
     def decl_to_stan(self, acc, id, indent=0):
         self.to_stan(acc, indent)
         acc += self.mkString(" ")
@@ -706,7 +721,7 @@ class Type(IR):
         pass
 
 
-class ConstrainedType(Type):
+class ConstrainedDataType(DataType):
     def __init__(self, cstrts):
         self.cstrts = cstrts
 
@@ -729,9 +744,9 @@ class ConstrainedType(Type):
             acc += self.mkString(">")
 
 
-class AtomicType(ConstrainedType):
+class AtomicDataType(ConstrainedDataType):
     def __init__(self, kind, cstrts=None):
-        ConstrainedType.__init__(self, cstrts)
+        ConstrainedDataType.__init__(self, cstrts)
         self.kind = kind
 
     def to_stan(self, acc, indent=0):
@@ -739,9 +754,9 @@ class AtomicType(ConstrainedType):
         self.constraints_to_stan(acc)
 
 
-class DimType(ConstrainedType):
+class DimDataType(ConstrainedDataType):
     def __init__(self, kind, dims, cstrts=None):
-        ConstrainedType.__init__(self, cstrts)
+        ConstrainedDataType.__init__(self, cstrts)
         self.kind = kind
         self.dims = dims
 
@@ -755,7 +770,7 @@ class DimType(ConstrainedType):
             acc += self.mkString("]")
 
 
-class ArrayType(Type):
+class ArrayDataType(DataType):
     def __init__(self, base, dims):
         self.base = base
         self.dims = dims

@@ -104,7 +104,7 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_DataDecl(self, node):
         id = node.arg
-        ty = self.visit_type(node.annotation)
+        ty = self.visit_datatype(node.annotation)
         log('Data:', id)
         self.data.append(IR.VariableDecl(id, ty).set_map(node))
 
@@ -116,13 +116,13 @@ class PythonVisitor(ast.NodeVisitor):
             assert len(type_ast.ops) == 1
             assert isinstance(type_ast.ops[0], ast.Is)
             assert len(type_ast.comparators) == 1
-            ty = self.visit_type(type_ast.left)
+            ty = self.visit_datatype(type_ast.left)
             self.parameters.append(IR.VariableDecl(id, ty).set_map(node))
             dist, trunc = self.visit_distribution(type_ast.comparators[0])
             self.model.append(IR.SamplingStmt(
                 IR.Variable(id), dist, trunc).set_map(node))
         else:
-            ty = self.visit_type(node.annotation)
+            ty = self.visit_datatype(node.annotation)
             self.parameters.append(IR.VariableDecl(id, ty).set_map(node))
 
     def visit_distribution(self, node):
@@ -142,6 +142,23 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_type(self, node):
         kind = None
+        dims = None
+
+        n = node
+
+        if isinstance(n, ast.Subscript):
+            dims = self.visit(n.slice.value)
+            n = n.value
+
+        if isinstance(n, ast.Name):
+            kind = n.id
+        else:
+            assert False, 'Wrong type format'
+        return IR.Type(kind, dims)
+
+
+    def visit_datatype(self, node):
+        kind = None
         cstrts = []
         dims = None
         inner_dims = None
@@ -160,23 +177,23 @@ class PythonVisitor(ast.NodeVisitor):
             for c in type_ast.keywords:
                 cstrts.append(self.visit_constraint(c))
         else:
-            assert False, 'Wrong type format'
+            assert False, 'Wrong data type format'
 
         if kind in ["int", "real"]:
-            assert not inner_dims, ('Wrong type format {} does not take a dimension'.format(
+            assert not inner_dims, ('Wrong data type format {} does not take a dimension'.format(
                 kind))
-            t = IR.AtomicType(kind, cstrts)
+            t = IR.AtomicDataType(kind, cstrts)
             if dims:
-                return IR.ArrayType(t, dims)
+                return IR.ArrayDataType(t, dims)
             else:
                 return t
         else:
-            assert dims, ('Wrong type format; {} requires a dimension'.format(kind))
+            assert dims, ('Wrong data type format; {} requires a dimension'.format(kind))
 
             if inner_dims:
-                return IR.ArrayType(IR.DimType(kind, inner_dims, cstrts), dims)
+                return IR.ArrayDataType(IR.DimDataType(kind, inner_dims, cstrts), dims)
             else:
-                return IR.DimType(kind, dims, cstrts)
+                return IR.DimDataType(kind, dims, cstrts)
 
     def visit_constraint(self, node):
         lhs = node.arg
@@ -212,7 +229,7 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_AnnAssign(self, node):
         assert node.simple == 1
         id = node.target.id
-        ty = self.visit_type(node.annotation)
+        ty = self.visit_datatype(node.annotation)
         val = self.visit(node.value)
         return IR.VariableDecl(id, ty, val).set_map(node)
 
