@@ -28,14 +28,9 @@ def run_test(dir):
             ast_ = yaps.from_string(source)
             stan = yaps.to_stan(ast_)
             nb_success += 1
-        except AttributeError:
-            print("ATTRIBUTE\t", path)
-        except SyntaxError:
-            print("SYNTAX\t", path)
-        except TypeError:
-             print("TYPE\t", path)
-        except AssertionError:
-             print("ASSERT\t", path)
+        except (AttributeError, SyntaxError, TypeError, AssertionError) as err:
+             print("ASSERT\t", path, err)
+
     print("-------------------------")
     print("{}% of success ({}/{} stan examples)".format(nb_success/nb_test * 100, nb_success, nb_test))
 
