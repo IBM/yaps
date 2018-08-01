@@ -409,11 +409,7 @@ class Stan2Astpy(stanListener):
         id = ctx.IDENTIFIER().getText()
         body = listFromStmt(ctx.statement())
         if len(ctx.atom()) > 1:
-            # Index in Stan start at 1...
-            lbound = BinOp(
-                left=ctx.atom()[0].ast,
-                op=Sub(),
-                right=Num(n=1))
+            lbound = ctx.atom()[0].ast
             ubound = ctx.atom()[1].ast
             ctx.ast = For(
                 target=Name(id=id, ctx=Store()),
