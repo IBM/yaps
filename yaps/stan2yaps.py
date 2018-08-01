@@ -442,7 +442,10 @@ class Stan2Astpy(stanListener):
     def exitConditionalStmt(self, ctx):
         expr = ctx.expression().ast
         body = listFromStmt(ctx.s1)
-        orstmt = listFromStmt(ctx.s2)
+        if ctx.s2 is not None:
+            orstmt = listFromStmt(ctx.s2)
+        else:
+            orstmt = []
         ctx.ast = If(
             test=expr,
             body=body,
