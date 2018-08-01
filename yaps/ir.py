@@ -583,11 +583,11 @@ class IfExp(Expression):
         return tv + bv + ov
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("((", indent)
+        acc += self.mkString("(", indent)
         self.to_stan_prec(self.test, acc, indent)
-        acc += self.mkString(") ? ")
-        self.to_stan_prec(self.body, acc, indent)
         acc += self.mkString(" ? ")
+        self.to_stan_prec(self.body, acc, indent)
+        acc += self.mkString(" : ")
         self.to_stan_prec(self.orelse, acc, indent)
         acc += self.mkString(")")
 
