@@ -735,3 +735,30 @@ class MID(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("|", indent)
 
+class LT(Operator):
+    def __init__(self):
+        self.binary_precedence = 8
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("<", indent)
+
+class LEQ(Operator):
+    def __init__(self):
+        self.binary_precedence = 8
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("<=", indent)
+
+class GT(Operator):
+    def __init__(self):
+        self.binary_precedence = 8
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(">", indent)
+
+class GEQ(Operator):
+    def __init__(self):
+        self.binary_precedence = 8
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(">=", indent)

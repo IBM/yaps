@@ -26,6 +26,7 @@ class PythonVisitor(ast.NodeVisitor):
     def generic_visit(self, node):
         kind = type(node).__name__
         print("Missing visit method for {}".format(kind))
+        raise SyntaxError
 
     def visit_list(self, list):
         res = []
@@ -315,6 +316,18 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_Eq(self, node):
         return IR.EQ()
+
+    def visit_Lt(self, node):
+        return IR.LT()
+
+    def visit_LtE(self, node):
+        return IR.LEQ()
+
+    def visit_Gt(self, node):
+        return IR.GT()
+
+    def visit_GtE(self, node):
+        return IR.GEQ()
 
     def visit_Pass(self, node):
         return None
