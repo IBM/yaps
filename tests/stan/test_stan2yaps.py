@@ -29,7 +29,7 @@ def run_test(dir):
             ast_ = yaps.from_string(source)
             stan = yaps.to_stan(ast_)
             print('Processing', path)
-            pystan.stan(model_code=stan, iter=1, chains=1)
+            pystan.stanc(model_code=stan)
             nb_success += 1
         except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError) as err:
             print("FAILED\t", path, err)
