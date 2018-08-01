@@ -192,7 +192,10 @@ class PythonVisitor(ast.NodeVisitor):
             args.append(self.visit(a))
         body = []
         for stmt in node.body:
-            body.append(self.visit(stmt))
+            s = self.visit(stmt)
+            # Required because visit_Pass is not working
+            if s is not None:
+                body.append(s)
         return IR.FunctionDef(id, args, ty, body)
 
     def visit_arg(self, node):
@@ -234,9 +237,18 @@ class PythonVisitor(ast.NodeVisitor):
         body = self.visit(node.body)
         return IR.Block(body)
 
+    def visit_Continue(self, node):
+        return IR.ContinueStmt()
+
+    def visit_Break(self, node):
+        return IR.BreakStmt()
+
+    def visit_Pass(self, node):
+        return IR.PassStmt()
+
     def visit_Return(self, node):
         val = self.visit(node.value)
-        return IR.Return(val)
+        return IR.ReturnStmt(val)
 
     def visit_Expr(self, node):
         return self.visit(node.value)

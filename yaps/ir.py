@@ -409,7 +409,12 @@ class ContinueStmt(Statement):
         acc += self.mkString("continue", indent)
 
 
-class Return(Statement):
+class PassStmt(Statement):
+    def to_stan(self, acc, indent=0):
+        pass
+
+
+class ReturnStmt(Statement):
     def __init__(self, val):
         self.val = val
 
