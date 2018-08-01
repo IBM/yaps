@@ -270,6 +270,7 @@ class AugAssignStmt(Statement):
         self.lhs.to_stan(acc, indent)
         acc += self.mkString(" += ")
         self.rhs.to_stan(acc)
+        acc += self.mkString(";")
 
 class SamplingStmt(Statement):
     def __init__(self, lhs, dist, trunc=None):
@@ -401,12 +402,12 @@ class CallStmt(Statement):
 
 class BreakStmt(Statement):
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("break", indent)
+        acc += self.mkString("break;", indent)
 
 
 class ContinueStmt(Statement):
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("continue", indent)
+        acc += self.mkString("continue;", indent)
 
 
 class PassStmt(Statement):
@@ -421,6 +422,7 @@ class ReturnStmt(Statement):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("return ", indent)
         self.val.to_stan(acc)
+        acc += self.mkString(";")
 
 # expessions (Section 4)
 class Expression(IR):
