@@ -569,4 +569,5 @@ program
         transformedParametersBlock?
         modelBlock?
         generatedQuantitiesBlock?
+        EOF
 ;
