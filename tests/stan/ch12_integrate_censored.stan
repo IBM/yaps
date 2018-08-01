@@ -10,5 +10,5 @@ parameters {
 }
 model {
     y_obs ~ normal(mu, sigma);
-    target += N_cens * normal_lccdf(U, mu, sigma);
+    target += N_cens * normal_lccdf(U | mu, sigma);
 }

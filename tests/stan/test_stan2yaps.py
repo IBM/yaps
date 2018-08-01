@@ -2,6 +2,7 @@ import yaps
 from yaps.lib import *
 import astor
 import sys
+import pystan
 from pathlib import Path
 
 def roundtrip(path):
@@ -27,11 +28,18 @@ def run_test(dir):
             source = yaps.from_stan(code_file=path)
             ast_ = yaps.from_string(source)
             stan = yaps.to_stan(ast_)
+            print('Processing', path)
+            pystan.stan(model_code=stan, iter=1, chains=1)
             nb_success += 1
-        except (AttributeError, SyntaxError, TypeError, AssertionError) as err:
-             print("ASSERT\t", path, err)
+        except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError) as err:
+            print("FAILED\t", path, err)
+        except RuntimeError:
+            nb_success += 1
 
     print("-------------------------")
     print("{}% of success ({}/{} stan examples)".format(nb_success/nb_test * 100, nb_success, nb_test))
 
-run_test('tests/stan')
+if len(sys.argv) > 1:
+    roundtrip(sys.argv[1])
+else:
+    run_test('tests/stan')
