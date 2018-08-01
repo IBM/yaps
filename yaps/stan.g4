@@ -486,6 +486,7 @@ statement
     | callStmt
     | BREAK ';'
     | CONTINUE ';'
+    | returnStmt
     ;
 
 statementsOpt
@@ -496,8 +497,8 @@ statementsOpt
 /** Functions (section 7) */
 
 functionType
-    : type_ IDENTIFIER '(' parameterCommaListopt ')'
-    | VOID IDENTIFIER '(' parameterCommaListopt ')'
+    : type_ IDENTIFIER '(' parameterCommaListOpt ')'
+    | VOID IDENTIFIER '(' parameterCommaListOpt ')'
     ;
 
 parameterDecl
@@ -508,22 +509,16 @@ parameterCommaList
     : parameterDecl (',' parameterDecl)*
     ;
 
-parameterCommaListopt
+parameterCommaListOpt
     : parameterCommaList?
     ;
 
-functionStatement
-    : statement
-    | RETURN expression ';'
-    | RETURN ';'
-    ;
-
-functionStatementsOpt
-    : functionStatement*
+returnStmt
+    : RETURN expression? ';'
     ;
 
 functionDecl
-    : functionType '{' variableDeclsOpt functionStatementsOpt '}'
+    : functionType '{' variableDeclsOpt statementsOpt '}'
     | functionType ';'
     ;
 

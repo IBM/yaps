@@ -539,12 +539,44 @@ class Stan2Astpy(stanListener):
             ctx.ast = Break()
         elif ctx.CONTINUE() is not None:
             ctx.ast = Continue()
+        elif ctx.returnStmt() is not None:
+            ctx.ast = ctx.returnStmt().ast
         else:
             assert False, "Internal error on " + ctx.getText()
 
-
     def exitStatementsOpt(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)
+
+    # Functions (section 7)
+
+    def exitFunctionType(self, ctx):
+        # XXX TODO XXX
+        assert False, "Not yet implemented"
+
+    def exitParameterDecl(self, ctx):
+        # XXX TODO XXX
+        assert False, "Not yet implemented"
+
+    def exitParameterCommaList(self, ctx):
+        # XXX TODO XXX
+        assert False, "Not yet implemented"
+
+    def exitParameterCommaListOpt(self, ctx):
+        # XXX TODO XXX
+        assert False, "Not yet implemented"
+
+    def exitReturnStmt(self, ctx):
+        # XXX TODO XXX
+        assert False, "Not yet implemented"
+
+    def exitFunctionDecl(self, ctx):
+        # XXX TODO XXX
+        assert False, "Not yet implemented"
+
+    def exitFunctionDeclsOpt(self, ctx):
+        # XXX TODO XXX
+        assert False, "Not yet implemented"
+
 
     # Program blocks (section 6)
 
