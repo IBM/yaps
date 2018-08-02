@@ -51,7 +51,6 @@ class IR(object):
 
     def to_stan_arg_list(self, l, acc, indent=0):
         acc += self.mkString("(")
-<<<<<<< HEAD
         first = True
         for b in l:
             if first:
@@ -59,13 +58,6 @@ class IR(object):
             else:
                 acc += self.mkString(", ")
             b.to_stan(acc)
-=======
-        if len(l) > 0:
-            for b in l[:-1]:
-                b.to_stan(acc)
-                acc += self.mkString(", ")
-            l[-1].to_stan(acc)
->>>>>>> Fix trailing , argList bug
         acc += self.mkString(")")
 
 
@@ -426,9 +418,12 @@ class PassStmt(Statement):
     def to_stan(self, acc, indent=0):
         pass
 
+    def viz(self, dot):
+        pass
+
 
 class ReturnStmt(Statement):
-    def __init__(self, val):
+    def __init__(self, val=None):
         self.val = val
 
     def to_stan(self, acc, indent=0):
@@ -481,6 +476,14 @@ class Variable(Atom):
         acc += self.mkString(self.id, indent)
 
 
+class String(Atom):
+    def __init__(self, value):
+        self.value = value
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(self.value)
+
+
 class VectorExpr(Atom):
     pass
 
@@ -525,7 +528,8 @@ class Slice(Expression):
         # is this an operator precedence issue?
         if self.lower:
             self.to_stan_prec(self.lower, acc, indent)
-        acc += self.mkString(":")
+        if self.lower and self.upper:
+            acc += self.mkString(":")
         if self.upper:
             self.to_stan_prec(self.upper, acc, indent)
 

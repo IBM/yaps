@@ -294,6 +294,9 @@ class PythonVisitor(ast.NodeVisitor):
             elts.append(self.visit(e))
         return IR.List(elts)
 
+    def visit_Str(self, node):
+        return IR.String(node.s)
+
 
     def visit_Slice(self, node):
         assert not node.step, "slices with a step not currently supported"
@@ -391,9 +394,6 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_GtE(self, node):
         return IR.GEQ()
-
-    def visit_Pass(self, node):
-        return None
 
 def parse_string(s):
     # Hack to avoid weird AST with sampling op
