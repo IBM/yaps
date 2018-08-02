@@ -1,3 +1,5 @@
+// TODO, declarations in the model are not parameters...
+
 functions {
   vector gp_pred_rng(real[] x2,
                      vector y1,

@@ -1,3 +1,5 @@
+// TODO, declarations in the model are not parameters...
+
 data {
   int<lower=1> T; // num observations
   real y[T]; // observed outputs

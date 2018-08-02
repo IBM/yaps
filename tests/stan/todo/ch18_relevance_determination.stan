@@ -1,3 +1,5 @@
+// TODO ./ is not supported
+
 functions {
   matrix L_cov_exp_quad_ARD(vector[] x,
                             real alpha,
@@ -9,8 +11,7 @@ functions {
     for (i in 1:(N-1)) {
       K[i, i] = sq_alpha + delta;
       for (j in (i + 1):N) {
-        K[i, j] = sq_alpha
-                      * exp(-0.5 * dot_self((x[i] - x[j]) ./ rho));
+        K[i, j] = sq_alpha * exp(-0.5 * dot_self((x[i] - x[j]) ./ rho));
         K[j, i] = K[i, j];
       }
     }
