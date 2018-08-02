@@ -244,6 +244,12 @@ class PythonVisitor(ast.NodeVisitor):
         body = self.visit(node.body)
         return IR.ForStmt(var, iter, body).set_map(node)
 
+    def visit_While(self, node):
+        test = self.visit(node.test)
+        body = self.visit(node.body)
+        return IR.WhileStmt(test, body)
+
+
     def visit_If(self, node):
         cond = self.visit(node.test)
         exp = self.visit(node.body)

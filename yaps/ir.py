@@ -8,6 +8,9 @@ class IR(object):
     last_parsed_lineno = 0
     last_parse_col_offset = 0
 
+    def to_stan(self, acc, indent=0):
+        pass
+
     def set_map(self, ast):
         if hasattr(ast, 'lineno'):
             self.lineno = ast.lineno
@@ -224,7 +227,8 @@ class GeneratedQuantities(ProgramBlock):
 
 
 class Statement(IR):
-    pass
+    def viz(self, dot):
+        pass
 
 class FunctionDef(Statement):
     def __init__(self, id, args, ty, body):
@@ -232,9 +236,6 @@ class FunctionDef(Statement):
         self.args = args
         self.ty = ty
         self.body = body
-
-    def viz(self, dot):
-        pass
 
     def to_stan(self, acc, indent=0):
         self.ty.to_stan(acc, indent)
@@ -253,9 +254,6 @@ class AssignStmt(Statement):
         self.lhs = lhs
         self.op = op
         self.rhs = rhs
-
-    def viz(self, dot):
-        pass
 
     def to_stan(self, acc, indent=0):
         self.lhs.to_stan(acc, indent)
@@ -345,6 +343,12 @@ class ConditionalStmt(Statement):
         self.exp = exp
         self.alt = alt
 
+    def viz(self, dot):
+        for s in self.exp:
+            s.viz(dot)
+        for a in self.alt:
+            a.viz(dot)
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("if (", indent)
         self.cond.to_stan(acc)
@@ -362,12 +366,16 @@ class WhileStmt(Statement):
         self.cond = cond
         self.body = body
 
+    def viz(self, dot):
+        for stmt in self.body:
+            stmt.viz(dot)
+
     def to_stan(self, acc, indent=0):
         acc += self.mkString("while (", indent)
         self.cond.to_stan(acc)
         acc += self.mkString(")")
         acc.newline()
-        self.body.to_stan(acc, indent+1)
+        self.to_stan_stmt_list(self.body, acc, indent)
 
 class Block(Statement):
     def __init__(self, body=[]):
@@ -415,11 +423,7 @@ class ContinueStmt(Statement):
 
 
 class PassStmt(Statement):
-    def to_stan(self, acc, indent=0):
-        pass
-
-    def viz(self, dot):
-        pass
+    pass
 
 
 class ReturnStmt(Statement):
@@ -652,13 +656,10 @@ class Unop(Expression):
         return self.op.unary_precedence
 
 
-class Call(Expression):
+class Call(Expression, Statement):
     def __init__(self, id, args):
         self.id = id
         self.args = args
-
-    def viz(self, dot):
-        pass
 
     def get_vars(self):
         vars = []
@@ -693,7 +694,7 @@ class Arg(IR):
             acc += self.mkString(" ")
             acc += self.mkString(self.id)
 
-class VariableDecl(IR):
+class VariableDecl(Statement):
     def __init__(self, id, ty, val=None):
         self.id = id
         self.ty = ty
@@ -735,9 +736,6 @@ class DataType(IR):
         self.to_stan(acc, indent)
         acc += self.mkString(" ")
         acc += id
-
-    def to_stan(self, acc, indent):
-        pass
 
 
 class ConstrainedDataType(DataType):
