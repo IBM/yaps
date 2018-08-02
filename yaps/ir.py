@@ -51,9 +51,13 @@ class IR(object):
 
     def to_stan_arg_list(self, l, acc, indent=0):
         acc += self.mkString("(")
+        first = True
         for b in l:
+            if first:
+                first = False
+            else:
+                acc += self.mkString(", ")
             b.to_stan(acc)
-            acc += self.mkString(", ")
         acc += self.mkString(")")
 
 
