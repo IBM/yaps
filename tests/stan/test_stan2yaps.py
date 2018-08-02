@@ -7,18 +7,21 @@ from pathlib import Path
 
 def roundtrip(path):
     with open(path, 'r') as fin:
-        print(fin.read())
+        code = fin.read()
+        print(code)
+        pystan.stanc(model_code=code)
     print('--------------------------------')
     source = yaps.from_stan(code_file=path)
     print(source)
     print('--------------------------------')
     ast_ = yaps.from_string(source)
-    print(yaps.to_stan(ast_))
+    code = yaps.to_stan(ast_)
+    print(code)
     print('--------------------------------')
-
+    pystan.stanc(model_code=code)
 
 def run_test(dir):
-    pathlist = Path(dir).glob('**/*.stan')
+    pathlist = Path(dir).glob('*.stan')
     nb_test = 0
     nb_success = 0
     for p in pathlist:
