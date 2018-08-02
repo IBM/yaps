@@ -645,7 +645,7 @@ class Stan2Astpy(stanListener):
 
     def exitModelBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        if verbose:
+        if verbose or not (ctx.variableDeclsOpt().ast == []):
             ctx.ast = [With(items=[
                 withitem(
                     context_expr=Name(id='model', ctx=Load()),

@@ -1,5 +1,3 @@
-// TODO, declarations in the model are not parameters...
-
 functions {
   real[] sho(real t,
              real[] y,
