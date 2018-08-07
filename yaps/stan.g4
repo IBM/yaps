@@ -422,6 +422,7 @@ lvalue
 assignStmt
     : le=expression sample='~' re=expression ';'
     | lvalue eq='=' e=expression ';'
+    | lvalue eq='<-' e=expression ';'
     | lvalue op=(PLUS_EQ|MINUS_EQ|MULT_EQ|DIV_EQ|DOT_MULT_EQ|DOT_DIV_EQ) e=expression ';'
     ;
 
