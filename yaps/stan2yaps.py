@@ -408,18 +408,22 @@ class Stan2Astpy(stanListener):
     def exitForStmt(self, ctx):
         id = ctx.IDENTIFIER().getText()
         body = listFromStmt(ctx.statement())
+        iter = None
         if len(ctx.atom()) > 1:
             lbound = ctx.atom()[0].ast
             ubound = ctx.atom()[1].ast
-            ctx.ast = For(
-                target=Name(id=id, ctx=Store()),
-                iter=Call(func=Name(
+            iter = Call(func=Name(
                     id='range', ctx=Load()),
                     args=[lbound, ubound],
-                    keywords=[]),
-                body=body,
-                orelse=[])
-
+                    keywords=[])
+        else:
+            assert len(ctx.atom()) == 1
+            iter = ctx.atom()[0].ast
+        ctx.ast = For(
+            target=Name(id=id, ctx=Store()),
+            iter=iter,
+            body=body,
+            orelse=[])
     # Conditional statements (section 5.5)
 
     def exitConditionalStmt(self, ctx):
@@ -594,6 +598,8 @@ class Stan2Astpy(stanListener):
 
     def exitFunctionBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         ctx.ast = [With(items=[
             withitem(
                 context_expr=Name(id='functions', ctx=Load()),
@@ -603,6 +609,8 @@ class Stan2Astpy(stanListener):
 
     def exitDataBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         if verbose:
             ctx.ast = [With(items=[
                 withitem(
@@ -615,6 +623,8 @@ class Stan2Astpy(stanListener):
 
     def exitTransformedDataBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         ctx.ast = [With(items=[
             withitem(
                 context_expr=Name(id='transformed_data', ctx=Load()),
@@ -624,6 +634,8 @@ class Stan2Astpy(stanListener):
 
     def exitParametersBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         if verbose:
             ctx.ast = [With(items=[
                 withitem(
@@ -636,6 +648,8 @@ class Stan2Astpy(stanListener):
 
     def exitTransformedParametersBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         ctx.ast = [With(items=[
             withitem(
                 context_expr=Name(id='transformed_parameters', ctx=Load()),
@@ -645,6 +659,8 @@ class Stan2Astpy(stanListener):
 
     def exitModelBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         if verbose or not (ctx.variableDeclsOpt().ast == []):
             ctx.ast = [With(items=[
                 withitem(
@@ -657,6 +673,8 @@ class Stan2Astpy(stanListener):
 
     def exitGeneratedQuantitiesBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if len(body) == 0:
+            body = [Pass()]
         ctx.ast = [With(items=[
             withitem(
                 context_expr=Name(id='generated_quantities', ctx=Load()),

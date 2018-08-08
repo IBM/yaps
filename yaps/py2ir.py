@@ -400,6 +400,9 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_GtE(self, node):
         return IR.GEQ()
 
+    def visit_Not(self, node):
+        return IR.NOT()
+
 def parse_string(s):
     # Hack to avoid weird AST with sampling op
     source = re.sub(r"<\s*~", "is", s, re.X)

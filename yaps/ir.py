@@ -202,12 +202,11 @@ class ModelBlock(ProgramBlock):
             stmt.viz(dot)
 
     def to_stan(self, acc, indent=0):
-        if self.stmts:
-            self.start_block(acc, "model", indent)
-            for b in self.stmts:
-                b.to_stan(acc, indent+1)
-                acc.newline()
-            self.end_block(acc, indent)
+        self.start_block(acc, "model", indent)
+        for b in self.stmts:
+            b.to_stan(acc, indent+1)
+            acc.newline()
+        self.end_block(acc, indent)
 
 
 class GeneratedQuantities(ProgramBlock):
@@ -241,12 +240,15 @@ class FunctionDef(Statement):
         self.ty.to_stan(acc, indent)
         acc += self.mkString(self.id, indent)
         self.to_stan_arg_list(self.args, acc, indent)
-        acc += self.mkString("{")
-        acc.newline()
-        for s in self.body:
-            s.to_stan(acc, indent + 1)
+        if len(self.body) == 1 and isinstance(self.body[0], PassStmt):
+            acc += self.mkString(";")
+        else:
+            acc += self.mkString("{")
             acc.newline()
-        acc += self.mkString("}", indent)
+            for s in self.body:
+                s.to_stan(acc, indent + 1)
+                acc.newline()
+            acc += self.mkString("}", indent)
 
 
 class AssignStmt(Statement):
@@ -327,8 +329,7 @@ class ForStmt(Statement):
                 raise ValueError(
                     "For loop specified using an invalid invocation of range. range does not accept " + len(args) + " arguments")
         else:
-            raise ValueError(
-                "For loop specified using an unknown form of iteration.")
+            self.iter.to_stan(acc)
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("for (", indent)
@@ -858,13 +859,6 @@ class DIV(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("/", indent)
 
-class POW(Operator):
-    def __init__(self):
-        self.binary_precedence = 0.5
-
-    def to_stan(self, acc, indent=0):
-        acc += self.mkString("^", indent)
-
 
 class MOD(Operator):
     def __init__(self):
@@ -872,6 +866,15 @@ class MOD(Operator):
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("/", indent)
+
+
+class POW(Operator):
+    def __init__(self):
+        self.binary_precedence = 0.5
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("^", indent)
+
 
 class MID(Operator):
     def __init__(self):
@@ -882,28 +885,36 @@ class MID(Operator):
 
 class LT(Operator):
     def __init__(self):
-        self.binary_precedence = 8
+        self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("<", indent)
 
 class LEQ(Operator):
     def __init__(self):
-        self.binary_precedence = 8
+        self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("<=", indent)
 
 class GT(Operator):
     def __init__(self):
-        self.binary_precedence = 8
+        self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(">", indent)
 
 class GEQ(Operator):
     def __init__(self):
-        self.binary_precedence = 8
+        self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(">=", indent)
+
+class NOT(Operator):
+    def __init__(self):
+        self.unary_precedence = 1
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("!", indent)
+
