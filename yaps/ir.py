@@ -858,6 +858,13 @@ class DIV(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("/", indent)
 
+class POW(Operator):
+    def __init__(self):
+        self.binary_precedence = 0.5
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("^", indent)
+
 
 class MOD(Operator):
     def __init__(self):
