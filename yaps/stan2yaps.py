@@ -609,8 +609,6 @@ class Stan2Astpy(stanListener):
 
     def exitDataBlock(self, ctx):
         body = gatherChildrenASTList(ctx)
-        if len(body) == 0:
-            body = [Pass()]
         if verbose:
             ctx.ast = [With(items=[
                 withitem(

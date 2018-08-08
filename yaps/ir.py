@@ -81,7 +81,7 @@ class Program(IR):
     def viz(self):
         def block_helper(name):
             if (name in self.blocks):
-                    self.blocks[name].viz(self.dot)
+                self.blocks[name].viz(self.dot)
 
         names = [
             "data",
@@ -109,9 +109,8 @@ class Program(IR):
         for n in names:
             block_helper(n)
 
+
 # Program Blocks (Section 6)
-
-
 class ProgramBlock(IR):
     def __init__(self, body=[]):
         self.body = []
@@ -223,11 +222,10 @@ class GeneratedQuantities(ProgramBlock):
 
 
 # stmts (Section 5)
-
-
 class Statement(IR):
     def viz(self, dot):
         pass
+
 
 class FunctionDef(Statement):
     def __init__(self, id, args, ty, body):
@@ -275,6 +273,7 @@ class AugAssignStmt(Statement):
         acc += self.mkString(" += ")
         self.rhs.to_stan(acc)
         acc += self.mkString(";")
+
 
 class SamplingStmt(Statement):
     def __init__(self, lhs, dist, trunc=None):
@@ -338,6 +337,7 @@ class ForStmt(Statement):
         acc += self.mkString(")")
         self.to_stan_stmt_list(self.body, acc, indent)
 
+
 class ConditionalStmt(Statement):
     def __init__(self, cond, exp, alt):
         self.cond = cond
@@ -361,7 +361,6 @@ class ConditionalStmt(Statement):
             self.to_stan_stmt_list(self.alt, acc, indent)
 
 
-
 class WhileStmt(Statement):
     def __init__(self, cond, body):
         self.cond = cond
@@ -377,6 +376,7 @@ class WhileStmt(Statement):
         acc += self.mkString(")")
         acc.newline()
         self.to_stan_stmt_list(self.body, acc, indent)
+
 
 class Block(Statement):
     def __init__(self, body=[]):
@@ -437,9 +437,9 @@ class ReturnStmt(Statement):
             self.val.to_stan(acc)
         acc += self.mkString(";")
 
+
 # expessions (Section 4)
 class Expression(IR):
-
     def to_stan_prec(self, sub, acc, indent):
         needsParens = sub.precedence > self.precedence
         if needsParens:
@@ -511,6 +511,7 @@ class Subscript(Atom):
         self.slice.to_stan(acc)
         acc += self.mkString("]")
 
+
 class Transpose(Expression):
     def __init__(self, val):
         self.val = val
@@ -543,6 +544,7 @@ class Slice(Expression):
         # not sure
         return 0
 
+
 class List(Expression):
     def __init__(self, elts):
         self.elts = elts
@@ -567,6 +569,7 @@ class List(Expression):
                 acc += self.mkString(", ")
                 e.to_stan(acc)
         acc += self.mkString("]")
+
 
 class Tuple(Expression):
     def __init__(self, elts):
@@ -657,6 +660,29 @@ class Unop(Expression):
         return self.op.unary_precedence
 
 
+class Boolop(Expression):
+    def __init__(self, op, values):
+        self.op = op
+        self.values = values
+
+    def get_vars(self):
+        vars = []
+        for e in self.values:
+            vars += e.get_vars()
+        return vars
+
+    def to_stan(self, acc, indent=0):
+        assert len(self.values) >= 2
+        self.to_stan_prec(self.values[0], acc, indent)
+        for v in self.values[1:]:
+            self.op.to_stan(acc, indent)
+            self.to_stan_prec(v, acc, indent)
+
+    @property
+    def precedence(self):
+        return self.op.binary_precedence
+
+
 class Call(Expression, Statement):
     def __init__(self, id, args):
         self.id = id
@@ -682,6 +708,7 @@ class Call(Expression, Statement):
 
 # Declarations
 
+
 class Arg(IR):
     def __init__(self, id, ty):
         self.id = id
@@ -694,6 +721,7 @@ class Arg(IR):
             self.ty.to_stan(acc, indent)
             acc += self.mkString(" ")
             acc += self.mkString(self.id)
+
 
 class VariableDecl(Statement):
     def __init__(self, id, ty, val=None):
@@ -714,6 +742,7 @@ class VariableDecl(Statement):
             self.val.to_stan(acc)
         acc += self.mkString(";")
 
+
 class Type(IR):
     def __init__(self, kind, dims):
         self.kind = kind
@@ -729,6 +758,7 @@ class Type(IR):
 
             self.dims.to_stan(acc)
             acc += self.mkString("]")
+
 
 class DataType(IR):
     # All types can print typed variable Declarations
@@ -883,12 +913,14 @@ class MID(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("|", indent)
 
+
 class LT(Operator):
     def __init__(self):
         self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("<", indent)
+
 
 class LEQ(Operator):
     def __init__(self):
@@ -897,12 +929,14 @@ class LEQ(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString("<=", indent)
 
+
 class GT(Operator):
     def __init__(self):
         self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(">", indent)
+
 
 class GEQ(Operator):
     def __init__(self):
@@ -911,10 +945,26 @@ class GEQ(Operator):
     def to_stan(self, acc, indent=0):
         acc += self.mkString(">=", indent)
 
+
+class AND(Operator):
+    def __init__(self):
+        self.binary_precedence = 8
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("&&", indent)
+
+
+class OR(Operator):
+    def __init__(self):
+        self.binary_precedence = 9
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("||", indent)
+
+
 class NOT(Operator):
     def __init__(self):
         self.unary_precedence = 1
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString("!", indent)
-

@@ -156,7 +156,6 @@ class PythonVisitor(ast.NodeVisitor):
             assert False, 'Wrong type format'
         return IR.Type(kind, dims)
 
-
     def visit_datatype(self, node):
         kind = None
         cstrts = []
@@ -188,7 +187,8 @@ class PythonVisitor(ast.NodeVisitor):
             else:
                 return t
         else:
-            assert dims, ('Wrong data type format; {} requires a dimension'.format(kind))
+            assert dims, ('Wrong data type format; {} requires a dimension'.format(
+                kind))
 
             if inner_dims:
                 return IR.ArrayDataType(IR.DimDataType(kind, inner_dims, cstrts), dims)
@@ -248,7 +248,6 @@ class PythonVisitor(ast.NodeVisitor):
         test = self.visit(node.test)
         body = self.visit(node.body)
         return IR.WhileStmt(test, body)
-
 
     def visit_If(self, node):
         cond = self.visit(node.test)
@@ -361,6 +360,13 @@ class PythonVisitor(ast.NodeVisitor):
         expr = self.visit(node.operand)
         return IR.Unop(op, expr).set_map(node)
 
+    def visit_BoolOp(self, node):
+        op = self.visit(node.op)
+        values = []
+        for e in node.values:
+            values.append(self.visit(e))
+        return IR.Boolop(op, values)
+
     def visit_USub(self, node):
         return IR.SUB()
 
@@ -400,8 +406,15 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_GtE(self, node):
         return IR.GEQ()
 
+    def visit_And(self, node):
+        return IR.AND()
+
+    def visit_Or(self, node):
+        return IR.OR()
+
     def visit_Not(self, node):
         return IR.NOT()
+
 
 def parse_string(s):
     # Hack to avoid weird AST with sampling op
