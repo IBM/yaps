@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join('..', 'yaps')))
-
 import yaps as yaps
 from yaps.lib import int, real, parameters, model, uniform, bernoulli
 

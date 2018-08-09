@@ -1,8 +1,4 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join('..', 'yaps')))
-
-from yaps.lib import int, real, transformed_parameters, generated_quantities, gamma, normal
+from yaps.lib import *
 import yaps as yaps
 
 N = yaps.dependent_type_var()

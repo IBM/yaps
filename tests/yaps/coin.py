@@ -1,8 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join('..', 'yaps')))
-
-
 from yaps.lib import int, real, uniform, bernoulli
 import yaps as yaps
 
@@ -14,7 +9,6 @@ def coin(x: int(lower=0, upper=1)[10]):
 
 
 coin.graph
-
 print(coin)
 
 flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]

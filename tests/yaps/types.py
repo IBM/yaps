@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join('..', 'yaps')))
-
 from yaps.lib import *
 import yaps as yaps
 
