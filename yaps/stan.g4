@@ -77,7 +77,8 @@ NonZeroDigit
     ;
 
 StringLiteral
-    : '"' ([a-z]|[A-Z]|[0-9]|Symbol)* '"'
+	:'"' (~["\\\r\n])* '"'
+    // : '"' ([a-z]|[A-Z]|[0-9]|Symbol)* '"'
     ;
 
 fragment
