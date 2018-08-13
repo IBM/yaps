@@ -967,7 +967,7 @@ class PDIV(Operator):
         self.binary_precedence = 2
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("./", indent)
+        acc += self.mkString(" ./ ", indent)
 
 
 class PMULT(Operator):
@@ -975,7 +975,7 @@ class PMULT(Operator):
         self.binary_precedence = 2
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString(".*", indent)
+        acc += self.mkString(" .* ", indent)
 
 
 class NOT(Operator):

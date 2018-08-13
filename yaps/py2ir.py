@@ -383,6 +383,9 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_USub(self, node):
         return IR.SUB()
 
+    def visit_UAdd(self, node):
+        return IR.ADD()
+
     def visit_Sub(self, node):
         return IR.SUB()
 
@@ -406,6 +409,9 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_Eq(self, node):
         return IR.EQ()
+
+    def visit_NotEq(self, node):
+        return IR.NEQ()
 
     def visit_Lt(self, node):
         return IR.LT()
