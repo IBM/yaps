@@ -1,5 +1,3 @@
-// TODO ./ is not supported
-
 functions {
   matrix L_cov_exp_quad_ARD(vector[] x,
                             real alpha,

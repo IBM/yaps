@@ -77,42 +77,7 @@ NonZeroDigit
     ;
 
 StringLiteral
-	:'"' (~["\\\r\n])* '"'
-    // : '"' ([a-z]|[A-Z]|[0-9]|Symbol)* '"'
-    ;
-
-fragment
-Symbol
-    : '~'
-    | '@'
-    | '#'
-    | '%'
-    | '^'
-    | '&'
-    | '*'
-    | '_'
-    | '\''
-    | '`'
-    | '-'
-    | '+'
-    | '='
-    | '{'
-    | ' '
-    | '}'
-    | '['
-    | ']'
-    | '('
-    | ')'
-    | '<'
-    | '>'
-    | '|'
-    | '/'
-    | '!'
-    | '?'
-    | '.'
-    | ','
-    | ';'
-    | ':'
+	:'"' (~["\r\n])* '"'
     ;
 
 /** Variables and keywords (section 4.2) */
@@ -423,7 +388,6 @@ lvalue
 assignStmt
     : le=expression sample='~' re=expression ';'
     | lvalue eq='=' e=expression ';'
-    | lvalue eq='<-' e=expression ';'
     | lvalue op=(PLUS_EQ|MINUS_EQ|MULT_EQ|DIV_EQ|DOT_MULT_EQ|DOT_DIV_EQ) e=expression ';'
     ;
 
