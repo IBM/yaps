@@ -324,9 +324,22 @@ class PythonVisitor(ast.NodeVisitor):
         return self.visit(node.value)
 
     def visit_Call(self, node):
-        id = node.func.id
         args = self.visit(node.args)
-        return IR.Call(id, args).set_map(node)
+        if isinstance(node.func, ast.Name):
+            id = node.func.id
+            return IR.Call(id, args).set_map(node)
+        elif isinstance(node.func, ast.Attribute):
+            assert len(args) == 1, 'Wrong number of arguments'
+            e2 = args[0]
+            e1 = self.visit(node.func.value)
+            if node.func.attr == 'pmult':
+                return IR.Binop(IR.PMULT(), e1, e2)
+            elif node.func.attr == 'pdiv':
+                return IR.Binop(IR.PDIV(), e1, e2)
+            else:
+                assert False, 'Unsupported attribute method'
+        else:
+            assert False, 'Unsupported function call'
 
     def visit_Compare(self, node):
         # No chaining

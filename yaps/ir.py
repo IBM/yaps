@@ -962,6 +962,22 @@ class OR(Operator):
         acc += self.mkString("||", indent)
 
 
+class PDIV(Operator):
+    def __init__(self):
+        self.binary_precedence = 2
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString("./", indent)
+
+
+class PMULT(Operator):
+    def __init__(self):
+        self.binary_precedence = 2
+
+    def to_stan(self, acc, indent=0):
+        acc += self.mkString(".*", indent)
+
+
 class NOT(Operator):
     def __init__(self):
         self.unary_precedence = 1

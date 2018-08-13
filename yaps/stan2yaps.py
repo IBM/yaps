@@ -27,6 +27,7 @@ from antlr4.error.ErrorListener import ErrorListener
 
 verbose = False
 
+
 def parseExpr(expr):
     node = ast.parse(expr).body[0].value
     return node
@@ -70,6 +71,7 @@ def isBlock(stmt):
             return False
     else:
         return False
+
 
 def listFromStmt(stmt):
     if isBlock(stmt):
@@ -216,16 +218,22 @@ class Stan2Astpy(stanListener):
                 right=ctx.e2.ast,)
         elif ctx.DOT_MULT_OP() is not None:
             # Mult on tensors
-            ctx.ast = BinOp(
-                left=ctx.e1.ast,
-                op=Mult(),
-                right=ctx.e2.ast)
+            ctx.ast = Call(
+                func=Attribute(
+                    value=ctx.e1.ast,
+                    attr='pmult',
+                    ctx=Load()),
+                args=[ctx.e2.ast],
+                keywords=[])
         elif ctx.DOT_DIV_OP() is not None:
             # Div on tensors
-            ctx.ast = BinOp(
-                left=ctx.e1.ast,
-                op=Div(),
-                right=ctx.e2.ast)
+            ctx.ast = Call(
+                func=Attribute(
+                    value=ctx.e1.ast,
+                    attr='pdiv',
+                    ctx=Load()),
+                args=[ctx.e2.ast],
+                keywords=[])
         elif ctx.LEFT_DIV_OP() is not None:
             assert False, "Not yet implemented"
         elif ctx.MULT_OP() is not None:
@@ -336,7 +344,6 @@ class Stan2Astpy(stanListener):
     def exitIndexExpressionCommaListOpt(self, ctx):
         ctx.ast = Tuple(elts=gatherChildrenAST(ctx), ctx=Load())
 
-
     # Statements (section 5)
 
     # Assignment (section 5.1)
@@ -413,9 +420,9 @@ class Stan2Astpy(stanListener):
             lbound = ctx.atom()[0].ast
             ubound = ctx.atom()[1].ast
             iter = Call(func=Name(
-                    id='range', ctx=Load()),
-                    args=[lbound, ubound],
-                    keywords=[])
+                id='range', ctx=Load()),
+                args=[lbound, ubound],
+                keywords=[])
         else:
             assert len(ctx.atom()) == 1
             iter = ctx.atom()[0].ast
@@ -455,11 +462,11 @@ class Stan2Astpy(stanListener):
     def exitBlockStmt(self, ctx):
         body = gatherChildrenASTList(ctx)
         ctx.ast = With(items=[
-                withitem(
-                    context_expr=Name(id='block', ctx=Load()),
-                    optional_vars=None,
-                ),
-            ], body=body)
+            withitem(
+                context_expr=Name(id='block', ctx=Load()),
+                optional_vars=None,
+            ),
+        ], body=body)
 
     # Functions calls (sections 5.9 and 5.10)
 
@@ -493,13 +500,13 @@ class Stan2Astpy(stanListener):
             ctx.ast = Call(
                 func=Name(id=id1, ctx=Load()),
                 args=[
-                        BinOp(
-                            left=expr,
-                            op=BitOr(),
-                            right=idxFromExprList(exprList),
-                        ),
-                    ],
-                    keywords=[])
+                    BinOp(
+                        left=expr,
+                        op=BitOr(),
+                        right=idxFromExprList(exprList),
+                    ),
+                ],
+                keywords=[])
 
     def exitExpressionOrString(self, ctx):
         if ctx.expression() is not None:
@@ -550,16 +557,16 @@ class Stan2Astpy(stanListener):
         else:
             assert False, "Internal error on " + ctx.getText()
         ctx.ast = FunctionDef(
-                name=name,
-                args=arguments(args=args,
-                               vararg=None,
-                               kwonlyargs=[],
-                               kw_defaults=[],
-                               kwarg=None,
-                               defaults=[]),
-                body=[Pass()],
-                decorator_list=[],
-                returns=returnType)
+            name=name,
+            args=arguments(args=args,
+                           vararg=None,
+                           kwonlyargs=[],
+                           kw_defaults=[],
+                           kwarg=None,
+                           defaults=[]),
+            body=[Pass()],
+            decorator_list=[],
+            returns=returnType)
 
     def exitParameterDecl(self, ctx):
         vid = ctx.IDENTIFIER().getText()
@@ -592,7 +599,6 @@ class Stan2Astpy(stanListener):
 
     def exitFunctionDeclsOpt(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)
-
 
     # Program blocks (section 6)
 
@@ -703,18 +709,18 @@ class Stan2Astpy(stanListener):
 
 ####################
 
-class MyErrorListener( ErrorListener ):
+class MyErrorListener(ErrorListener):
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        print('Line ' + str(line) + ':' + str(column) + ': Syntax error, ' + str(msg))
+        print('Line ' + str(line) + ':' + str(column) +
+              ': Syntax error, ' + str(msg))
         raise SyntaxError
-
 
 
 def stream2parsetree(stream):
     lexer = stanLexer(stream)
     stream = CommonTokenStream(lexer)
     parser = stanParser(stream)
-    parser._listeners = [ MyErrorListener() ]
+    parser._listeners = [MyErrorListener()]
     tree = parser.program()
     return tree
 

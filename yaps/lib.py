@@ -3,6 +3,7 @@ def infer(model, *args, **kwargs):
 
 # Types
 
+
 class dummy_full_type(object):
     def __init__(self, name):
         self.name = name
@@ -11,7 +12,8 @@ class dummy_full_type(object):
         raise TypeError("{} cannot be further constrained".format(self.name))
 
     def __getitem__(self, key):
-        raise TypeError("{} cannot have additional dimensions".format(self.name))
+        raise TypeError(
+            "{} cannot have additional dimensions".format(self.name))
 
     def print_dims(self, key):
         if type(key) is tuple:
@@ -26,6 +28,7 @@ class dummy_full_type(object):
             return ret
         else:
             return str(key)
+
 
 class dummy_constrained_type(dummy_full_type):
     def __init__(self, name):
@@ -42,6 +45,7 @@ class dummy_type(dummy_constrained_type):
     def __call__(self, *args, **kwargs):
         return dummy_constrained_type(self.name)
 
+
 class dummy_constrained_dim_type(dummy_full_type):
     def __init__(self, name, num_args):
         dummy_full_type.__init__(self, name)
@@ -50,7 +54,8 @@ class dummy_constrained_dim_type(dummy_full_type):
     def __getitem__(self, key):
         if self.num_args == 1:
             if key is tuple:
-                raise TypeError("{} was given {} dimensions; {} expected".format(self.name, len(key), num_args))
+                raise TypeError("{} was given {} dimensions; {} expected".format(
+                    self.name, len(key), num_args))
             else:
                 return dummy_constrained_type("{}[{}]".format(self.name, self.print_dims(key)))
         else:
@@ -58,11 +63,15 @@ class dummy_constrained_dim_type(dummy_full_type):
                 if len(key) == self.num_args:
                     return dummy_constrained_type("{}[{}]".format(self.name, self.print_dims(key)))
                 else:
-                    raise TypeError("{} was given {} dimensions; {} expected".format(self.name, len(key), self.num_args))
+                    raise TypeError("{} was given {} dimensions; {} expected".format(
+                        self.name, len(key), self.num_args))
             else:
-                raise TypeError("{} was given {} dimensions; {} expected".format(self.name, 1, self.num_args))
+                raise TypeError("{} was given {} dimensions; {} expected".format(
+                    self.name, 1, self.num_args))
 
-## vector/matrix types.  They must be applied to a dimension
+# vector/matrix types.  They must be applied to a dimension
+
+
 class dummy_dim_type(dummy_constrained_dim_type):
     def __init__(self, name, num_args):
         dummy_constrained_dim_type.__init__(self, name, num_args)
@@ -93,12 +102,14 @@ dependent_type_var = type_var("type_var")
 
 # Blocks
 
+
 class block(object):
     def __enter__(self):
         pass
 
     def __exit__(self, x, y, z):
         pass
+
 
 class functions(object):
     def __enter__(self):
@@ -180,6 +191,14 @@ def normal(x, y):
 
 
 # Functions
+
+def pmult(x, y):
+    return x
+
+
+def pdiv(x, y):
+    return x
+
 
 def qr_Q(x):
     return x
