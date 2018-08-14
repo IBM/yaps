@@ -300,6 +300,11 @@ variableDecl
 
 arrayDim
     : '[' expressionCommaListOpt ']'
+    | '[' commaListOpt ']'
+    ;
+
+commaListOpt
+    : ','*
     ;
 
 variableDeclsOpt

@@ -164,7 +164,18 @@ class Stan2Astpy(stanListener):
         )
 
     def exitArrayDim(self, ctx):
-        ctx.ast = ctx.expressionCommaListOpt().ast
+        if ctx.expressionCommaListOpt() is not None:
+            ctx.ast = ctx.expressionCommaListOpt().ast
+        elif ctx.commaListOpt() is not None:
+            ctx.ast = ctx.commaListOpt().ast
+        else:
+            assert False, "Internal error on " + ctx.getText()
+
+    def exitCommaListOpt(self, ctx):
+        ctx.ast = []
+        for _ in range(len(ctx.children)):
+            ctx.ast += Name(id='_', ctx=Store())
+
 
     def exitVariableDeclsOpt(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)
