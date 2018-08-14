@@ -845,7 +845,7 @@ class EQ(Operator):
         self.binary_precedence = 7
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("==", indent)
+        acc += self.mkString(" == ", indent)
 
 
 class NEQ(Operator):
@@ -853,7 +853,7 @@ class NEQ(Operator):
         self.binary_precedence = 7
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("!=", indent)
+        acc += self.mkString(" != ", indent)
 
 
 class SUB(Operator):
@@ -862,7 +862,7 @@ class SUB(Operator):
         self.unary_precedence = 1
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("-", indent)
+        acc += self.mkString(" - ", indent)
 
 
 class ADD(Operator):
@@ -871,7 +871,7 @@ class ADD(Operator):
         self.unary_precedence = 1
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("+", indent)
+        acc += self.mkString(" + ", indent)
 
 
 class MULT(Operator):
@@ -879,7 +879,7 @@ class MULT(Operator):
         self.binary_precedence = 4
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("*", indent)
+        acc += self.mkString(" * ", indent)
 
 
 class DIV(Operator):
@@ -887,7 +887,7 @@ class DIV(Operator):
         self.binary_precedence = 4
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("/", indent)
+        acc += self.mkString(" / ", indent)
 
 
 class MOD(Operator):
@@ -895,7 +895,7 @@ class MOD(Operator):
         self.binary_precedence = 4
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("/", indent)
+        acc += self.mkString(" % ", indent)
 
 
 class POW(Operator):
@@ -903,7 +903,7 @@ class POW(Operator):
         self.binary_precedence = 0.5
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("^", indent)
+        acc += self.mkString(" ^ ", indent)
 
 
 class MID(Operator):
@@ -911,7 +911,7 @@ class MID(Operator):
         self.binary_precedence = 9
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("|", indent)
+        acc += self.mkString(" | ", indent)
 
 
 class LT(Operator):
@@ -919,7 +919,7 @@ class LT(Operator):
         self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("<", indent)
+        acc += self.mkString(" < ", indent)
 
 
 class LEQ(Operator):
@@ -927,7 +927,7 @@ class LEQ(Operator):
         self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("<=", indent)
+        acc += self.mkString(" <= ", indent)
 
 
 class GT(Operator):
@@ -935,7 +935,7 @@ class GT(Operator):
         self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString(">", indent)
+        acc += self.mkString(" > ", indent)
 
 
 class GEQ(Operator):
@@ -943,7 +943,7 @@ class GEQ(Operator):
         self.binary_precedence = 6
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString(">=", indent)
+        acc += self.mkString(" >= ", indent)
 
 
 class AND(Operator):
@@ -951,7 +951,7 @@ class AND(Operator):
         self.binary_precedence = 8
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("&&", indent)
+        acc += self.mkString(" && ", indent)
 
 
 class OR(Operator):
@@ -959,7 +959,7 @@ class OR(Operator):
         self.binary_precedence = 9
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("||", indent)
+        acc += self.mkString(" || ", indent)
 
 
 class PDIV(Operator):
@@ -983,4 +983,4 @@ class NOT(Operator):
         self.unary_precedence = 1
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString("!", indent)
+        acc += self.mkString(" ! ", indent)
