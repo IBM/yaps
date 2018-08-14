@@ -538,6 +538,8 @@ class Stan2Astpy(stanListener):
             ctx.ast = Continue()
         elif ctx.returnStmt() is not None:
             ctx.ast = ctx.returnStmt().ast
+        elif ctx.empty is not None:
+            ctx.ast = Pass()
         else:
             assert False, "Internal error on " + ctx.getText()
 

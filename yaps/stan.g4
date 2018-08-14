@@ -453,6 +453,7 @@ statement
     | BREAK ';'
     | CONTINUE ';'
     | returnStmt
+    | empty=';'
     ;
 
 statementsOpt
