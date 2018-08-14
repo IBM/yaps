@@ -440,7 +440,7 @@ class ReturnStmt(Statement):
 
 # expessions (Section 4)
 class Expression(IR):
-    def to_stan_prec(self, sub, acc, indent):
+    def to_stan_prec(self, sub, acc, indent=0):
         needsParens = sub.precedence > self.precedence
         if needsParens:
             acc += sub.mkString("(", indent)
@@ -479,14 +479,6 @@ class Variable(Atom):
 
     def to_stan(self, acc, indent=0):
         acc += self.mkString(self.id, indent)
-
-
-class String(Atom):
-    def __init__(self, value):
-        self.value = value
-
-    def to_stan(self, acc, indent=0):
-        acc += self.mkString(self.value)
 
 
 class VectorExpr(Atom):
@@ -635,8 +627,8 @@ class Binop(Expression):
 
     def to_stan(self, acc, indent=0):
         self.to_stan_prec(self.lhs, acc, indent)
-        self.op.to_stan(acc, indent)
-        self.to_stan_prec(self.rhs, acc, indent)
+        self.op.to_stan(acc)
+        self.to_stan_prec(self.rhs, acc)
 
     @property
     def precedence(self):
@@ -705,6 +697,7 @@ class Call(Expression, Statement):
                 acc += self.mkString(",")
             a.to_stan(acc)
         acc += self.mkString(")")
+
 
 # Declarations
 

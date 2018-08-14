@@ -297,7 +297,7 @@ class PythonVisitor(ast.NodeVisitor):
         return IR.List(elts)
 
     def visit_Str(self, node):
-        return IR.String(node.s).set_map(node)
+        return IR.Constant(node.s).set_map(node)
 
     def visit_Slice(self, node):
         assert not node.step, "slices with a step not currently supported"
@@ -379,6 +379,14 @@ class PythonVisitor(ast.NodeVisitor):
         for e in node.values:
             values.append(self.visit(e))
         return IR.Boolop(op, values)
+
+    def visit_NameConstant(self, node):
+        if node.value == True:
+            return IR.Constant("true")
+        elif node.value == False:
+            return IR.Constant("true")
+        else:
+            assert False, 'None is not supported'
 
     def visit_USub(self, node):
         return IR.SUB()

@@ -4,7 +4,7 @@ yaps/stanLexer.py yaps/stanParser.py: yaps/stan.g4
 	antlr4 -Dlanguage=Python3 yaps/stan.g4
 
 test:
-	python -m tests.stan.test_stan2yaps 2> /dev/null
+	python -m tests.stan.test_stan2yaps
 
 clean:
 	-rm -f	yaps/stan.tokens yaps/stanLexer.tokens \
