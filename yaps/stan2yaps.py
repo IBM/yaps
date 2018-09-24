@@ -190,7 +190,7 @@ class Stan2Astpy(stanListener):
         ctx.ast = []
         if ctx.children is not None:
             for _ in range(len(ctx.children)):
-                ctx.ast += Name(id='_', ctx=Store())
+                ctx.ast.append(Name(id='_', ctx=Store()))
 
 
     def exitVariableDeclsOpt(self, ctx):
@@ -490,6 +490,8 @@ class Stan2Astpy(stanListener):
 
     def exitBlockStmt(self, ctx):
         body = gatherChildrenASTList(ctx)
+        if body == []:
+            body = [ Pass() ]
         ctx.ast = With(items=[
             withitem(
                 context_expr=Name(id='block', ctx=Load()),
@@ -581,6 +583,10 @@ class Stan2Astpy(stanListener):
         name = ctx.IDENTIFIER().getText()
         args = ctx.parameterCommaListOpt().ast
         body = ctx.statement().ast
+        if ctx.statement().blockStmt() is not None:
+            body = body.body
+        else:
+            body = [body]
         returnType = ctx.unsizedReturnType().ast
         ctx.ast = FunctionDef(
             name=name,
@@ -590,7 +596,7 @@ class Stan2Astpy(stanListener):
                            kw_defaults=[],
                            kwarg=None,
                            defaults=[]),
-            body=[body],
+            body=body,
             decorator_list=[],
             returns=returnType)
 
