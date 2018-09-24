@@ -101,9 +101,24 @@ class Stan2Astpy(stanListener):
         self.data = []
 
     def exitTypeConstraint(self, ctx):
+        value = None
+        if ctx.NOT_OP() is not None:
+            value = UnaryOp(
+                op=Not(),
+                operand=ctx.atom().ast)
+        elif ctx.PLUS_OP() is not None:
+            value = UnaryOp(
+                op=UAdd(),
+                operand=ctx.atom().ast)
+        elif ctx.MINUS_OP() is not None:
+            value = UnaryOp(
+                op=USub(),
+                operand=ctx.atom().ast)
+        else:
+            value = ctx.atom().ast
         ctx.ast = keyword(
             arg=ctx.IDENTIFIER().getText(),
-            value=ctx.atom().ast
+            value=value
         )
 
     def exitTypeConstraintList(self, ctx):

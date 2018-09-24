@@ -290,7 +290,7 @@ typeConstraintList
     ;
 
 typeConstraint
-    : IDENTIFIER '=' atom
+    : op=(NOT_OP|PLUS_OP|MINUS_OP)? IDENTIFIER '=' atom
     ;
 
 variableDecl
@@ -393,7 +393,7 @@ lvalue
 
 assignStmt
     : le=expression sample='~' re=expression ';'
-    | lvalue eq='=' e=expression ';'
+    | lvalue eq=('='|'<-') e=expression ';'
     | lvalue op=(PLUS_EQ|MINUS_EQ|MULT_EQ|DIV_EQ|DOT_MULT_EQ|DOT_DIV_EQ) e=expression ';'
     ;
 
