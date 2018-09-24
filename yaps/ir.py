@@ -516,7 +516,7 @@ class Slice(Expression):
         # is this an operator precedence issue?
         if self.lower:
             self.to_stan_prec(self.lower, acc, indent)
-        if self.lower and self.upper:
+        if self.lower or self.upper:
             acc += self.mkString(":")
         if self.upper:
             self.to_stan_prec(self.upper, acc, indent)

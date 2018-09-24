@@ -91,7 +91,7 @@ def argsFromVardecl(vdecls):
 
 def sliceFromExpr(e):
     if e is None:
-        return Slice(lower=None, upper=None, step=None)
+        return None
     else:
         return Index(value=e.ast)
 
