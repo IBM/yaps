@@ -710,7 +710,7 @@ class Stan2Astpy(stanListener):
         body = gatherChildrenASTList(ctx)
         if len(body) == 0:
             body = [Pass()]
-        if verbose or not (ctx.variableDeclsOpt().ast == []):
+        if verbose or not (ctx.variableDeclsOpt().ast == []) or ctx.statement() is not None:
             ctx.ast = [With(items=[
                 withitem(
                     context_expr=Name(id='model', ctx=Load()),

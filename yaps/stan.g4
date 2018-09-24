@@ -537,6 +537,7 @@ transformedParametersBlock
 
 modelBlock
     : MODEL '{' variableDeclsOpt statementsOpt '}'
+    | MODEL statement
     ;
 
 generatedQuantitiesBlock
