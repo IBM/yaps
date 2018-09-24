@@ -345,7 +345,9 @@ class Stan2Astpy(stanListener):
         elif ctx.e is not None:
             ctx.ast = Index(value=ctx.e.ast)
         else:
-            assert False, "Internal error on " + ctx.getText()
+            ctx.ast = Slice(lower=None,
+                            upper=None,
+                            step=None)
 
     def exitExpressionCommaList(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)

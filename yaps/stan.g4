@@ -364,7 +364,8 @@ expression
     ;
 
 indexExpression
-    : e=expression
+    : /* empty */
+    | e=expression
     | e1=expression? sliceOp=':' e2=expression?
     ;
 
@@ -377,7 +378,7 @@ expressionCommaListOpt
     ;
 
 indexExpressionCommaListOpt
-    : indexExpression? (',' indexExpression?)*
+    : indexExpression (',' indexExpression)*
     ;
 
 
