@@ -173,8 +173,9 @@ class Stan2Astpy(stanListener):
 
     def exitCommaListOpt(self, ctx):
         ctx.ast = []
-        for _ in range(len(ctx.children)):
-            ctx.ast += Name(id='_', ctx=Store())
+        if ctx.children is not None:
+            for _ in range(len(ctx.children)):
+                ctx.ast += Name(id='_', ctx=Store())
 
 
     def exitVariableDeclsOpt(self, ctx):
@@ -559,16 +560,11 @@ class Stan2Astpy(stanListener):
 
     # Functions (section 7)
 
-    def exitFunctionType(self, ctx):
+    def exitFunctionDecl(self, ctx):
         name = ctx.IDENTIFIER().getText()
         args = ctx.parameterCommaListOpt().ast
-        returnType = None
-        if ctx.type_() is not None:
-            returnType = ctx.type_().ast
-        elif ctx.VOID() is not None:
-            returnType = Name(id='void', ctx=Load())
-        else:
-            assert False, "Internal error on " + ctx.getText()
+        body = ctx.statement().ast
+        returnType = ctx.unsizedReturnType().ast
         ctx.ast = FunctionDef(
             name=name,
             args=arguments(args=args,
@@ -577,13 +573,61 @@ class Stan2Astpy(stanListener):
                            kw_defaults=[],
                            kwarg=None,
                            defaults=[]),
-            body=[Pass()],
+            body=[body],
             decorator_list=[],
             returns=returnType)
 
+
+
+    def exitUnsizedReturnType(self, ctx):
+        if ctx.VOID() is not None:
+            ctx.ast = Name(id='void', ctx=Load())
+        elif ctx.unsizedType() is not None:
+            ctx.ast = ctx.unsizedType().ast
+        else:
+            assert False, "Internal error on " + ctx.getText()
+
+    def exitUnsizedType(self, ctx):
+        kind = ctx.basicType().getText()
+        ty = Name(id=kind, ctx=Load())
+        if ctx.unsizedDims() is not None:
+            dims = ctx.unsizedDims().ast
+            ctx.ast = Subscript(
+                value=ty,
+                slice=idxFromExprList(dims),
+                ctx=Load()
+            )
+        else:
+            ctx.ast = ty
+
+    def exitUnsizedDims(self, ctx):
+        ctx.ast = ctx.commaListOpt().ast
+
+    # def exitFunctionType(self, ctx):
+    #     name = ctx.IDENTIFIER().getText()
+    #     args = ctx.parameterCommaListOpt().ast
+    #     returnType = None
+    #     if ctx.type_() is not None:
+    #         returnType = ctx.type_().ast
+    #     elif ctx.VOID() is not None:
+    #         returnType = Name(id='void', ctx=Load())
+    #     else:
+    #         assert False, "Internal error on " + ctx.getText()
+    #     ctx.ast = FunctionDef(
+    #         name=name,
+    #         args=arguments(args=args,
+    #                        vararg=None,
+    #                        kwonlyargs=[],
+    #                        kw_defaults=[],
+    #                        kwarg=None,
+    #                        defaults=[]),
+    #         body=[Pass()],
+    #         decorator_list=[],
+    #         returns=returnType)
+
     def exitParameterDecl(self, ctx):
         vid = ctx.IDENTIFIER().getText()
-        ty = ctx.type_().ast
+        ty = ctx.unsizedType().ast
         ctx.ast = arg(arg=vid, annotation=ty)
 
     def exitParameterCommaList(self, ctx):
@@ -597,18 +641,6 @@ class Stan2Astpy(stanListener):
             ctx.ast = Return(value=None)
         else:
             ctx.ast = Return(value=ctx.expression().ast)
-
-    def exitFunctionDecl(self, ctx):
-        ctx.ast = ctx.functionType().ast
-        if ctx.body is not None:
-            body = []
-            if ctx.variableDeclsOpt() is not None:
-                body += ctx.variableDeclsOpt().ast
-            if ctx.statementsOpt() is not None:
-                body += ctx.statementsOpt().ast
-            if len(body) == 0:
-                body = [Pass()]
-            ctx.ast.body = body
 
     def exitFunctionDeclsOpt(self, ctx):
         ctx.ast = gatherChildrenAST(ctx)

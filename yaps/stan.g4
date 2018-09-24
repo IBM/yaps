@@ -468,13 +468,33 @@ statementsOpt
 
 /** Functions (section 7) */
 
-functionType
-    : type_ IDENTIFIER '(' parameterCommaListOpt ')'
-    | VOID IDENTIFIER '(' parameterCommaListOpt ')'
+functionDecl
+    : unsizedReturnType IDENTIFIER '(' parameterCommaListOpt ')' statement
+    ;
+
+unsizedReturnType
+    : VOID
+    | unsizedType
+    ;
+
+unsizedType
+    : basicType unsizedDims?
+    ;
+
+basicType
+    : INT
+    | REAL
+    | VECTOR
+    | ROW_VECTOR
+    | MATRIX
+    ;
+
+unsizedDims
+    : '[' commaListOpt ']'
     ;
 
 parameterDecl
-    : type_ IDENTIFIER
+    : unsizedType IDENTIFIER
     ;
 
 parameterCommaList
@@ -487,11 +507,6 @@ parameterCommaListOpt
 
 returnStmt
     : RETURN expression? ';'
-    ;
-
-functionDecl
-    : functionType body='{' variableDeclsOpt statementsOpt '}'
-    | functionType ';'
     ;
 
 functionDeclsOpt
