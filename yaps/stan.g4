@@ -491,7 +491,7 @@ basicType
     ;
 
 unsizedDims
-    : '[' commaListOpt ']'
+    : '[' ','* ']'
     ;
 
 parameterDecl

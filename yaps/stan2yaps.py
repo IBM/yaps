@@ -582,11 +582,11 @@ class Stan2Astpy(stanListener):
     def exitFunctionDecl(self, ctx):
         name = ctx.IDENTIFIER().getText()
         args = ctx.parameterCommaListOpt().ast
-        body = ctx.statement().ast
-        if ctx.statement().blockStmt() is not None:
-            body = body.body
-        else:
-            body = [body]
+        body = [ctx.statement().ast]
+        # if ctx.statement().blockStmt() is not None:
+        #     body = body.body
+        # else:
+        #     body = [body]
         returnType = ctx.unsizedReturnType().ast
         ctx.ast = FunctionDef(
             name=name,
@@ -624,7 +624,8 @@ class Stan2Astpy(stanListener):
             ctx.ast = ty
 
     def exitUnsizedDims(self, ctx):
-        ctx.ast = ctx.commaListOpt().ast
+        # XXX TODO XXX
+        ctx.ast = None
 
     # def exitFunctionType(self, ctx):
     #     name = ctx.IDENTIFIER().getText()
