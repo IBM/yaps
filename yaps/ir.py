@@ -395,22 +395,31 @@ class Block(Statement):
         acc += self.mkString("}", indent)
 
 
-class CallStmt(Statement):
-    def __init__(self, id, args):
-        self.id = id
-        self.args = args
+# class CallStmt(Statement):
+#     def __init__(self, id, args):
+#         self.id = id
+#         self.args = args
+
+#     def to_stan(self, acc, indent=0):
+#         acc += self.mkString(self.id, indent)
+#         acc += self.mkString("(")
+#         first = True
+#         for a in self.args:
+#             if first:
+#                 first = False
+#             else:
+#                 acc += self.mkString(",")
+#             a.to_stan(acc)
+#         acc += self.mkString(")")
+#         acc += self.mkString(";")
+
+class ExprStmt(Statement):
+    def __init__(self, expr):
+        self.body = expr
 
     def to_stan(self, acc, indent=0):
-        acc += self.mkString(self.id, indent)
-        acc += self.mkString("(")
-        first = True
-        for a in self.args:
-            if first:
-                first = False
-            else:
-                acc += self.mkString(",")
-            a.to_stan(acc)
-        acc += self.mkString(")")
+        self.body.to_stan(acc)
+        acc += self.mkString(";")
 
 
 class BreakStmt(Statement):

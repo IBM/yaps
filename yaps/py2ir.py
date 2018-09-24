@@ -273,7 +273,8 @@ class PythonVisitor(ast.NodeVisitor):
         return IR.ReturnStmt(val)
 
     def visit_Expr(self, node):
-        return self.visit(node.value)
+        body = self.visit(node.value)
+        return IR.ExprStmt(body)
 
     def visit_Num(self, node):
         return IR.Constant(node.n).set_map(node)
