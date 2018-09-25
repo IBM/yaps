@@ -477,6 +477,22 @@ class VectorExpr(Atom):
 
 class ArrayExpr(Atom):
     pass
+    # def __init__(self, val, elts):
+    #     self.elts = elts
+
+    # def get_vars(self):
+    #     return self.val.get_vars()
+
+    # def to_stan(self, acc, indent=0):
+    #     acc += self.mkString("{ ", indent)
+    #     first = True
+    #     for elt in self.elts:
+    #         if first:
+    #             first = False
+    #         else:
+    #             acc += self.mkString(", ")
+    #         elt.to_stan(acc)
+    #     acc += self.mkString(" }", indent)
 
 
 class Subscript(Atom):
@@ -540,7 +556,7 @@ class List(Expression):
     def to_stan(self, acc, indent=0):
         # Do we sometime need parens?
         # is this an operator precedence issue?
-        acc += self.mkString("[", indent)
+        acc += self.mkString("{", indent)
         first = True
         for e in self.elts:
             if first:
@@ -550,7 +566,7 @@ class List(Expression):
             else:
                 acc += self.mkString(", ")
                 e.to_stan(acc)
-        acc += self.mkString("]")
+        acc += self.mkString("}")
 
 
 class Tuple(Expression):
