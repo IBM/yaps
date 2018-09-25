@@ -290,7 +290,7 @@ typeConstraintList
     ;
 
 typeConstraint
-    : op=(NOT_OP|PLUS_OP|MINUS_OP)? IDENTIFIER '=' atom
+    : IDENTIFIER '=' op=(NOT_OP|PLUS_OP|MINUS_OP)? atom
     ;
 
 variableDecl
