@@ -290,7 +290,7 @@ typeConstraintList
     ;
 
 typeConstraint
-    : IDENTIFIER '=' op=(NOT_OP|PLUS_OP|MINUS_OP)? atom
+    : IDENTIFIER '=' constraintExpression
     ;
 
 variableDecl
@@ -361,6 +361,22 @@ expression
     | e1=expression AND_OP e2=expression
     | e1=expression OR_OP e2=expression
     | <assoc=right> e1=expression '?' e2=expression ':' e3=expression
+    ;
+
+constraintExpression
+    : atom
+    | e=constraintExpression TRANSPOSE_OP
+    | <assoc=right> e1=constraintExpression POW_OP e2=constraintExpression
+    | op=(NOT_OP|PLUS_OP|MINUS_OP) e=constraintExpression
+    | e1=constraintExpression op=(DOT_MULT_OP|DOT_DIV_OP) e2=constraintExpression
+    | e1=constraintExpression LEFT_DIV_OP e2=constraintExpression
+    | e1=constraintExpression op=(MULT_OP|DIV_OP|MOD_OP) e2=constraintExpression
+    | e1=constraintExpression op=(PLUS_OP|MINUS_OP) e2=constraintExpression
+    | e1=constraintExpression op=(LT_OP|LE_OP) e2=constraintExpression
+    | e1=constraintExpression op=(EQ_OP|NEQ_OP) e2=constraintExpression
+    | e1=constraintExpression AND_OP e2=constraintExpression
+    | e1=constraintExpression OR_OP e2=constraintExpression
+    | <assoc=right> e1=constraintExpression '?' e2=constraintExpression ':' e3=constraintExpression
     ;
 
 indexExpression

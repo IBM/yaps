@@ -101,24 +101,9 @@ class Stan2Astpy(stanListener):
         self.data = []
 
     def exitTypeConstraint(self, ctx):
-        value = None
-        if ctx.NOT_OP() is not None:
-            value = UnaryOp(
-                op=Not(),
-                operand=ctx.atom().ast)
-        elif ctx.PLUS_OP() is not None:
-            value = UnaryOp(
-                op=UAdd(),
-                operand=ctx.atom().ast)
-        elif ctx.MINUS_OP() is not None:
-            value = UnaryOp(
-                op=USub(),
-                operand=ctx.atom().ast)
-        else:
-            value = ctx.atom().ast
         ctx.ast = keyword(
             arg=ctx.IDENTIFIER().getText(),
-            value=value
+            value=ctx.constraintExpression().ast
         )
 
     def exitTypeConstraintList(self, ctx):
@@ -321,6 +306,117 @@ class Stan2Astpy(stanListener):
             ctx.ast = BinOp(
                 left=ctx.e1.ast,
                 op=GtE(),
+                right=ctx.e2.ast)
+        elif ctx.EQ_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Eq(),
+                right=ctx.e2.ast)
+        elif ctx.NEQ_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=NotEq(),
+                right=ctx.e2.ast)
+        elif ctx.AND_OP() is not None:
+            ctx.ast = BoolOp(
+                op=And(),
+                values=[
+                    ctx.e1.ast,
+                    ctx.e2.ast])
+        elif ctx.OR_OP() is not None:
+            ctx.ast = BoolOp(
+                op=Or(),
+                values=[
+                    ctx.e1.ast,
+                    ctx.e2.ast])
+        elif '?' in ctx.getText():
+            ctx.ast = IfExp(
+                test=ctx.e1.ast,
+                body=ctx.e2.ast,
+                orelse=ctx.e3.ast)
+        else:
+            assert False, "Internal error on " + ctx.getText()
+
+    def exitConstraintExpression(self, ctx):
+        if ctx.atom() is not None:
+            ctx.ast = ctx.atom().ast
+        elif ctx.TRANSPOSE_OP() is not None:
+            ctx.ast = Attribute(
+                value=ctx.e.ast,
+                attr='transpose', ctx=Load())
+        elif ctx.POW_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Pow(),
+                right=ctx.e2.ast,)
+        elif ctx.DOT_MULT_OP() is not None:
+            # Mult on tensors
+            ctx.ast = Call(
+                func=Attribute(
+                    value=ctx.e1.ast,
+                    attr='pmult',
+                    ctx=Load()),
+                args=[ctx.e2.ast],
+                keywords=[])
+        elif ctx.DOT_DIV_OP() is not None:
+            # Div on tensors
+            ctx.ast = Call(
+                func=Attribute(
+                    value=ctx.e1.ast,
+                    attr='pdiv',
+                    ctx=Load()),
+                args=[ctx.e2.ast],
+                keywords=[])
+        elif ctx.LEFT_DIV_OP() is not None:
+            assert False, "Not yet implemented"
+        elif ctx.MULT_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Mult(),
+                right=ctx.e2.ast)
+        elif ctx.DIV_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Div(),
+                right=ctx.e2.ast)
+        elif ctx.MOD_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Mod(),
+                right=ctx.e2.ast)
+        elif ctx.NOT_OP() is not None:
+            ctx.ast = UnaryOp(
+                op=Not(),
+                operand=ctx.e.ast)
+        elif ctx.PLUS_OP() is not None:
+            if ctx.e1 is None:
+                ctx.ast = UnaryOp(
+                    op=UAdd(),
+                    operand=ctx.e.ast)
+            else:
+                ctx.ast = BinOp(
+                    left=ctx.e1.ast,
+                    op=Add(),
+                    right=ctx.e2.ast)
+        elif ctx.MINUS_OP() is not None:
+            if ctx.e1 is None:
+                ctx.ast = UnaryOp(
+                    op=USub(),
+                    operand=ctx.e.ast)
+            else:
+                ctx.ast = BinOp(
+                    left=ctx.e1.ast,
+                    op=Sub(),
+                    right=ctx.e2.ast)
+        elif ctx.LT_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=Lt(),
+                right=ctx.e2.ast)
+        elif ctx.LE_OP() is not None:
+            ctx.ast = BinOp(
+                left=ctx.e1.ast,
+                op=LtE(),
                 right=ctx.e2.ast)
         elif ctx.EQ_OP() is not None:
             ctx.ast = BinOp(
