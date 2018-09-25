@@ -91,7 +91,7 @@ def argsFromVardecl(vdecls):
 
 def sliceFromExpr(e):
     if e is None:
-        return None
+        return Slice(lower=None, upper=None, step=None)
     else:
         return Index(value=e.ast)
 
@@ -354,8 +354,14 @@ class Stan2Astpy(stanListener):
 
     def exitIndexExpression(self, ctx):
         if ctx.sliceOp is not None:
-            ctx.ast = Slice(lower=sliceFromExpr(ctx.e1),
-                            upper=sliceFromExpr(ctx.e2),
+            lower = None
+            if ctx.e1 is not None:
+                lower = sliceFromExpr(ctx.e1)
+            upper = None
+            if ctx.e2 is not None:
+                upper = sliceFromExpr(ctx.e2)
+            ctx.ast = Slice(lower=lower,
+                            upper=upper,
                             step=None)
         elif ctx.e is not None:
             ctx.ast = Index(value=ctx.e.ast)
