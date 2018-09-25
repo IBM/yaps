@@ -617,15 +617,17 @@ class Stan2Astpy(stanListener):
             dims = ctx.unsizedDims().ast
             ctx.ast = Subscript(
                 value=ty,
-                slice=idxFromExprList(dims),
+                slice=dims,
                 ctx=Load()
             )
         else:
             ctx.ast = ty
 
     def exitUnsizedDims(self, ctx):
-        # XXX TODO XXX
-        ctx.ast = None
+        elts = [ Tuple(elts=[], ctx=Load()) ]
+        if ctx.commas is not None:
+            elts += [Tuple(elts=[], ctx=Load()) for _ in ctx.commas]
+        ctx.ast = Tuple(elts=elts, ctx=Load())
 
     # def exitFunctionType(self, ctx):
     #     name = ctx.IDENTIFIER().getText()

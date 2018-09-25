@@ -491,7 +491,7 @@ basicType
     ;
 
 unsizedDims
-    : '[' ','* ']'
+    : '[' (commas+=',')* ']'
     ;
 
 parameterDecl
