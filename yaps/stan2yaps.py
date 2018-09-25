@@ -379,8 +379,8 @@ class Stan2Astpy(stanListener):
 
     def exitLvalue(self, ctx):
         id = ctx.IDENTIFIER().getText()
-        if ctx.expressionCommaList() is not None:
-            idx = idxFromExprList(ctx.expressionCommaList().ast)
+        if ctx.indexExpressionCommaListOpt() is not None:
+            idx = idxFromExprList(ctx.indexExpressionCommaListOpt().ast.elts)
             ctx.ast = Subscript(
                 value=Name(id=id, ctx=Load()),
                 slice=Index(value=idx),

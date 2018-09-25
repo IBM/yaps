@@ -388,7 +388,7 @@ indexExpressionCommaListOpt
 
 lvalue
     : IDENTIFIER
-    | IDENTIFIER '[' expressionCommaList ']'
+    | IDENTIFIER '[' indexExpressionCommaListOpt ']'
     ;
 
 assignStmt
