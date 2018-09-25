@@ -407,7 +407,7 @@ truncation
 /** For loops (section 5.4) */
 
 forStmt
-    : FOR '(' IDENTIFIER IN atom ':' atom ')' statement
+    : FOR '(' IDENTIFIER IN atom ':' expression ')' statement
     | FOR '(' IDENTIFIER IN atom ')' statement
     ;
 

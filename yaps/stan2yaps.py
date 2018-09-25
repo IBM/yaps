@@ -451,16 +451,15 @@ class Stan2Astpy(stanListener):
         id = ctx.IDENTIFIER().getText()
         body = listFromStmt(ctx.statement())
         iter = None
-        if len(ctx.atom()) > 1:
-            lbound = ctx.atom()[0].ast
-            ubound = ctx.atom()[1].ast
+        if ctx.expression() is not None:
+            lbound = ctx.atom().ast
+            ubound = ctx.expression().ast
             iter = Call(func=Name(
                 id='range', ctx=Load()),
                 args=[lbound, ubound],
                 keywords=[])
         else:
-            assert len(ctx.atom()) == 1
-            iter = ctx.atom()[0].ast
+            iter = ctx.atom().ast
         ctx.ast = For(
             target=Name(id=id, ctx=Store()),
             iter=iter,
