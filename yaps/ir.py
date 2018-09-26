@@ -556,6 +556,29 @@ class List(Expression):
     def to_stan(self, acc, indent=0):
         # Do we sometime need parens?
         # is this an operator precedence issue?
+        acc += self.mkString("[", indent)
+        first = True
+        for e in self.elts:
+            if first:
+                first = False
+                e.to_stan(acc, indent)
+
+            else:
+                acc += self.mkString(", ")
+                e.to_stan(acc)
+        acc += self.mkString("]")
+
+class Set(Expression):
+    def __init__(self, elts):
+        self.elts = elts
+
+    def get_vars(self):
+        vars = []
+        for e in self.elts:
+            vars += e.get_vars()
+        return vars
+
+    def to_stan(self, acc, indent=0):
         acc += self.mkString("{", indent)
         first = True
         for e in self.elts:

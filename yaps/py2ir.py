@@ -297,6 +297,12 @@ class PythonVisitor(ast.NodeVisitor):
             elts.append(self.visit(e))
         return IR.List(elts)
 
+    def visit_Set(self, node):
+        elts = []
+        for e in node.elts:
+            elts.append(self.visit(e))
+        return IR.Set(elts)
+
     def visit_Str(self, node):
         return IR.Constant(node.s).set_map(node)
 

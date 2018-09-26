@@ -187,7 +187,7 @@ class Stan2Astpy(stanListener):
         ctx.ast = List(elts=ctx.expressionCommaList().ast, ctx=Load())
 
     def exitArrayExpr(self, ctx):
-        ctx.ast = List(elts=ctx.expressionCommaList().ast, ctx=Load())
+        ctx.ast = Set(elts=ctx.expressionCommaList().ast, ctx=Load())
 
     def exitAtom(self, ctx):
         if ctx.constant() is not None:
