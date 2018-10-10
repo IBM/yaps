@@ -1,7 +1,7 @@
 # YAPS
 
-Yaps is a new surface language for Stan (http://mc-stan.org/). It allows
-to write Stan program using Python syntax. For example, consider the
+Yaps is a new surface language for [Stan](http://mc-stan.org/). It allows
+to write Stan programs using Python syntax. For example, consider the
 following Stan program:
 ```stan
 data {
@@ -46,7 +46,7 @@ loop in the example. The operator `<~` is used to represent sampling
 and `x.T[a,b]` for truncated distribution.
 
 Other Stan blocks can be introduced using the `with` syntax of Python.
-For example, this program could also be written as follows:
+For example, the previous program could also be written as follows:
 ```python
 @yaps.model
 def coin(x: int(lower=0, upper=1)[10]):
@@ -70,12 +70,12 @@ posterior = yaps.infer(coin(x=flips), iter=1000)
 ```
 It returns `posterior`, a dictionary containing the value of the parameters:
 ```python
-print(\"theta: {:.3f}\".format(posterior.theta.mean()))
+print("theta: {:.3f}".format(posterior.theta.mean()))
 ```
 
-Yaps is build on top on PyStan (http://). It provides a lighter syntax
-to Stan programs. It allows to take advantage of Python tooling for
-syntax highlighting, indentation, error reporting, ...
+Yaps is build on top on [PyStan](http://mc-stan.org/users/interfaces/pystan). It provides a lighter
+syntax to Stan programs. It allows to take advantage of Python tooling
+for syntax highlighting, indentation, error reporting, ...
 
 ## Install
 
