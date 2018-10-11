@@ -18,7 +18,9 @@ grammar stan;
 
 /** Includes (section 2.2) */
 
-// XXX TODO: #include file.stan XXX
+include
+    : '#' 'include' IDENTIFIER '.' IDENTIFIER
+    ;
 
 
 /** Comments (section 2.3) */
@@ -562,7 +564,8 @@ generatedQuantitiesBlock
     ;
 
 program
-    : functionBlock?
+    : include?
+        functionBlock?
         dataBlock?
         transformedDataBlock?
         parametersBlock?
