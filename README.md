@@ -79,7 +79,16 @@ for syntax highlighting, indentation, error reporting, ...
 
 ## Install
 
-TODO
+Yaps depends on the following packages:
+- astor
+- graphviz
+- antlr4-python3-runtime
+- pystan
+
+To install Yaps and all its dependencies run:
+```
+pip install .
+```
 
 
 # For Yaps developers
