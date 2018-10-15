@@ -935,16 +935,16 @@ def from_stan(code_string=None, code_file=None):
     return astor.to_source(ast_)
 
 
-def main(argv):
-    if (len(argv) <= 1):
+def main():
+    if (len(sys.argv) <= 1):
         assert False, "File name expected"
-    for i in range(1, len(argv)):
+    for i in range(1, len(sys.argv)):
         print('# -------------')
-        print('#', argv[i])
+        print('#', sys.argv[i])
         print('# -------------')
-        code = from_stan(code_file=argv[i])
+        code = from_stan(code_file=sys.argv[i])
         print(code)
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()

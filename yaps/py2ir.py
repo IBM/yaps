@@ -274,7 +274,11 @@ class PythonVisitor(ast.NodeVisitor):
 
     def visit_Expr(self, node):
         body = self.visit(node.value)
-        return IR.ExprStmt(body)
+        # `is` (ast.Compare) is used for the sampling statement
+        if isinstance(node.value, ast.Compare):
+            return body
+        else:
+            return IR.ExprStmt(body)
 
     def visit_Num(self, node):
         return IR.Constant(node.n).set_map(node)
@@ -458,6 +462,6 @@ def parse_string(s):
     return visitor.visit(tree)
 
 
-def parse_model(model):
+def parse_function(model):
     source = inspect.getsource(model)
     return parse_string(source)

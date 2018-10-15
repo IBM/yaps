@@ -297,6 +297,7 @@ class SamplingStmt(Statement):
             acc += self.mkString("[")
             self.trunc.to_stan(acc)
             acc += self.mkString("]")
+        acc += self.mkString(";")
 
 
 class ForStmt(Statement):

@@ -126,7 +126,7 @@ class model(object):
     def __init__(self, func):
         self.func = func
         functools.update_wrapper(self, func)
-        self.compiled_model = py2ir.parse_model(func)
+        self.compiled_model = py2ir.parse_function(func)
         self.model_string = self.compiled_model.to_mapped_string()
         self.viz = self.compiled_model.viz()
 

@@ -92,22 +92,24 @@ pip install .
 
 
 # For Yaps developers
-## Compilation
 
-You need to compile the parser:
+```
+pip install .[test]
+nosetests tests/run_tests.py
+```
+
+Alternativaly, you can build and test the package locally:
 ```
 make
-```
-
-## Test
-
-To launch tests:
-```
 make test
 ```
 
-
-To test the round trip on only one file:
+To test the round trip on only one file, after the install:
 ```
-python -m tests.stan.test_stan2yaps file.stan
+yaps-roundtrip path/to/file.stan
+```
+
+To compile a stan file to yaps:
+```
+stan2yaps path/to/file.stan
 ```
