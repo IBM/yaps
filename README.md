@@ -38,7 +38,7 @@ array of integers between `0` and `1` (`int(lower=0, upper=1)[10]`).
 
 Parameters are declared as variables with their type in the body of
 the function. Their prior can be defined using the sampling operator
-`<~`.
+`<~` (or `is`).
 
 The body of the function corresponds to the Stan model. Python syntax
 is used for the imperative constructs of the model, like the `for`
@@ -53,9 +53,9 @@ def coin(x: int(lower=0, upper=1)[10]):
     with parameters:
         theta: real(lower=0, upper=1)
     with model:
-        theta < ~ uniform(0, 1)
+        theta <~ uniform(0, 1)
         for i in range(10):
-            x[i] < ~ bernoulli(theta)
+            x[i] <~ bernoulli(theta)
 ```
 
 The corresponding Stan program can be display using the `print` function:

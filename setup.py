@@ -16,6 +16,6 @@ setup(
     ],
     entry_points = {
         'console_scripts': ['stan2yaps=yaps.stan2yaps:main',
-                            'yaps-roundtrip=yaps:main'],
+                            'yaps-roundtrip=yaps.decorator:main'],
     }
 )
