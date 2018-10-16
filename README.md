@@ -113,3 +113,18 @@ To compile a stan file to yaps:
 ```
 stan2yaps path/to/file.stan
 ```
+
+
+# License
+
+Yaps is distributed under the terms of the Apache 2.0 License, see
+[LICENSE.txt](LICENSE.txt)
+
+
+
+# Contributions
+
+Yaps is still at an early phase of development and we welcome
+contributions. Contributors are expected to submit a 'Developer's
+Certificate of Origin' which can be found in [DCO1.1.txt](DCO1.1.txt).
+
