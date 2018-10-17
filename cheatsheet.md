@@ -30,10 +30,10 @@ a: matrix[3,2] = 0.5 * (b + c)           # matrix[3,2] a = 0.5 * (b + c);
 ## Expressions
 
 ```python
-m1: matrix[3,2] = [[1,2],[3,4],[5,6]]   # matrix[3,2] m1 = [[1,2],[3,4],[5,6]];
-vX: vector[2] = [1,10].transpose        # vector[2] vX = [ 1, 10 ]';
-a: int[3] = {1,10,1000}                 # int a[3] = {1,10,100};
-b: int[2,3] = {{1,2,3},{4,5,6}}         # int b[2,3] = {{1,2,3},{4,5,6}};
+m1: matrix[3,2] = [[1,2],[3,4],[5,6]]    # matrix[3,2] m1 = [[1,2],[3,4],[5,6]];
+vX: vector[2] = [1,10].transpose         # vector[2] vX = [ 1, 10 ]';
+a: int[3] = {1,10,1000}                  # int a[3] = {1,10,100};
+b: int[2,3] = {{1,2,3},{4,5,6}}          # int b[2,3] = {{1,2,3},{4,5,6}};
 
 3.0+0.14
 -15
@@ -43,31 +43,31 @@ b: int[2,3] = {{1,2,3},{4,5,6}}         # int b[2,3] = {{1,2,3},{4,5,6}};
 x/n
 m%n
 
-3**2                                    # 3^2
-c = a.pmult(b)                          # c = a .* b
-c = a.pdiv(b)                           # c = a ./ b
-b if a else c                           # a?b:c
+3**2                                     # 3^2
+c = a.pmult(b)                           # c = a .* b
+c = a.pdiv(b)                            # c = a ./ b
+b if a else c                            # a?b:c
 
 x[4]
-x[4,:]                                  # x[4,]
+x[4,:]                                   # x[4,] or x[4,:]
 ```
 
 ## Statements
 
 ```python
-target += -0.5 * y * y                  # target += -0.5 * y * y;
-y <~ normal(mu, sigma)                  # y ~ normal(mu,sigma);
-y is normal(mu, sigma)                  # y ~ normal(mu,sigma);
-y <~ normal(0,1).T[-0.5, 2.1]           # y ~ normal(0, 1) T[-0.5, 2.1];
+target += -0.5 * y * y                   # target += -0.5 * y * y;
+y <~ normal(mu, sigma)                   # y ~ normal(mu,sigma);
+y is normal(mu, sigma)                   # y ~ normal(mu,sigma);
+y <~ normal(0,1).T[-0.5, 2.1]            # y ~ normal(0, 1) T[-0.5, 2.1];
 
-for n in range(N): ...                  # for (n in 1:N) {...}
-while cond: ...                         # while (cond) {...}
-if cond: ...                            # if (cond) {...}
-else: ...                               # else {...}
+for n in range(N): ...                   # for (n in 1:N) {...}
+while cond: ...                          # while (cond) {...}
+if cond: ...                             # if (cond) {...}
+else: ...                                # else {...}
 
-break                                   # break;
-continue                                # continue;
-pass                                    # //nothing
+break                                    # break;
+continue                                 # continue;
+pass                                     # //nothing
 ```
 
 ## Program Blocks
@@ -82,11 +82,11 @@ def model(x: real):                      # data {int x;}
 
 We also support a fully annotated syntax where blocks are introduced via python `with` statements
 ```python
-with functions: ...                     # function {...}
-with transformed_data                   # transformed data {...}
-with parameters: ...                    # parameters {...}
-with transformed_parameters: ...        # transformed parameters {...}
-with model: ...                         # model {...}
-with generated quantities: ...          # generated quantities {...}
+with functions: ...                      # function {...}
+with transformed_data                    # transformed data {...}
+with parameters: ...                     # parameters {...}
+with transformed_parameters: ...         # transformed parameters {...}
+with model: ...                          # model {...}
+with generated quantities: ...           # generated quantities {...}
 ```
 
