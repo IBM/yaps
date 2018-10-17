@@ -90,6 +90,26 @@ To install Yaps and all its dependencies run:
 pip install .
 ```
 
+# Tools
+
+We provide a tool to compile Stan files to yaps syntax:
+For instance, if `path/to/coin.stan` contain the stan model presented at the beginning, then:
+```
+stan2yaps path/to/coin.stan
+```
+outputs:
+```
+# -------------
+# tests/stan/coin.stan
+# -------------
+@yaps.model
+def stan_model(x: int(lower=0, upper=1)[10]):
+    theta: real
+    theta is uniform(0.0, 1.0)
+    for i in range(1, 10):
+        x[(i),] is bernoulli(theta)
+    print(x)
+```
 
 # For Yaps developers
 
