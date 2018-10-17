@@ -24,7 +24,7 @@ setup(
     long_description=open('README.md').read(),
     extras_require={ 'test': ['nose'] },
     install_requires=[
-        'astor', 'graphviz', 'antlr4-python3-runtime', 'pystan'
+        'astor', 'graphviz', 'antlr4-python3-runtime', 'pystan<=2.17.1'
     ],
     entry_points = {
         'console_scripts': ['stan2yaps=yaps.stan2yaps:main',
