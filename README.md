@@ -97,12 +97,6 @@ To build the parser, you need to install [antlr](http://www.antlr.org/) before i
 For instance using homebrew:
 ```
 brew install antlr
-pip install .[test]
-nosetests tests/run_tests.py
-```
-
-Alternativaly, you can build and test the package locally:
-```
 make
 make test
 ```

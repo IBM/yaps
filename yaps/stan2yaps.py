@@ -20,7 +20,6 @@ from .stanLexer import stanLexer
 from .stanParser import stanParser
 from .stanListener import stanListener
 import astor
-import astpretty
 from antlr4.error.ErrorListener import ErrorListener
 
 verbose = False

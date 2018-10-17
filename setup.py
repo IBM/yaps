@@ -16,8 +16,6 @@ from distutils.core import setup
 import os
 import sys
 
-os.system("antlr4 -Dlanguage=Python3 yaps/stan.g4")
-
 setup(
     name='yaps',
     version='0.1dev',
