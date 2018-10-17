@@ -79,7 +79,7 @@ for syntax highlighting, indentation, error reporting, ...
 
 ## Install
 
-Yaps depends on the following packages:
+Yaps depends on the following python packages:
 - astor
 - graphviz
 - antlr4-python3-runtime
@@ -93,7 +93,10 @@ pip install .
 
 # For Yaps developers
 
+To build the parser, you need to install [antlr](http://www.antlr.org/) before installing the package.
+For instance using homebrew:
 ```
+brew install antlr
 pip install .[test]
 nosetests tests/run_tests.py
 ```
