@@ -4,6 +4,3 @@ __pycache__/
 .antlr/
 *.interp
 *.tokens
-stanLexer.py
-stanListener.py
-stanParser.py
