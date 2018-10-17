@@ -58,7 +58,7 @@ def coin(x: int(lower=0, upper=1)[10]):
             x[i] <~ bernoulli(theta)
 ```
 
-The corresponding Stan program can be display using the `print` function:
+The corresponding Stan program can be displayed using the `print` function:
 ```python
 print(coin)
 ```
@@ -73,7 +73,7 @@ It returns `posterior`, a dictionary containing the value of the parameters:
 print("theta: {:.3f}".format(posterior.theta.mean()))
 ```
 
-Yaps is build on top on [PyStan](http://mc-stan.org/users/interfaces/pystan). It provides a lighter
+Yaps is built on top on [PyStan](http://mc-stan.org/users/interfaces/pystan). It provides a lighter
 syntax to Stan programs. It allows to take advantage of Python tooling
 for syntax highlighting, indentation, error reporting, ...
 
