@@ -1,0 +1,5 @@
+# From Stan to Yaps to Stan
+
+| `yaps.from_stan(code_string=None, code_file=None)` | Compile a Stan model to Yaps |
+| `yaps.to_stan(code_string=None, code_file=None)`   | Compile a Yaps model to Stan |
+

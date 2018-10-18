@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>YAPS &mdash; Yaps 0.1dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Yaps Modeling Language" href="cheatsheet.html" />
+    <link rel="prev" title="Welcome to Yaps’s documentation!" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Yaps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1dev
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">YAPS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install">Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#for-developers">For Developers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributions">Contributions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">Yaps Modeling Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Yaps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>YAPS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="yaps">
+<span id="yaps"></span><h1>YAPS<a class="headerlink" href="#yaps" title="Permalink to this headline">¶</a></h1>
+<p>Yaps is a new surface language for <a class="reference external" href="http://mc-stan.org/">Stan</a>. It allows
+to write Stan programs using Python syntax. For example, consider the
+following Stan program:</p>
+<div class="highlight-stan"><div class="highlight"><pre><span></span><span class="kn">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+<span class="p">}</span>
+<span class="kn">parameters</span> <span class="p">{</span>
+  <span class="kt">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">theta</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kn">model</span> <span class="p">{</span>
+  <span class="n">theta</span> <span class="o">~</span> <span class="nb">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">~</span> <span class="nb">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>It can be rewritten in Python has follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaps</span>
+<span class="kn">from</span> <span class="nn">yaps.lib</span> <span class="kn">import</span> <span class="nb">int</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">bernoulli</span>
+
+<span class="nd">@yaps.model</span>
+<span class="k">def</span> <span class="nf">coin</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">10</span><span class="p">]):</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">real</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;~</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;~</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">&#64;yaps.model</span></code> decorator indicates that the function following it
+is a Stan program.  While being syntactically Python, it should be
+semantically reinterpreted as Stan.</p>
+<p>The argument of the function corresponds to the <code class="docutils literal"><span class="pre">data</span></code> block. The
+type of the data must be declared. Here, you can see that <code class="docutils literal"><span class="pre">x</span></code> is an
+array of integers between <code class="docutils literal"><span class="pre">0</span></code> and <code class="docutils literal"><span class="pre">1</span></code> (<code class="docutils literal"><span class="pre">int(lower=0,</span> <span class="pre">upper=1)[10]</span></code>).</p>
+<p>Parameters are declared as variables with their type in the body of
+the function. Their prior can be defined using the sampling operator
+<code class="docutils literal"><span class="pre">&lt;~</span></code> (or <code class="docutils literal"><span class="pre">is</span></code>).</p>
+<p>The body of the function corresponds to the Stan model. Python syntax
+is used for the imperative constructs of the model, like the <code class="docutils literal"><span class="pre">for</span></code>
+loop in the example. The operator <code class="docutils literal"><span class="pre">&lt;~</span></code> is used to represent sampling
+and <code class="docutils literal"><span class="pre">x.T[a,b]</span></code> for truncated distribution.</p>
+<p>Other Stan blocks can be introduced using the <code class="docutils literal"><span class="pre">with</span></code> syntax of Python.
+For example, the previous program could also be written as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@yaps.model</span>
+<span class="k">def</span> <span class="nf">coin</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">10</span><span class="p">]):</span>
+    <span class="k">with</span> <span class="n">parameters</span><span class="p">:</span>
+        <span class="n">theta</span><span class="p">:</span> <span class="n">real</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">model</span><span class="p">:</span>
+        <span class="n">theta</span> <span class="o">&lt;~</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;~</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The corresponding Stan program can be displayed using the <code class="docutils literal"><span class="pre">print</span></code> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">coin</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, it is possible to launch the inference on the defined model applied to some data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">flips</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">posterior</span> <span class="o">=</span> <span class="n">yaps</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">),</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It returns <code class="docutils literal"><span class="pre">posterior</span></code>, a dictionary containing the value of the parameters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;theta: {:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">posterior</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+</pre></div>
+</div>
+<p>Yaps is built on top on <a class="reference external" href="http://mc-stan.org/users/interfaces/pystan">PyStan</a>. It provides a lighter
+syntax to Stan programs. It allows to take advantage of Python tooling
+for syntax highlighting, indentation, error reporting, …</p>
+<div class="section" id="install">
+<span id="install"></span><h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
+<p>Yaps depends on the following python packages:</p>
+<ul class="simple">
+<li>astor</li>
+<li>graphviz</li>
+<li>antlr4-python3-runtime</li>
+<li>pystan</li>
+</ul>
+<p>To install Yaps and all its dependencies run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tools">
+<span id="tools"></span><h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
+<p>We provide a tool to compile Stan files to yaps syntax:
+For instance, if <code class="docutils literal"><span class="pre">path/to/coin.stan</span></code> contain the stan model presented at the beginning, then:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">stan2yaps</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coin</span><span class="o">.</span><span class="n">stan</span>
+</pre></div>
+</div>
+<p>outputs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -------------</span>
+<span class="c1"># tests/stan/coin.stan</span>
+<span class="c1"># -------------</span>
+<span class="nd">@yaps</span><span class="o">.</span><span class="n">model</span>
+<span class="k">def</span> <span class="nf">stan_model</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">10</span><span class="p">]):</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">real</span>
+    <span class="n">theta</span> <span class="ow">is</span> <span class="n">uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">[(</span><span class="n">i</span><span class="p">),]</span> <span class="ow">is</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Compilers from Yaps to Stan and from Stan to Yaps can also be invoked programmatically using the following functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">yaps</span><span class="o">.</span><span class="n">from_stan</span><span class="p">(</span><span class="n">code_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">code_file</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>  <span class="c1"># Compile a Stan model to Yaps</span>
+<span class="n">yaps</span><span class="o">.</span><span class="n">to_stan</span><span class="p">(</span><span class="n">code_string</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">code_file</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>    <span class="c1"># Compile a Yaps model to Stan</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="for-developers">
+<span id="for-developers"></span><h2>For Developers<a class="headerlink" href="#for-developers" title="Permalink to this headline">¶</a></h2>
+<p>To build the parser, you need to install <a class="reference external" href="http://www.antlr.org/">antlr</a> before installing the package.
+You will also need to install the nose package to run the tests.
+For instance using homebrew:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">antlr</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">nose</span>
+<span class="n">make</span>
+<span class="n">make</span> <span class="n">test</span>
+</pre></div>
+</div>
+<p>To test the round trip on only one file, after the install:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">yaps</span><span class="o">-</span><span class="n">roundtrip</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">stan</span>
+</pre></div>
+</div>
+<p>To compile a stan file to yaps:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">stan2yaps</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">stan</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="license">
+<span id="license"></span><h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>Yaps is distributed under the terms of the Apache 2.0 License, see
+<a class="reference external" href="LICENSE.txt">LICENSE.txt</a></p>
+</div>
+<div class="section" id="contributions">
+<span id="contributions"></span><h2>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h2>
+<p>Yaps is still at an early phase of development and we welcome
+contributions. Contributors are expected to submit a ‘Developer’s
+Certificate of Origin’ which can be found in <a class="reference external" href="DCO1.1.txt">DCO1.1.txt</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cheatsheet.html" class="btn btn-neutral float-right" title="Yaps Modeling Language" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Yaps’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Guillaume Baudart, Martin Hirzel, Kiran Kate, Louis Mandel, Avraham Shinnar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'0.1dev',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

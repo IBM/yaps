@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Yaps Modeling Language &mdash; Yaps 0.1dev documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="From Stan to Yaps to Stan" href="api.html" />
+    <link rel="prev" title="YAPS" href="README.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Yaps
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1dev
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">YAPS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Yaps Modeling Language</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#comments">Comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-types-and-variable-declarations">Data Types and Variable Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#expressions">Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#statements">Statements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#program-blocks">Program Blocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#function-definitions">Function Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">From Stan to Yaps to Stan</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Yaps</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Yaps Modeling Language</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/cheatsheet.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="yaps-modeling-language">
+<span id="yaps-modeling-language"></span><h1>Yaps Modeling Language<a class="headerlink" href="#yaps-modeling-language" title="Permalink to this headline">¶</a></h1>
+<p>A yaps model is a python function prefixed by the <code class="docutils literal"><span class="pre">&#64;yaps.model</span></code> decorator</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaps</span>
+<span class="kn">from</span> <span class="nn">yaps.lib</span> <span class="kn">import</span> <span class="nb">int</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">bernoulli</span>
+
+<span class="nd">@yaps.model</span>
+<span class="k">def</span> <span class="nf">coin</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">10</span><span class="p">]):</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">real</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;~</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;~</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Types definition, e.g., <code class="docutils literal"><span class="pre">int</span></code> and <code class="docutils literal"><span class="pre">real</span></code>, and stan function are defined in <code class="docutils literal"><span class="pre">yaps.lib</span></code>.</p>
+<p>We list below examples of Yaps code with the corresponding Stan code.</p>
+<div class="section" id="comments">
+<span id="comments"></span><h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># This is a comment</span>
+<span class="n">x</span> <span class="o">&lt;~</span> <span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># This is a comment</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-types-and-variable-declarations">
+<span id="data-types-and-variable-declarations"></span><h2>Data Types and Variable Declarations<a class="headerlink" href="#data-types-and-variable-declarations" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span>                                   <span class="c1"># int x;</span>
+<span class="n">x</span><span class="p">:</span> <span class="n">real</span>                                  <span class="c1"># real x;</span>
+
+<span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>                              <span class="c1"># real x[10];</span>
+<span class="n">m</span><span class="p">:</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>                     <span class="c1"># matrix[3,3] m[6,7];</span>
+
+<span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>                          <span class="c1"># int&lt;lower=1&gt; N;</span>
+<span class="n">log_p</span><span class="p">:</span> <span class="n">real</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>                     <span class="c1"># real&lt;upper=0&gt; log_p;</span>
+<span class="n">rho</span><span class="p">:</span> <span class="n">vector</span><span class="p">(</span><span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span>         <span class="c1"># vector&lt;lower=-1,upper=1&gt;[3] rho;</span>
+
+<span class="n">mu</span><span class="p">:</span> <span class="n">vector</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>                         <span class="c1"># vector[7] mu[3];</span>
+<span class="n">mu</span><span class="p">:</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span><span class="mi">12</span><span class="p">]</span>                  <span class="c1"># matrix[7,2] mu[15,12];</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>                                 <span class="c1"># x = w[5];</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>                               <span class="c1"># c = a[1,3];</span>
+<span class="n">a</span><span class="p">:</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>           <span class="c1"># matrix[3,2] a = 0.5 * (b + c);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="expressions">
+<span id="expressions"></span><h2>Expressions<a class="headerlink" href="#expressions" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">m1</span><span class="p">:</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>    <span class="c1"># matrix[3,2] m1 = [[1,2],[3,4],[5,6]];</span>
+<span class="n">vX</span><span class="p">:</span> <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span>         <span class="c1"># vector[2] vX = [1,10]&#39;;</span>
+<span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1000</span><span class="p">}</span>                  <span class="c1"># int a[3] = {1,10,100};</span>
+<span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">},{</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">}}</span>          <span class="c1"># int b[2,3] = {{1,2,3},{4,5,6}};</span>
+
+<span class="mf">3.0</span><span class="o">+</span><span class="mf">0.14</span>
+<span class="o">-</span><span class="mi">15</span>
+<span class="mi">2</span><span class="o">*</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span>
+<span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+<span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">x</span><span class="o">/</span><span class="n">n</span>
+<span class="n">m</span><span class="o">%</span><span class="n">n</span>
+
+<span class="mi">3</span><span class="o">**</span><span class="mi">2</span>                                     <span class="c1"># 3^2</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">pmult</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>                           <span class="c1"># c = a .* b</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">pdiv</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>                            <span class="c1"># c = a ./ b</span>
+<span class="n">b</span> <span class="k">if</span> <span class="n">a</span> <span class="k">else</span> <span class="n">c</span>                            <span class="c1"># a?b:c</span>
+
+<span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">,:]</span>                                   <span class="c1"># x[4,] or x[4,:]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="statements">
+<span id="statements"></span><h2>Statements<a class="headerlink" href="#statements" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">+=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span>                   <span class="c1"># target += -0.5 * y * y;</span>
+<span class="n">y</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>                   <span class="c1"># y ~ normal(mu,sigma);</span>
+<span class="n">y</span> <span class="ow">is</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>                   <span class="c1"># y ~ normal(mu,sigma);</span>
+<span class="n">y</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">]</span>            <span class="c1"># y ~ normal(0, 1) T[-0.5, 2.1];</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span> <span class="o">...</span>                   <span class="c1"># for (n in 1:N) {...}</span>
+<span class="k">while</span> <span class="n">cond</span><span class="p">:</span> <span class="o">...</span>                          <span class="c1"># while (cond) {...}</span>
+<span class="k">if</span> <span class="n">cond</span><span class="p">:</span> <span class="o">...</span>                             <span class="c1"># if (cond) {...}</span>
+<span class="k">else</span><span class="p">:</span> <span class="o">...</span>                                <span class="c1"># else {...}</span>
+
+<span class="k">break</span>                                    <span class="c1"># break;</span>
+<span class="k">continue</span>                                 <span class="c1"># continue;</span>
+<span class="k">pass</span>                                     <span class="c1"># //nothing</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="program-blocks">
+<span id="program-blocks"></span><h2>Program Blocks<a class="headerlink" href="#program-blocks" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Data are the keyword argument of the model.</li>
+<li>Top-level declarations are parsed as parameters.</li>
+<li>Top-level statements defined the model.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="p">):</span>                      <span class="c1"># data {int x;}</span>
+  <span class="n">mu</span><span class="p">:</span> <span class="n">real</span>                               <span class="c1"># parameters {real mu;}</span>
+  <span class="n">x</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>                      <span class="c1"># model { x ~ normal(mu, 1)}</span>
+</pre></div>
+</div>
+<p>Yaps also supports a fully annotated syntax where blocks are introduced via python <code class="docutils literal"><span class="pre">with</span></code> statements</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">functions</span><span class="p">:</span> <span class="o">...</span>                      <span class="c1"># function {...}</span>
+<span class="k">with</span> <span class="n">transformed_data</span>                    <span class="c1"># transformed data {...}</span>
+<span class="k">with</span> <span class="n">parameters</span><span class="p">:</span> <span class="o">...</span>                     <span class="c1"># parameters {...}</span>
+<span class="k">with</span> <span class="n">transformed_parameters</span><span class="p">:</span> <span class="o">...</span>         <span class="c1"># transformed parameters {...}</span>
+<span class="k">with</span> <span class="n">model</span><span class="p">:</span> <span class="o">...</span>                          <span class="c1"># model {...}</span>
+<span class="k">with</span> <span class="n">generated</span> <span class="n">quantities</span><span class="p">:</span> <span class="o">...</span>           <span class="c1"># generated quantities {...}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="function-definitions">
+<span id="function-definitions"></span><h2>Function Definitions<a class="headerlink" href="#function-definitions" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="From Stan to Yaps to Stan" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="README.html" class="btn btn-neutral" title="YAPS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Guillaume Baudart, Martin Hirzel, Kiran Kate, Louis Mandel, Avraham Shinnar
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'0.1dev',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
