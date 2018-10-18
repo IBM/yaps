@@ -86,7 +86,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">YAPS</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#install">Install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#for-developers">For Developers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#for-developers">For Developers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#contributions">Contributions</a></li>
 </ul>
@@ -285,6 +288,21 @@ For instance using homebrew:</p>
 <p>To compile a stan file to yaps:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">stan2yaps</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">stan</span>
 </pre></div>
+</div>
+<div class="section" id="documentation">
+<span id="documentation"></span><h3>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h3>
+<p>The documentation is written with Sphynx, using a Markdown parser, and the readthedoc theme.
+You thus need to install the following packages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">sphynx</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx_rtd_theme</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">recommonmark</span>
+</pre></div>
+</div>
+<p>Then to generate the documentation:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span><span class="o">/</span>
+<span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="license">
