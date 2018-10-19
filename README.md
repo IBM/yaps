@@ -141,10 +141,10 @@ stan2yaps path/to/file.stan
 
 ### Documentation
 
-The documentation is written with Sphynx, using a Markdown parser, and the readthedoc theme.
+The documentation is written with Sphinx, using a Markdown parser, and the readthedoc theme.
 You thus need to install the following packages:
 ```
-pip install sphynx
+pip install sphinx
 pip install sphinx_rtd_theme
 pip install recommonmark
 ```

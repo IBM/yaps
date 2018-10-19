@@ -22,7 +22,6 @@ setup(
     packages=['yaps', ],
     license=open('LICENSE.txt').read(),
     long_description=open('README.md').read(),
-    extras_require={ 'test': ['nose'] },
     install_requires=[
         'astor', 'graphviz', 'antlr4-python3-runtime', 'pystan<=2.17.1'
     ],
