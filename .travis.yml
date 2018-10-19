@@ -10,7 +10,7 @@ install:
   - pip install --upgrade pip
 # command to run tests
 before_script:
-  - cd yaps
+  - cd IBM/yaps
   - make
 script:
   - make test
