@@ -16,11 +16,11 @@ Communication with the Stan inference engine is based on `PyStan <https://pystan
    README
    cheatsheet
    inference
+   developers
 
 
-Indices and tables
-==================
+Links
+-----
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+- Stan: http://mc-stan.org/
+- PyStan: https://pystan.readthedocs.io

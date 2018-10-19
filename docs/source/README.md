@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps)[![PyPI version](https://badge.fury.io/py/yaps.svg)](https://badge.fury.io/py/yaps)
+[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps) [![PyPI version](https://badge.fury.io/py/yaps.svg)](https://badge.fury.io/py/yaps)
 
 # YAPS
 
@@ -123,50 +123,6 @@ Compilers from Yaps to Stan and from Stan to Yaps can also be invoked programmat
 yaps.from_stan(code_string=None, code_file=None)  # Compile a Stan model to Yaps
 yaps.to_stan(code_string=None, code_file=None)    # Compile a Yaps model to Stan
 ```
-
-## For Developers
-
-To build the parser, you need to install [antlr](http://www.antlr.org/) before installing the package.
-You will also need to install the nose package to run the tests.
-For instance using homebrew:
-```
-brew install antlr
-pip install nose
-make
-make test
-```
-
-To test the round trip on only one file, after the install:
-```
-yaps-roundtrip path/to/file.stan
-```
-
-### Documentation
-
-The documentation is written with Sphinx, using a Markdown parser, and the readthedoc theme.
-You thus need to install the following packages:
-```
-pip install sphinx sphinx_rtd_theme recommonmark
-```
-
-Then to generate the documentation:
-```
-make doc
-```
-
-### Distribution
-
-To create a new distribution you need the following packages:
-```
-pip install setuptools wheel twine
-```
-
-Then to build the a new distribution and upload it:
-```
-make distrib
-make upload
-```
-Note: you need valid PyPI credentials to upload the package.
 
 
 ## License
