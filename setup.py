@@ -21,14 +21,14 @@ with open("README.md", "r") as fh:
 
 setup(
     name='yaps',
-    version='0.1.0',
+    version='0.1.1',
     author="Guillaume Baudart, Martin Hirzel, Kiran Kate, Louis Mandel, Avraham Shinnar",
     description="A surface language for programming Stan models using python syntax",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://ibm.github.io/yaps/",
     packages=['yaps', ],
-    license=open('LICENSE.txt').read(),
+    license='Apache License 2.0',
     install_requires=[
         'astor', 'graphviz', 'antlr4-python3-runtime', 'pystan<=2.17.1'
     ],
