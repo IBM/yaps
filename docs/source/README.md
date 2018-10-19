@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps)
+
 # YAPS
 
 Yaps is a new surface language for [Stan](http://mc-stan.org/). It allows
@@ -134,25 +136,32 @@ To test the round trip on only one file, after the install:
 yaps-roundtrip path/to/file.stan
 ```
 
-To compile a stan file to yaps:
-```
-stan2yaps path/to/file.stan
-```
-
 ### Documentation
 
 The documentation is written with Sphinx, using a Markdown parser, and the readthedoc theme.
 You thus need to install the following packages:
 ```
-pip install sphinx
-pip install sphinx_rtd_theme
-pip install recommonmark
+pip install sphinx sphinx_rtd_theme recommonmark
 ```
 
 Then to generate the documentation:
 ```
 make doc
 ```
+
+### Distribution
+
+To create a new distribution you need the following packages:
+```
+pip install setuptools wheel twine
+```
+
+Then to build the a new distribution and upload it:
+```
+make distrib
+make upload
+```
+Note: you need valid PyPI credentials to upload the package.
 
 
 ## License

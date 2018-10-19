@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#for-developers">For Developers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distribution">Distribution</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
@@ -160,7 +161,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="yaps">
+  <p><a class="reference external" href="https://travis-ci.org/IBM/yaps"><img alt="Build Status" src="https://travis-ci.org/IBM/yaps.svg?branch=master" /></a></p>
+<div class="section" id="yaps">
 <span id="yaps"></span><h1>YAPS<a class="headerlink" href="#yaps" title="Permalink to this headline">¶</a></h1>
 <p>Yaps is a new surface language for <a class="reference external" href="http://mc-stan.org/">Stan</a>. It allows
 to write Stan programs using Python syntax. For example, consider the
@@ -285,23 +287,30 @@ For instance using homebrew:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">yaps</span><span class="o">-</span><span class="n">roundtrip</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">stan</span>
 </pre></div>
 </div>
-<p>To compile a stan file to yaps:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">stan2yaps</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">stan</span>
-</pre></div>
-</div>
 <div class="section" id="documentation">
 <span id="documentation"></span><h3>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h3>
 <p>The documentation is written with Sphinx, using a Markdown parser, and the readthedoc theme.
 You thus need to install the following packages:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx_rtd_theme</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">recommonmark</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx</span> <span class="n">sphinx_rtd_theme</span> <span class="n">recommonmark</span>
 </pre></div>
 </div>
 <p>Then to generate the documentation:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">doc</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="distribution">
+<span id="distribution"></span><h3>Distribution<a class="headerlink" href="#distribution" title="Permalink to this headline">¶</a></h3>
+<p>To create a new distribution you need the following packages:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">setuptools</span> <span class="n">wheel</span> <span class="n">twine</span>
+</pre></div>
+</div>
+<p>Then to build the a new distribution and upload it:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">distrib</span>
+<span class="n">make</span> <span class="n">upload</span>
+</pre></div>
+</div>
+<p>Note: you need valid PyPI credentials to upload the package.</p>
 </div>
 </div>
 <div class="section" id="license">

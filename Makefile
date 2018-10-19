@@ -10,14 +10,20 @@ doc:
 	cp README.md docs/source/
 	cd docs; make html
 
+distrib:
+	python setup.py sdist bdist_wheel
+
+upload:
+	twine upload dist/*
 
 clean:
 	-rm -f	yaps/stan.tokens yaps/stanLexer.tokens \
-		yaps/stanLexer.py yaps/stanParser.py \
-		yaps/stanListener.py \
 		yaps/stan.interp yaps/stanLexer.interp
 	-rm -rf __pycache__ yaps/__pycache__
-	cd docs; make clean
 
 cleanall: clean
 	-rm -f *~ */*~ */*/*~
+	cd docs; make clean
+	-rm -rf build/
+	-rm -rf dist/
+	-rm -rf yaps.egg-info
