@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps)
+[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps)[![PyPI version](https://badge.fury.io/py/yaps.svg)](https://badge.fury.io/py/yaps)
 
 # YAPS
 
@@ -88,6 +88,11 @@ Yaps depends on the following python packages:
 - pystan
 
 To install Yaps and all its dependencies run:
+```
+pip install yaps
+```
+
+To install from source, first clone the repo, then:
 ```
 pip install .
 ```
