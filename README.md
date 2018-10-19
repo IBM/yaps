@@ -151,8 +151,7 @@ pip install recommonmark
 
 Then to generate the documentation:
 ```
-cd docs/
-make html
+make doc
 ```
 
 
