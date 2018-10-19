@@ -11,5 +11,7 @@ install:
 # command to run tests
 before_script:
   - make
+  - pip install nose
+  - pip install .
 script:
   - make test
