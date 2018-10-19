@@ -1,0 +1,16 @@
+language: python
+cache: pip
+dist: xenial
+python:
+  - "3.6"
+# command to install dependencies
+before_install:
+  - sudo apt-get install -y antlr4
+install:
+  - pip install --upgrade pip
+# command to run tests
+before_script:
+  - cd yaps
+  - make
+script:
+  - make test

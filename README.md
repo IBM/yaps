@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps)
+
 # YAPS
 
 Yaps is a new surface language for [Stan](http://mc-stan.org/). It allows
