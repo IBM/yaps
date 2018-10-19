@@ -89,6 +89,11 @@ Yaps depends on the following python packages:
 
 To install Yaps and all its dependencies run:
 ```
+pip install yaps
+```
+
+To install from source, first clone the repo, then:
+```
 pip install .
 ```
 
