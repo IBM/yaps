@@ -19,7 +19,6 @@ import re as regex
 import sys
 import pystan
 from . import py2ir
-from . import stan2yaps
 
 class FitModel(object):
     def __init__(self, fit_model):
@@ -190,23 +189,3 @@ def to_stan(code_string=None, code_file=None):
             code_string = file.read()
             ast_ = py2ir.parse_string(code_string)
     return print_stan(ast_)
-
-def roundtrip(code_file=None):
-    with open(code_file, 'r') as file:
-        code_string = file.read()
-        print(code_string)
-        print('# -------------')
-        source = stan2yaps.from_stan(code_string)
-        print(source)
-        print('# -------------')
-        target = to_stan(code_string=source)
-        print(target)
-
-def main():
-    if (len(sys.argv) <= 1):
-        assert False, "File name expected"
-    for i in range(1, len(sys.argv)):
-        print('# -------------')
-        print('#', sys.argv[i])
-        print('# -------------')
-        roundtrip(code_file=sys.argv[i])
