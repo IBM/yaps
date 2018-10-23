@@ -8,7 +8,7 @@ test:
 
 doc:
 	cp README.md docs/source/
-	cd docs; make html
+	cd docs; make clean html
 
 distrib:
 	python setup.py sdist bdist_wheel
