@@ -1,9 +1,9 @@
-__pycache__/
-.ipynb_checkpoints/
-.vscode/
-.antlr/
+__pycache__
+.ipynb_checkpoints
+.vscode
+.antlr
 *.interp
 *.tokens
-build/
-dist/
-yaps.egg-info/
+/build/
+/dist/
+/yaps.egg-info/
