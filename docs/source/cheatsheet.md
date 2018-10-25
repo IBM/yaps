@@ -85,6 +85,10 @@ else: ...                                # else {...}
 break                                    # break;
 continue                                 # continue;
 pass                                     # //nothing
+
+with block:                              # {
+ ...                                     #   ...
+                                         # }
 ```
 
 ## Program Blocks
