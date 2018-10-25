@@ -31,7 +31,7 @@ def coin(x: int(lower=0, upper=1)[10]):
 ```
 
 The `@yaps.model` decorator indicates that the function following it
-is a Stan program.  While being syntactically Python, it should be
+is a Stan program.  While being syntactically Python, it is
 semantically reinterpreted as Stan.
 
 The argument of the function corresponds to the `data` block. The
@@ -100,7 +100,7 @@ pip install .
 ## Tools
 
 We provide a tool to compile Stan files to yaps syntax:
-For instance, if `path/to/coin.stan` contain the stan model presented at the beginning, then:
+For instance, if `path/to/coin.stan` contain the Stan model presented at the beginning, then:
 ```
 stan2yaps path/to/coin.stan
 ```

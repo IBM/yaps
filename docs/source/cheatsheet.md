@@ -13,7 +13,7 @@ def coin(x: int(lower=0, upper=1)[10]):
         x[i] <~ bernoulli(theta)
 ```
 
-Types definition, e.g., `int` and `real`, and stan function are defined in `yaps.lib`.
+Types definition, e.g., `int` and `real`, and Stan function are defined in `yaps.lib`.
 
 We list below examples of Yaps code with the corresponding Stan code.
 
@@ -112,4 +112,12 @@ with generated quantities: ...           # generated quantities {...}
 
 ## Function Definitions
 
-TODO
+User defined functions must be defined inside the model in the `functions` block. Their syntax follows Python syntax with type annotations
+
+```python
+with functions:                          # funtions {
+    def succ(x: int) -> int:             #   int succ(int x) {
+        return x + 1                     #     return x + 1;
+                                         #   }
+                                         # }
+```
