@@ -1,6 +1,5 @@
 import pystan
 import numpy as np
-import matplotlib.pyplot as plt
 import yaps
 from .utils import compare_fit_objects, global_num_chains,global_num_iterations,global_random_seed
 
@@ -52,7 +51,8 @@ def test_regression_matrix():
 
     # if matplotlib is installed (optional, not required), a visual summary and
     # traceplot are available
-    print(fit_stan)
+    #print(fit_stan)
+    #import matplotlib.pyplot as plt
     #fit.plot()
     #plt.show()
 
