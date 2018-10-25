@@ -159,38 +159,38 @@
 <p>To build the parser, you need to install <a class="reference external" href="http://www.antlr.org/">antlr</a> before installing the package.
 You will also need to install the nose package to run the tests.
 For instance using homebrew:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">antlr</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">antlr</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="n">nose</span>
 <span class="n">make</span>
 <span class="n">make</span> <span class="n">test</span>
 </pre></div>
 </div>
 <p>To test the round trip on only one file, after the install:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">yaps</span><span class="o">-</span><span class="n">roundtrip</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">stan</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yaps</span><span class="o">-</span><span class="n">roundtrip</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">stan</span>
 </pre></div>
 </div>
 <div class="section" id="documentation">
 <span id="documentation"></span><h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <p>The documentation is written with Sphinx, using a Markdown parser, and the readthedoc theme.
 You thus need to install the following packages:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx</span> <span class="n">sphinx_rtd_theme</span> <span class="n">recommonmark</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">sphinx</span> <span class="n">sphinx_rtd_theme</span> <span class="n">recommonmark</span>
 </pre></div>
 </div>
 <p>Then to generate the documentation:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">doc</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">doc</span>
 </pre></div>
 </div>
 <p>The version number used in the documentation correspond to the last installed version.
-You might want to run <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code> before generating the doc.</p>
+You might want to run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code> before generating the doc.</p>
 </div>
 <div class="section" id="distribution">
 <span id="distribution"></span><h2>Distribution<a class="headerlink" href="#distribution" title="Permalink to this headline">¶</a></h2>
 <p>To create a new distribution you need the following packages:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">setuptools</span> <span class="n">wheel</span> <span class="n">twine</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">setuptools</span> <span class="n">wheel</span> <span class="n">twine</span>
 </pre></div>
 </div>
 <p>Then to build the a new distribution and upload it:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">distrib</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">distrib</span>
 <span class="n">make</span> <span class="n">upload</span>
 </pre></div>
 </div>

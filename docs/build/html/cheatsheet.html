@@ -161,8 +161,8 @@
             
   <div class="section" id="yaps-modeling-language">
 <span id="yaps-modeling-language"></span><h1>Yaps Modeling Language<a class="headerlink" href="#yaps-modeling-language" title="Permalink to this headline">¶</a></h1>
-<p>A yaps model is a python function prefixed by the <code class="docutils literal"><span class="pre">&#64;yaps.model</span></code> decorator</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaps</span>
+<p>A yaps model is a python function prefixed by the <code class="docutils literal notranslate"><span class="pre">&#64;yaps.model</span></code> decorator</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaps</span>
 <span class="kn">from</span> <span class="nn">yaps.lib</span> <span class="kn">import</span> <span class="nb">int</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">bernoulli</span>
 
 <span class="nd">@yaps.model</span>
@@ -172,18 +172,18 @@
         <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;~</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Types definition, e.g., <code class="docutils literal"><span class="pre">int</span></code> and <code class="docutils literal"><span class="pre">real</span></code>, and stan function are defined in <code class="docutils literal"><span class="pre">yaps.lib</span></code>.</p>
+<p>Types definition, e.g., <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">real</span></code>, and Stan function are defined in <code class="docutils literal notranslate"><span class="pre">yaps.lib</span></code>.</p>
 <p>We list below examples of Yaps code with the corresponding Stan code.</p>
 <div class="section" id="comments">
 <span id="comments"></span><h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># This is a comment</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is a comment</span>
 <span class="n">x</span> <span class="o">&lt;~</span> <span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># This is a comment</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="data-types-and-variable-declarations">
 <span id="data-types-and-variable-declarations"></span><h2>Data Types and Variable Declarations<a class="headerlink" href="#data-types-and-variable-declarations" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span>                                   <span class="c1"># int x;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span>                                   <span class="c1"># int x;</span>
 <span class="n">x</span><span class="p">:</span> <span class="n">real</span>                                  <span class="c1"># real x;</span>
 
 <span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>                              <span class="c1"># real x[10];</span>
@@ -204,7 +204,7 @@
 </div>
 <div class="section" id="expressions">
 <span id="expressions"></span><h2>Expressions<a class="headerlink" href="#expressions" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">m1</span><span class="p">:</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>    <span class="c1"># matrix[3,2] m1 = [[1,2],[3,4],[5,6]];</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">m1</span><span class="p">:</span> <span class="n">matrix</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>    <span class="c1"># matrix[3,2] m1 = [[1,2],[3,4],[5,6]];</span>
 <span class="n">vX</span><span class="p">:</span> <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span>         <span class="c1"># vector[2] vX = [1,10]&#39;;</span>
 <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1000</span><span class="p">}</span>                  <span class="c1"># int a[3] = {1,10,100};</span>
 <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">},{</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">}}</span>          <span class="c1"># int b[2,3] = {{1,2,3},{4,5,6}};</span>
@@ -229,7 +229,7 @@
 </div>
 <div class="section" id="statements">
 <span id="statements"></span><h2>Statements<a class="headerlink" href="#statements" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">+=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span>                   <span class="c1"># target += -0.5 * y * y;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">+=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span>                   <span class="c1"># target += -0.5 * y * y;</span>
 <span class="n">y</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>                   <span class="c1"># y ~ normal(mu,sigma);</span>
 <span class="n">y</span> <span class="ow">is</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>                   <span class="c1"># y ~ normal(mu,sigma);</span>
 <span class="n">y</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">]</span>            <span class="c1"># y ~ normal(0, 1) T[-0.5, 2.1];</span>
@@ -242,6 +242,10 @@
 <span class="k">break</span>                                    <span class="c1"># break;</span>
 <span class="k">continue</span>                                 <span class="c1"># continue;</span>
 <span class="k">pass</span>                                     <span class="c1"># //nothing</span>
+
+<span class="k">with</span> <span class="n">block</span><span class="p">:</span>                              <span class="c1"># {</span>
+ <span class="o">...</span>                                     <span class="c1">#   ...</span>
+                                         <span class="c1"># }</span>
 </pre></div>
 </div>
 </div>
@@ -252,13 +256,13 @@
 <li>Top-level declarations are parsed as parameters.</li>
 <li>Top-level statements defined the model.</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="p">):</span>                      <span class="c1"># data {int x;}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="p">):</span>                      <span class="c1"># data {int x;}</span>
   <span class="n">mu</span><span class="p">:</span> <span class="n">real</span>                               <span class="c1"># parameters {real mu;}</span>
   <span class="n">x</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>                      <span class="c1"># model { x ~ normal(mu, 1)}</span>
 </pre></div>
 </div>
-<p>Yaps also supports a fully annotated syntax where blocks are introduced via python <code class="docutils literal"><span class="pre">with</span></code> statements</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">functions</span><span class="p">:</span> <span class="o">...</span>                      <span class="c1"># function {...}</span>
+<p>Yaps also supports a fully annotated syntax where blocks are introduced via python <code class="docutils literal notranslate"><span class="pre">with</span></code> statements</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">functions</span><span class="p">:</span> <span class="o">...</span>                      <span class="c1"># function {...}</span>
 <span class="k">with</span> <span class="n">transformed_data</span>                    <span class="c1"># transformed data {...}</span>
 <span class="k">with</span> <span class="n">parameters</span><span class="p">:</span> <span class="o">...</span>                     <span class="c1"># parameters {...}</span>
 <span class="k">with</span> <span class="n">transformed_parameters</span><span class="p">:</span> <span class="o">...</span>         <span class="c1"># transformed parameters {...}</span>
@@ -269,7 +273,14 @@
 </div>
 <div class="section" id="function-definitions">
 <span id="function-definitions"></span><h2>Function Definitions<a class="headerlink" href="#function-definitions" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<p>User defined functions must be defined inside the model in the <code class="docutils literal notranslate"><span class="pre">functions</span></code> block. Their syntax follows Python syntax with type annotations</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">functions</span><span class="p">:</span>                          <span class="c1"># funtions {</span>
+    <span class="k">def</span> <span class="nf">succ</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>             <span class="c1">#   int succ(int x) {</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>                     <span class="c1">#     return x + 1;</span>
+                                         <span class="c1">#   }</span>
+                                         <span class="c1"># }</span>
+</pre></div>
+</div>
 </div>
 </div>
 

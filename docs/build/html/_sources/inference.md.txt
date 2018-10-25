@@ -1,7 +1,7 @@
 # Inference
 
 Communication with the Stan inference engine is based on [PyStan](https://pystan.readthedocs.io/en/latest/).
-When a model is defined, the name of the model is linked to the compiled stan code.
+When a model is defined, the name of the model is linked to the compiled Stan code.
 
 ## PyStan API
 The first option is to use the PyStan API to call the inference engine with `str(model)` for the model code.
