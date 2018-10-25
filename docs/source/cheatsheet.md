@@ -1,6 +1,6 @@
 # Yaps Modeling Language
 
-A yaps model is a python function prefixed by the `@yaps.model` decorator
+A Yaps model is a Python function prefixed by the `@yaps.model` decorator.
 
 ```python
 import yaps
@@ -13,9 +13,9 @@ def coin(x: int(lower=0, upper=1)[10]):
         x[i] <~ bernoulli(theta)
 ```
 
-Types definition, e.g., `int` and `real`, and Stan function are defined in `yaps.lib`.
+Types definitions, e.g., `int` and `real`, and Stan functions are defined in `yaps.lib`.
 
-We list below examples of Yaps code with the corresponding Stan code.
+Below are examples of Yaps code with the corresponding Stan code.
 
 ## Comments
 
@@ -25,7 +25,10 @@ x <~ Normal(0,1) # This is a comment
 ```
 
 ## Data Types and Variable Declarations
+
 ```python
+Yaps                                     # Stan
+############################################################################
 x: int                                   # int x;
 x: real                                  # real x;
 
@@ -87,20 +90,20 @@ continue                                 # continue;
 pass                                     # //nothing
 
 with block:                              # {
- ...                                     #   ...
+    ...                                  #   ...
                                          # }
 ```
 
 ## Program Blocks
 
-- Data are the keyword argument of the model.
-- Top-level declarations are parsed as parameters.
-- Top-level statements defined the model.
+- The keyword arguments of the Yaps model function are Stan data.
+- Yaps top-level declarations are parsed as Stan parameters.
+- Yaps top-level statements define the Stan model.
 
 ```python
 def model(x: real):                      # data {int x;}
-  mu: real                               # parameters {real mu;}
-  x <~ normal(mu,1)                      # model { x ~ normal(mu, 1)}
+    mu: real                             # parameters {real mu;}
+    x <~ normal(mu, 1)                   # model { x ~ normal(mu, 1)}
 ```
 
 Yaps also supports a fully annotated syntax where blocks are introduced via python `with` statements
@@ -116,11 +119,11 @@ with generated quantities: ...           # generated quantities {...}
 
 ## Function Definitions
 
-User defined functions must be defined inside the model in the `functions` block. Their syntax follows Python syntax with type annotations
+User-defined functions must be defined inside the model in the `functions` block. Their syntax follows Python syntax with type annotations
 
 ```python
 with functions:                          # funtions {
-    def succ(x: int) -> int:             #   int succ(int x) {
+    def successor(x: int) -> int:        #   int successor(int x) {
         return x + 1                     #     return x + 1;
                                          #   }
                                          # }
