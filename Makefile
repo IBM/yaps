@@ -4,7 +4,7 @@ yaps/stanLexer.py yaps/stanParser.py: yaps/stan.g4
 	antlr4 -Dlanguage=Python3 yaps/stan.g4
 
 test:
-	nosetests -v
+	nosetests -v tests/stan/test_stan.py .
 
 doc:
 	cp README.md docs/source/
