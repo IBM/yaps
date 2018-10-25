@@ -38,7 +38,7 @@ def check_roundtrip(path):
             assert True, 'Error: Invalid Original Stan code'
 
 def test_stan():
-    pathlist = Path('tests/stan').glob('*.stan')
+    pathlist = Path('.').glob('*.stan')
     for p in pathlist:
         path = str(p)
         yield check_roundtrip, path
