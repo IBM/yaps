@@ -5,7 +5,14 @@ You will also need to install the nose package to run the tests.
 For instance using homebrew:
 ```
 brew install antlr
-pip install nose
+pip install nose astor graphviz antlr4-python3-runtime pystan
+make
+make test
+```
+Or equivalently on Ubuntu:
+```
+apt install antlr4
+pip install nose astor graphviz antlr4-python3-runtime pystan
 make
 make test
 ```
