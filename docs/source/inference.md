@@ -27,9 +27,9 @@ print("mean of theta: {:.3f}".format(theta_mean))
 ## Yaps infer
 
 Alternatively, Yaps provides an `yaps.infer` function that is a wrapper for `pystan.stan`.
-Compared to `pystan.stan` data are passed to the model as keyword parameters.
-After the inference `yaps.infer` returns an object with fields for parameters.
-For instance the second part of the previous example can be rewritten:
+Compared to `pystan.stan`, observed data are passed to the model as keyword parameters.
+After the inference, `yaps.infer` returns an object with fields for learned latent parameters.
+For instance, the second part of the previous example can be rewritten:
 
 ```python
 flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
