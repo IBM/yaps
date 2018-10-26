@@ -27,7 +27,7 @@ Then to generate the documentation:
 ```
 make doc
 ```
-The version number used in the documentation correspond to the last installed version.
+The version number used in the documentation corresponds to the last installed version.
 You might want to run `pip install .` before generating the doc.
 
 ## Distribution
@@ -37,7 +37,7 @@ To create a new distribution you need the following packages:
 pip install setuptools wheel twine
 ```
 
-Then to build the a new distribution and upload it:
+Then to build the new distribution and upload it:
 ```
 make distrib
 make upload
