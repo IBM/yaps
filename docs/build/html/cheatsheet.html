@@ -161,7 +161,7 @@
             
   <div class="section" id="yaps-modeling-language">
 <span id="yaps-modeling-language"></span><h1>Yaps Modeling Language<a class="headerlink" href="#yaps-modeling-language" title="Permalink to this headline">¶</a></h1>
-<p>A yaps model is a python function prefixed by the <code class="docutils literal notranslate"><span class="pre">&#64;yaps.model</span></code> decorator</p>
+<p>A Yaps model is a Python function prefixed by the <code class="docutils literal notranslate"><span class="pre">&#64;yaps.model</span></code> decorator.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaps</span>
 <span class="kn">from</span> <span class="nn">yaps.lib</span> <span class="kn">import</span> <span class="nb">int</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">bernoulli</span>
 
@@ -172,8 +172,8 @@
         <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;~</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Types definition, e.g., <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">real</span></code>, and Stan function are defined in <code class="docutils literal notranslate"><span class="pre">yaps.lib</span></code>.</p>
-<p>We list below examples of Yaps code with the corresponding Stan code.</p>
+<p>Types definitions, e.g., <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">real</span></code>, and Stan functions are defined in <code class="docutils literal notranslate"><span class="pre">yaps.lib</span></code>.</p>
+<p>Below are examples of Yaps code with the corresponding Stan code.</p>
 <div class="section" id="comments">
 <span id="comments"></span><h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is a comment</span>
@@ -183,7 +183,9 @@
 </div>
 <div class="section" id="data-types-and-variable-declarations">
 <span id="data-types-and-variable-declarations"></span><h2>Data Types and Variable Declarations<a class="headerlink" href="#data-types-and-variable-declarations" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span>                                   <span class="c1"># int x;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Yaps</span>                                     <span class="c1"># Stan</span>
+<span class="c1">############################################################################</span>
+<span class="n">x</span><span class="p">:</span> <span class="nb">int</span>                                   <span class="c1"># int x;</span>
 <span class="n">x</span><span class="p">:</span> <span class="n">real</span>                                  <span class="c1"># real x;</span>
 
 <span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>                              <span class="c1"># real x[10];</span>
@@ -244,7 +246,7 @@
 <span class="k">pass</span>                                     <span class="c1"># //nothing</span>
 
 <span class="k">with</span> <span class="n">block</span><span class="p">:</span>                              <span class="c1"># {</span>
- <span class="o">...</span>                                     <span class="c1">#   ...</span>
+    <span class="o">...</span>                                  <span class="c1">#   ...</span>
                                          <span class="c1"># }</span>
 </pre></div>
 </div>
@@ -252,13 +254,13 @@
 <div class="section" id="program-blocks">
 <span id="program-blocks"></span><h2>Program Blocks<a class="headerlink" href="#program-blocks" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Data are the keyword argument of the model.</li>
-<li>Top-level declarations are parsed as parameters.</li>
-<li>Top-level statements defined the model.</li>
+<li>The keyword arguments of the Yaps model function are Stan data.</li>
+<li>Yaps top-level declarations are parsed as Stan parameters.</li>
+<li>Yaps top-level statements define the Stan model.</li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">real</span><span class="p">):</span>                      <span class="c1"># data {int x;}</span>
-  <span class="n">mu</span><span class="p">:</span> <span class="n">real</span>                               <span class="c1"># parameters {real mu;}</span>
-  <span class="n">x</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>                      <span class="c1"># model { x ~ normal(mu, 1)}</span>
+    <span class="n">mu</span><span class="p">:</span> <span class="n">real</span>                             <span class="c1"># parameters {real mu;}</span>
+    <span class="n">x</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>                   <span class="c1"># model { x ~ normal(mu, 1)}</span>
 </pre></div>
 </div>
 <p>Yaps also supports a fully annotated syntax where blocks are introduced via python <code class="docutils literal notranslate"><span class="pre">with</span></code> statements</p>
@@ -273,9 +275,9 @@
 </div>
 <div class="section" id="function-definitions">
 <span id="function-definitions"></span><h2>Function Definitions<a class="headerlink" href="#function-definitions" title="Permalink to this headline">¶</a></h2>
-<p>User defined functions must be defined inside the model in the <code class="docutils literal notranslate"><span class="pre">functions</span></code> block. Their syntax follows Python syntax with type annotations</p>
+<p>User-defined functions must be defined inside the model in the <code class="docutils literal notranslate"><span class="pre">functions</span></code> block. Their syntax follows Python syntax with type annotations</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">functions</span><span class="p">:</span>                          <span class="c1"># funtions {</span>
-    <span class="k">def</span> <span class="nf">succ</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>             <span class="c1">#   int succ(int x) {</span>
+    <span class="k">def</span> <span class="nf">successor</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>        <span class="c1">#   int successor(int x) {</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>                     <span class="c1">#     return x + 1;</span>
                                          <span class="c1">#   }</span>
                                          <span class="c1"># }</span>
@@ -325,20 +327,11 @@
 
     
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'0.1.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
 
   
