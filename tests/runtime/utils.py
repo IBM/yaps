@@ -1,6 +1,6 @@
 import numpy as np
 
-global_num_iterations=1000
+global_num_iterations=10
 global_num_chains=4
 global_random_seed=42
 
