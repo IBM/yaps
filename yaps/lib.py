@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-def infer(model, *args, **kwargs):
-    return model.infer(*args, **kwargs)
+def apply(func, model, *args, **kwargs):
+    return model.apply(func, *args, **kwargs)
 
 # Types
 

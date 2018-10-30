@@ -1,5 +1,6 @@
 from yaps.lib import int, real, uniform, bernoulli
 import yaps as yaps
+import pystan
 
 @yaps.model
 def coin(x: int(lower=0, upper=1)[10]):
@@ -12,5 +13,5 @@ coin.graph
 print(coin)
 
 flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
-posterior = yaps.infer(coin(x=flips), iter=1000)
+posterior = yaps.apply(pystan.stan, coin(x=flips), iter=1000)
 print("mean of theta: {:.3f}".format(posterior.theta.mean()))

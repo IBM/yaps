@@ -17,7 +17,6 @@ import math
 import inspect as inspect
 import re as regex
 import sys
-import pystan
 from . import py2ir
 
 class FitModel(object):
@@ -98,9 +97,9 @@ class model_with_args(object):
 
         return err
 
-    def infer(self, **kwargs):
+    def apply(self, func, **kwargs):
         try:
-            return FitModel(pystan.stan(model_code=self.model.stan_code, model_name=self.model.func.__name__, data=self.stored_data, **kwargs))
+            return FitModel(func(model_code=self.model.stan_code, model_name=self.model.func.__name__, data=self.stored_data, **kwargs))
         except ValueError as err:
             e = ValueError(self.map_valueerror(str(err)))
             e.__traceback__ = err.__traceback__
@@ -147,8 +146,8 @@ class model(object):
         else:
             return self
 
-    def infer(self, **kwargs):
-        return model_with_args(self, {}).infer(**kwargs)
+    def infer(self, func, **kwargs):
+        return model_with_args(self, {}).infer(func, **kwargs)
 
     @property
     def graph(self):

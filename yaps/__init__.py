@@ -16,7 +16,7 @@ from . import lib
 from . import decorator
 from . import stan2yaps
 
-infer = lib.infer
+apply = lib.apply
 dependent_type_var = lib.dependent_type_var
 model = decorator.model
 
