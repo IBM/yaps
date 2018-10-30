@@ -26,7 +26,7 @@ def test_regression_matrix():
     yaps_code = yaps.from_stan(code_string=stan_code)
     generated_stan_code = yaps.to_stan(yaps_code)
 
-    # Add Data, from http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+    # Add Data
     num_samples = 100
     num_features = 2
     #X = np.array([[1, 1], [1, 2], [2, 2], [2, 3]])

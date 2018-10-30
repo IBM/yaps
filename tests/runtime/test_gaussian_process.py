@@ -34,7 +34,7 @@ def test_gaussian_process():
     yaps_code = yaps.from_stan(code_string=stan_code)
     generated_stan_code = yaps.to_stan(yaps_code)
 
-    # Add Data, from http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+    # Add Data
     num_samples = 6
     X = np.array([5, 6, 1, 0, 9, 10])
 

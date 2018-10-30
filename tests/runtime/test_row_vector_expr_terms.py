@@ -4,35 +4,53 @@ import yaps
 from .utils import compare_fit_objects, global_num_chains,global_num_iterations,global_random_seed
 
 
-def test_kmeans():
+def test_row_vector_expr_terms():
     stan_code = """
+        functions {
+
+        vector foo(int d) {
+            vector[3] result = [10.1, 11*3.0, d]';
+            return result;
+        }
+
+        row_vector bar() {
+            row_vector[2] result = [7, 8];
+            return result;
+        }
+
+        }
         data {
-        int<lower=0> N;  // number of data points
-        int<lower=1> D;  // number of dimensions
-        int<lower=1> K;  // number of clusters
-        vector[D] y[N];  // observations
+        real x;
+        real y;
         }
         transformed data {
-        real<upper=0> neg_log_K;
-        neg_log_K = -log(K);
+        vector[3] td_v1 = [ 21, 22, 23]';
+        row_vector[2] td_rv1 = [ 1, 2];
+        td_rv1 = [ x, y];
+        td_rv1 = [ x + y, x - y];
+        td_rv1 = [ x^2, y^2];
+        td_v1 = foo(1);
+        td_rv1 = bar();
         }
         parameters {
-        vector[D] mu[K]; // cluster means
+        real z;
         }
         transformed parameters {
-        real<upper=0> soft_z[N, K]; // log unnormalized clusters
-        for (n in 1:N)
-            for (k in 1:K)
-            soft_z[n, k] = neg_log_K
-                - 0.5 * dot_self(mu[k] - y[n]);
+        vector[3] tp_v1 = [ 41, 42, 43]';
+        row_vector[2] tp_rv1 = [ 1, x];
+        tp_v1 = foo(1);
+        tp_v1 = [ 51, y, z]';
+        tp_rv1 = [ y, z];
+        tp_rv1 = bar();
         }
         model {
-        // prior
-        for (k in 1:K)
-                mu[k] ~ normal(0, 1);
-        // likelihood
-        for (n in 1:N)
-                target += log_sum_exp(soft_z[n]);
+        z ~ normal(0,1);
+        }
+        generated quantities {
+        vector[3] gq_v1 = [1, x, y]';
+        row_vector[3] gq_rv1 = [1, x, y];
+        row_vector[3] gq_rv2 = [1, x, z];
+        gq_v1 = foo(1);
         }
     """
 
@@ -41,15 +59,9 @@ def test_kmeans():
     generated_stan_code = yaps.to_stan(yaps_code)
 
     # Add Data
-    num_samples = 6
-    num_features = 2
-    X = np.array([[1, 2], [1, 4], [1, 0], [4, 2], [4, 4], [4, 0]])
-    num_clusters = 2
-
-    data = {'N': num_samples,
-            'D': num_features,
-            'K': num_clusters,
-            'y': X}
+    x = 56.789
+    y = 98.765
+    data = {'x':x, 'y':y}
 
     # Compile and fit
     sm1 = pystan.StanModel(model_code=str(stan_code))
@@ -68,5 +80,5 @@ def test_kmeans():
     #fit.plot()
     #plt.show()
 
-#if __name__ == "__main__":
-test_kmeans()
+if __name__ == "__main__":
+    test_row_vector_expr_terms()

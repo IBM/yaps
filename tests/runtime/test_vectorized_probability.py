@@ -4,35 +4,19 @@ import yaps
 from .utils import compare_fit_objects, global_num_chains,global_num_iterations,global_random_seed
 
 
-def test_kmeans():
+def test_vectorized_probability():
     stan_code = """
         data {
-        int<lower=0> N;  // number of data points
-        int<lower=1> D;  // number of dimensions
-        int<lower=1> K;  // number of clusters
-        vector[D] y[N];  // observations
-        }
-        transformed data {
-        real<upper=0> neg_log_K;
-        neg_log_K = -log(K);
+        int<lower=1> K;
+        int<lower=1> N;
+        matrix[N, K] x;
+        vector[N] y;
         }
         parameters {
-        vector[D] mu[K]; // cluster means
-        }
-        transformed parameters {
-        real<upper=0> soft_z[N, K]; // log unnormalized clusters
-        for (n in 1:N)
-            for (k in 1:K)
-            soft_z[n, k] = neg_log_K
-                - 0.5 * dot_self(mu[k] - y[n]);
+        vector[K] beta;
         }
         model {
-        // prior
-        for (k in 1:K)
-                mu[k] ~ normal(0, 1);
-        // likelihood
-        for (n in 1:N)
-                target += log_sum_exp(soft_z[n]);
+        y ~ normal(x * beta, 1);
         }
     """
 
@@ -41,15 +25,17 @@ def test_kmeans():
     generated_stan_code = yaps.to_stan(yaps_code)
 
     # Add Data
-    num_samples = 6
+    num_samples = 100
     num_features = 2
-    X = np.array([[1, 2], [1, 4], [1, 0], [4, 2], [4, 4], [4, 0]])
-    num_clusters = 2
+    #X = np.array([[1, 1], [1, 2], [2, 2], [2, 3]])
+    X = np.random.randint(5, size=(100, 2))
+    # y = 1 * x_0 + 2 * x_1 + 3
+    y = np.dot(X, np.array([1, 2])) + 3
 
     data = {'N': num_samples,
-            'D': num_features,
-            'K': num_clusters,
-            'y': X}
+            'K': num_features,
+            'x': X,
+            'y': y}
 
     # Compile and fit
     sm1 = pystan.StanModel(model_code=str(stan_code))
@@ -68,5 +54,5 @@ def test_kmeans():
     #fit.plot()
     #plt.show()
 
-#if __name__ == "__main__":
-test_kmeans()
+if __name__ == "__main__":
+    test_vectorized_probability()

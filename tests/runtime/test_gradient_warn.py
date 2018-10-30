@@ -30,7 +30,7 @@ def test_gradient_warn():
     yaps_code = yaps.from_stan(code_string=stan_code)
     generated_stan_code = yaps.to_stan(yaps_code)
 
-    # Add Data, from http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+    # Add Data
     num_samples = 10
     X = [63.1, 108.3, 1.0, 46.0, 22.9, 14.8, 28.8, 52.5, 60.1, 81.3]
 
