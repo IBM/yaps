@@ -183,9 +183,9 @@ When a model is defined, the name of the model is linked to the compiled Stan co
 <div class="section" id="yaps-infer">
 <span id="yaps-infer"></span><h2>Yaps infer<a class="headerlink" href="#yaps-infer" title="Permalink to this headline">¶</a></h2>
 <p>Alternatively, Yaps provides an <code class="docutils literal notranslate"><span class="pre">yaps.infer</span></code> function that is a wrapper for <code class="docutils literal notranslate"><span class="pre">pystan.stan</span></code>.
-Compared to <code class="docutils literal notranslate"><span class="pre">pystan.stan</span></code> data are passed to the model as keyword parameters.
-After the inference <code class="docutils literal notranslate"><span class="pre">yaps.infer</span></code> returns an object with fields for parameters.
-For instance the second part of the previous example can be rewritten:</p>
+Compared to <code class="docutils literal notranslate"><span class="pre">pystan.stan</span></code>, observed data are passed to the model as keyword parameters.
+After the inference, <code class="docutils literal notranslate"><span class="pre">yaps.infer</span></code> returns an object with fields for learned latent parameters.
+For instance, the second part of the previous example can be rewritten:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">flips</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="n">posterior</span> <span class="o">=</span> <span class="n">yaps</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">),</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">theta_mean</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -236,20 +236,11 @@ For instance the second part of the previous example can be rewritten:</p>
 
     
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'0.1.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
 
   

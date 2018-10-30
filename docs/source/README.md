@@ -2,9 +2,9 @@
 
 # YAPS
 
-Yaps is a new surface language for [Stan](http://mc-stan.org/). It allows
-to write Stan programs using Python syntax. For example, consider the
-following Stan program:
+Yaps is a new surface language for [Stan](http://mc-stan.org/). It lets
+users write Stan programs using Python syntax. For example, consider the
+following Stan program, which models tosses `x` of a coin with bias `theta`:
 ```stan
 data {
   int<lower=0,upper=1> x[10];
@@ -36,7 +36,7 @@ semantically reinterpreted as Stan.
 
 The argument of the function corresponds to the `data` block. The
 type of the data must be declared. Here, you can see that `x` is an
-array of integers between `0` and `1` (`int(lower=0, upper=1)[10]`).
+array of 10 integers between `0` and `1` (`int(lower=0, upper=1)[10]`).
 
 Parameters are declared as variables with their type in the body of
 the function. Their prior can be defined using the sampling operator
@@ -65,18 +65,18 @@ The corresponding Stan program can be displayed using the `print` function:
 print(coin)
 ```
 
-Finally, it is possible to launch the inference on the defined model applied to some data:
+Finally, it is possible to launch Bayesian inference on the defined model applied to some data:
 ```python
 flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
 posterior = yaps.infer(coin(x=flips), iter=1000)
 ```
-It returns `posterior`, a dictionary containing the value of the parameters:
+The resulting `posterior` is an object with fields for the latent model parameters:
 ```python
 print("theta: {:.3f}".format(posterior.theta.mean()))
 ```
 
-Yaps is built on top on [PyStan](http://mc-stan.org/users/interfaces/pystan). It provides a lighter
-syntax to Stan programs. It allows to take advantage of Python tooling
+Yaps is built on top of [PyStan](http://mc-stan.org/users/interfaces/pystan). It provides a lighter
+syntax to Stan programs. Since Yaps uses Python syntax, users can take advantage of Python tooling
 for syntax highlighting, indentation, error reporting, ...
 
 ## Install
@@ -99,7 +99,7 @@ pip install .
 
 ## Tools
 
-We provide a tool to compile Stan files to yaps syntax:
+We provide a tool to compile Stan files to Yaps syntax.
 For instance, if `path/to/coin.stan` contain the Stan model presented at the beginning, then:
 ```
 stan2yaps path/to/coin.stan
@@ -136,5 +136,5 @@ Yaps is distributed under the terms of the Apache 2.0 License, see
 
 Yaps is still at an early phase of development and we welcome
 contributions. Contributors are expected to submit a 'Developer's
-Certificate of Origin' which can be found in [DCO1.1.txt](DCO1.1.txt).
+Certificate of Origin', which can be found in [DCO1.1.txt](DCO1.1.txt).
 

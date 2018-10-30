@@ -5,7 +5,14 @@ You will also need to install the nose package to run the tests.
 For instance using homebrew:
 ```
 brew install antlr
-pip install nose
+pip install nose astor graphviz antlr4-python3-runtime pystan
+make
+make test
+```
+Or equivalently on Ubuntu:
+```
+apt install antlr4
+pip install nose astor graphviz antlr4-python3-runtime pystan
 make
 make test
 ```
@@ -27,7 +34,7 @@ Then to generate the documentation:
 ```
 make doc
 ```
-The version number used in the documentation correspond to the last installed version.
+The version number used in the documentation corresponds to the last installed version.
 You might want to run `pip install .` before generating the doc.
 
 ## Distribution
@@ -37,7 +44,7 @@ To create a new distribution you need the following packages:
 pip install setuptools wheel twine
 ```
 
-Then to build the a new distribution and upload it:
+Then to build the new distribution and upload it:
 ```
 make distrib
 make upload

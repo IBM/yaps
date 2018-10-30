@@ -160,9 +160,9 @@
   <p><a class="reference external" href="https://travis-ci.org/IBM/yaps"><img alt="Build Status" src="https://travis-ci.org/IBM/yaps.svg?branch=master" /></a> <a class="reference external" href="https://badge.fury.io/py/yaps"><img alt="PyPI version" src="https://badge.fury.io/py/yaps.svg" /></a></p>
 <div class="section" id="yaps">
 <span id="yaps"></span><h1>YAPS<a class="headerlink" href="#yaps" title="Permalink to this headline">¶</a></h1>
-<p>Yaps is a new surface language for <a class="reference external" href="http://mc-stan.org/">Stan</a>. It allows
-to write Stan programs using Python syntax. For example, consider the
-following Stan program:</p>
+<p>Yaps is a new surface language for <a class="reference external" href="http://mc-stan.org/">Stan</a>. It lets
+users write Stan programs using Python syntax. For example, consider the
+following Stan program, which models tosses <code class="docutils literal notranslate"><span class="pre">x</span></code> of a coin with bias <code class="docutils literal notranslate"><span class="pre">theta</span></code>:</p>
 <div class="highlight-stan notranslate"><div class="highlight"><pre><span></span><span class="kn">data</span> <span class="p">{</span>
   <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
 <span class="p">}</span>
@@ -192,7 +192,7 @@ is a Stan program.  While being syntactically Python, it is
 semantically reinterpreted as Stan.</p>
 <p>The argument of the function corresponds to the <code class="docutils literal notranslate"><span class="pre">data</span></code> block. The
 type of the data must be declared. Here, you can see that <code class="docutils literal notranslate"><span class="pre">x</span></code> is an
-array of integers between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">int(lower=0,</span> <span class="pre">upper=1)[10]</span></code>).</p>
+array of 10 integers between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">int(lower=0,</span> <span class="pre">upper=1)[10]</span></code>).</p>
 <p>Parameters are declared as variables with their type in the body of
 the function. Their prior can be defined using the sampling operator
 <code class="docutils literal notranslate"><span class="pre">&lt;~</span></code> (or <code class="docutils literal notranslate"><span class="pre">is</span></code>).</p>
@@ -216,17 +216,17 @@ For example, the previous program could also be written as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">coin</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Finally, it is possible to launch the inference on the defined model applied to some data:</p>
+<p>Finally, it is possible to launch Bayesian inference on the defined model applied to some data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">flips</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="n">posterior</span> <span class="o">=</span> <span class="n">yaps</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">),</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>It returns <code class="docutils literal notranslate"><span class="pre">posterior</span></code>, a dictionary containing the value of the parameters:</p>
+<p>The resulting <code class="docutils literal notranslate"><span class="pre">posterior</span></code> is an object with fields for the latent model parameters:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;theta: {:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">posterior</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
 </pre></div>
 </div>
-<p>Yaps is built on top on <a class="reference external" href="http://mc-stan.org/users/interfaces/pystan">PyStan</a>. It provides a lighter
-syntax to Stan programs. It allows to take advantage of Python tooling
+<p>Yaps is built on top of <a class="reference external" href="http://mc-stan.org/users/interfaces/pystan">PyStan</a>. It provides a lighter
+syntax to Stan programs. Since Yaps uses Python syntax, users can take advantage of Python tooling
 for syntax highlighting, indentation, error reporting, …</p>
 <div class="section" id="install">
 <span id="install"></span><h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
@@ -248,7 +248,7 @@ for syntax highlighting, indentation, error reporting, …</p>
 </div>
 <div class="section" id="tools">
 <span id="tools"></span><h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
-<p>We provide a tool to compile Stan files to yaps syntax:
+<p>We provide a tool to compile Stan files to Yaps syntax.
 For instance, if <code class="docutils literal notranslate"><span class="pre">path/to/coin.stan</span></code> contain the Stan model presented at the beginning, then:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stan2yaps</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coin</span><span class="o">.</span><span class="n">stan</span>
 </pre></div>
@@ -281,7 +281,7 @@ For instance, if <code class="docutils literal notranslate"><span class="pre">pa
 <span id="contributions"></span><h2>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h2>
 <p>Yaps is still at an early phase of development and we welcome
 contributions. Contributors are expected to submit a ‘Developer’s
-Certificate of Origin’ which can be found in <a class="reference external" href="DCO1.1.txt">DCO1.1.txt</a>.</p>
+Certificate of Origin’, which can be found in <a class="reference external" href="DCO1.1.txt">DCO1.1.txt</a>.</p>
 </div>
 </div>
 
@@ -326,20 +326,11 @@ Certificate of Origin’ which can be found in <a class="reference external" hre
 
     
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'0.1.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
 
   
