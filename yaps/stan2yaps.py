@@ -546,7 +546,9 @@ class Stan2Astpy(stanListener):
         iter = None
         if ctx.expression() is not None:
             lbound = ctx.atom().ast
-            ubound = ctx.expression().ast
+            ubound = BinOp(left=ctx.expression().ast,
+                           op=Add(),
+                           right=Num(n=1))
             iter = Call(func=Name(
                 id='range', ctx=Load()),
                 args=[lbound, ubound],

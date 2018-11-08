@@ -21,7 +21,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='yaps',
-    version='0.1.1',
+    version='0.1.2',
     author="Guillaume Baudart, Martin Hirzel, Kiran Kate, Louis Mandel, Avraham Shinnar",
     description="A surface language for programming Stan models using python syntax",
     long_description=long_description,
@@ -30,7 +30,7 @@ setup(
     packages=['yaps', ],
     license='Apache License 2.0',
     install_requires=[
-        'astor', 'graphviz', 'antlr4-python3-runtime', 'pystan<=2.17.1'
+        'astor', 'graphviz', 'antlr4-python3-runtime'
     ],
     entry_points = {
         'console_scripts': ['stan2yaps=yaps.stan2yaps:main',

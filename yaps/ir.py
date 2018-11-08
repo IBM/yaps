@@ -329,12 +329,14 @@ class ForStmt(Statement):
         if(isinstance(self.iter, Call) and self.iter.id == "range"):
             args = self.iter.args
             if len(args) == 1:
-                acc += self.iter.mkString("1:")
-                args[0].to_stan(acc)
+                acc += self.iter.mkString("0:")
+                upper = Binop(SUB(), args[0], Constant(1))  # Exclude upper bound
+                upper.to_stan(acc)
             elif len(args) == 2:
                 args[0].to_stan(acc)
                 acc += self.iter.mkString(":")
-                args[1].to_stan(acc)
+                upper = Binop(SUB(), args[1], Constant(1))  # Exclude upper bound
+                upper.to_stan(acc)
             elif len(args) == 3:
                 raise ValueError(
                     "For loop specified using the three argument version of range.  Step values are not currently supported.")

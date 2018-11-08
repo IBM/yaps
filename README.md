@@ -56,7 +56,7 @@ def coin(x: int(lower=0, upper=1)[10]):
         theta: real(lower=0, upper=1)
     with model:
         theta <~ uniform(0, 1)
-        for i in range(10):
+        for i in range(1,11):
             x[i] <~ bernoulli(theta)
 ```
 
@@ -65,18 +65,18 @@ The corresponding Stan program can be displayed using the `print` function:
 print(coin)
 ```
 
-Finally, it is possible to launch Bayesian inference on the defined model applied to some data:
+Finally, it is possible to launch Bayesian inference on the defined model applied to some data.
+For example, if you have PyStan installed:
 ```python
 flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
-posterior = yaps.infer(coin(x=flips), iter=1000)
+posterior = yaps.apply(pystan.stan, coin(x=flips), iter=1000)
 ```
 The resulting `posterior` is an object with fields for the latent model parameters:
 ```python
 print("theta: {:.3f}".format(posterior.theta.mean()))
 ```
 
-Yaps is built on top of [PyStan](http://mc-stan.org/users/interfaces/pystan). It provides a lighter
-syntax to Stan programs. Since Yaps uses Python syntax, users can take advantage of Python tooling
+Yaps provides a lighter syntax to Stan programs. Since Yaps uses Python syntax, users can take advantage of Python tooling
 for syntax highlighting, indentation, error reporting, ...
 
 ## Install
@@ -85,7 +85,6 @@ Yaps depends on the following python packages:
 - astor
 - graphviz
 - antlr4-python3-runtime
-- pystan
 
 To install Yaps and all its dependencies run:
 ```
@@ -113,7 +112,7 @@ outputs:
 def stan_model(x: int(lower=0, upper=1)[10]):
     theta: real
     theta is uniform(0.0, 1.0)
-    for i in range(1, 10):
+    for i in range(1, 10 + 1):
         x[(i),] is bernoulli(theta)
     print(x)
 ```
