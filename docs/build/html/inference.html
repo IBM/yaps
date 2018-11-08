@@ -87,6 +87,9 @@
 <li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">Yaps Modeling Language</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Inference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pystan-api">PyStan API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#pycmdstan-api">PyCmdStan API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#yaps-infer">Yaps infer</a></li>
 </ul>
 </li>
@@ -158,10 +161,16 @@
   <div class="section" id="inference">
 <span id="inference"></span><h1>Inference<a class="headerlink" href="#inference" title="Permalink to this headline">¶</a></h1>
 <p>Communication with the Stan inference engine is based on <a class="reference external" href="https://pystan.readthedocs.io/en/latest/">PyStan</a>.
-When a model is defined, the name of the model is linked to the compiled Stan code.</p>
+When a model is defined, the name of the model is linked to the compiled Stan code.
+You can then use existing APIs to communicate with the Stan inference engine:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://pystan.readthedocs.io/en/latest/">PyStan</a>, or</li>
+<li><a class="reference external" href="https://pycmdstan.readthedocs.io/en/latest/">PyCmdStan</a></li>
+</ul>
 <div class="section" id="pystan-api">
 <span id="pystan-api"></span><h2>PyStan API<a class="headerlink" href="#pystan-api" title="Permalink to this headline">¶</a></h2>
-<p>The first option is to use the PyStan API to call the inference engine with <code class="docutils literal notranslate"><span class="pre">str(model)</span></code> for the model code.</p>
+<p>The first option is to use the PyStan API to call the inference engine with <code class="docutils literal notranslate"><span class="pre">str(model)</span></code> for the model code.
+You will need to install PyStan.</p>
 <p>For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">yaps.lib</span> <span class="kn">import</span> <span class="nb">int</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">bernoulli</span>
 <span class="kn">import</span> <span class="nn">yaps</span> <span class="kn">as</span> <span class="nn">yaps</span>
@@ -180,14 +189,18 @@ When a model is defined, the name of the model is linked to the compiled Stan co
 </pre></div>
 </div>
 </div>
+</div>
+<div class="section" id="pycmdstan-api">
+<span id="pycmdstan-api"></span><h1>PyCmdStan API<a class="headerlink" href="#pycmdstan-api" title="Permalink to this headline">¶</a></h1>
+<p>TODO</p>
 <div class="section" id="yaps-infer">
 <span id="yaps-infer"></span><h2>Yaps infer<a class="headerlink" href="#yaps-infer" title="Permalink to this headline">¶</a></h2>
-<p>Alternatively, Yaps provides an <code class="docutils literal notranslate"><span class="pre">yaps.infer</span></code> function that is a wrapper for <code class="docutils literal notranslate"><span class="pre">pystan.stan</span></code>.
-Compared to <code class="docutils literal notranslate"><span class="pre">pystan.stan</span></code>, observed data are passed to the model as keyword parameters.
+<p>Yaps also offer a wrapper <code class="docutils literal notranslate"><span class="pre">yaps.apply</span></code>. The first argument is the function used to communicate with Stan (e.g., <code class="docutils literal notranslate"><span class="pre">pystan.stan</span></code>).
+Observed data are passed to the model as keyword parameters.
 After the inference, <code class="docutils literal notranslate"><span class="pre">yaps.infer</span></code> returns an object with fields for learned latent parameters.
 For instance, the second part of the previous example can be rewritten:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">flips</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="n">posterior</span> <span class="o">=</span> <span class="n">yaps</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">),</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">posterior</span> <span class="o">=</span> <span class="n">yaps</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pystan</span><span class="o">.</span><span class="n">stan</span><span class="p">,</span> <span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">),</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">theta_mean</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: {:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
 </pre></div>

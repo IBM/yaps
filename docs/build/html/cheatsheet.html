@@ -94,6 +94,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html#pycmdstan-api">PyCmdStan API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">For Developers</a></li>
 </ul>
 
@@ -236,7 +237,7 @@
 <span class="n">y</span> <span class="ow">is</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>                   <span class="c1"># y ~ normal(mu,sigma);</span>
 <span class="n">y</span> <span class="o">&lt;~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">]</span>            <span class="c1"># y ~ normal(0, 1) T[-0.5, 2.1];</span>
 
-<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span> <span class="o">...</span>                   <span class="c1"># for (n in 1:N) {...}</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span> <span class="o">...</span>               <span class="c1"># for (n in 1:N) {...}</span>
 <span class="k">while</span> <span class="n">cond</span><span class="p">:</span> <span class="o">...</span>                          <span class="c1"># while (cond) {...}</span>
 <span class="k">if</span> <span class="n">cond</span><span class="p">:</span> <span class="o">...</span>                             <span class="c1"># if (cond) {...}</span>
 <span class="k">else</span><span class="p">:</span> <span class="o">...</span>                                <span class="c1"># else {...}</span>
@@ -250,6 +251,9 @@
                                          <span class="c1"># }</span>
 </pre></div>
 </div>
+<p>Warning: <code class="docutils literal notranslate"><span class="pre">range(n)</span></code> in python denotes integers from 0 to n-1.
+In Stan indexes starts from 1 (<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">1:n</span></code>).
+The correct translation for <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">1:n</span></code> is thus <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(1,</span> <span class="pre">n+1)</span></code>.</p>
 </div>
 <div class="section" id="program-blocks">
 <span id="program-blocks"></span><h2>Program Blocks<a class="headerlink" href="#program-blocks" title="Permalink to this headline">¶</a></h2>

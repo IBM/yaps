@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">YAPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">Yaps Modeling Language</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html#pycmdstan-api">PyCmdStan API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">For Developers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#distribution">Distribution</a></li>
@@ -160,7 +161,14 @@
 You will also need to install the nose package to run the tests.
 For instance using homebrew:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">antlr</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">nose</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">nose</span> <span class="n">astor</span> <span class="n">graphviz</span> <span class="n">antlr4</span><span class="o">-</span><span class="n">python3</span><span class="o">-</span><span class="n">runtime</span> <span class="n">pystan</span>
+<span class="n">make</span>
+<span class="n">make</span> <span class="n">test</span>
+</pre></div>
+</div>
+<p>Or equivalently on Ubuntu:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span> <span class="n">install</span> <span class="n">antlr4</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">nose</span> <span class="n">astor</span> <span class="n">graphviz</span> <span class="n">antlr4</span><span class="o">-</span><span class="n">python3</span><span class="o">-</span><span class="n">runtime</span> <span class="n">pystan</span>
 <span class="n">make</span>
 <span class="n">make</span> <span class="n">test</span>
 </pre></div>

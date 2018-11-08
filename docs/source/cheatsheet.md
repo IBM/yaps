@@ -80,7 +80,7 @@ y <~ normal(mu, sigma)                   # y ~ normal(mu,sigma);
 y is normal(mu, sigma)                   # y ~ normal(mu,sigma);
 y <~ normal(0,1).T[-0.5, 2.1]            # y ~ normal(0, 1) T[-0.5, 2.1];
 
-for n in range(N): ...                   # for (n in 1:N) {...}
+for n in range(1,N+1): ...               # for (n in 1:N) {...}
 while cond: ...                          # while (cond) {...}
 if cond: ...                             # if (cond) {...}
 else: ...                                # else {...}
@@ -93,6 +93,10 @@ with block:                              # {
     ...                                  #   ...
                                          # }
 ```
+
+Warning: `range(n)` in python denotes integers from 0 to n-1.
+In Stan indexes starts from 1 (`for i in 1:n`).
+The correct translation for `for i in 1:n` is thus `for i in range(1, n+1)`.
 
 ## Program Blocks
 

@@ -7,8 +7,6 @@ Welcome to Yaps's documentation!
 ================================
 
 Yaps is a new surface language for programming `Stan <http://mc-stan.org>`_ models using python syntax.
-Communication with the Stan inference engine is based on `PyStan <https://pystan.readthedocs.io/en/latest/>`_.
-
 
 .. toctree::
    :maxdepth: 2
@@ -24,3 +22,4 @@ Links
 
 - Stan: http://mc-stan.org/
 - PyStan: https://pystan.readthedocs.io
+- PyCmdStan: https://pycmdstan.readthedocs.io
