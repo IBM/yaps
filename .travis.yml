@@ -12,8 +12,8 @@ install:
 before_script:
   - make
   - wget https://github.com/stan-dev/cmdstan/releases/download/v2.18.0/cmdstan-2.18.0.tar.gz
-  - tar -xvfz cmdstan-2.18.0.tar.gz
-  - cd cmdstan-2.18.0 && make build && cd ..
+  - tar -xvf cmdstan-2.18.0.tar.gz
+  - cd cmdstan-2.18.0 && make build -j4 && cd ..
   - export CMDSTAN=`pwd`/'cmdstan-2.18.0'
   - pip install nose
   - pip install .
