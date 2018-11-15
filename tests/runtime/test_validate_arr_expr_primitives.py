@@ -1,7 +1,5 @@
-import pystan
 import numpy as np
-import yaps
-from .utils import compare_fit_objects, global_num_chains,global_num_iterations,global_random_seed
+from .utils import compare_models
 
 
 def test_validate_arr_expr_primitives():
@@ -20,14 +18,14 @@ def test_validate_arr_expr_primitives():
             return  {-y};
         }
         }
-        data { 
+        data {
         int d_i1;
         int d_i2;
         int d_i3;
         real d_r1;
         real d_r2;
         real d_r3;
-        } 
+        }
         transformed data {
         int td_arr_int_d1_1[3] = {1, 2, 3};
         int td_arr_int_d1_2[3] = {d_i1, 2, 3};
@@ -61,7 +59,7 @@ def test_validate_arr_expr_primitives():
         print("td_arr_real_d2_1 = ",td_arr_real_d2_1);
         print("td_arr_real_d2_2 = ",td_arr_real_d2_2);
         print("");
-        
+
         {
             int loc_td_arr_int_d1_1[3] = {1, 2, 3};
             int loc_td_arr_int_d1_2[3] = {d_i1, 2, 3};
@@ -99,11 +97,11 @@ def test_validate_arr_expr_primitives():
         }
         parameters {
 
-        } 
+        }
         transformed parameters {
         real tp1 = 0.1;
         real tp2 = 0.2;
-        
+
         real tp_arr_real_d1_1[3] = {1.1, 2.2, 3.3};
         real tp_arr_real_d1_2[3] = {d_r1, 2, 3};
         real tp_arr_real_d1_3[2] = f1_arr_real();
@@ -159,7 +157,7 @@ def test_validate_arr_expr_primitives():
         print("gq_arr_real_d2_1 = ",gq_arr_real_d2_1);
         print("gq_arr_real_d2_2 = ",gq_arr_real_d2_2);
         print("");
-        
+
         {
             int loc_gq_arr_int_d1_1[3] = {1, 2, 3};
             int loc_gq_arr_int_d1_2[3] = {d_i1, 2, 3};
@@ -195,35 +193,17 @@ def test_validate_arr_expr_primitives():
         }
     """
 
-    # Round Trip from Stan to Yaps to Stan
-    yaps_code = yaps.from_stan(code_string=stan_code)
-    generated_stan_code = yaps.to_stan(yaps_code)
-
-    # Add Data
     data = {
         'd_i1': 2,
         'd_i2': 3,
-        'd_i3' : 5,
-        'd_r1' : 8.0,
-        'd_r2' : 13.0,
-        'd_r3' : 21.0
+        'd_i3': 5,
+        'd_r1': 8.0,
+        'd_r2': 13.0,
+        'd_r3': 21.0
     }
-    # Compile and fit
-    sm1 = pystan.StanModel(model_code=str(stan_code))
-    fit_stan = sm1.sampling(data=data, iter=global_num_iterations, chains=global_num_chains, seed=global_random_seed, algorithm="Fixed_param")
 
-    # Compile and fit
-    sm2 = pystan.StanModel(model_code=str(generated_stan_code))
-    fit_generated_stan = sm2.sampling(data=data, iter=global_num_iterations, chains=global_num_chains, seed=global_random_seed, algorithm="Fixed_param")
+    compare_models(stan_code, data, algorithm='fixed_param')
 
-    compare_fit_objects(fit_stan, fit_generated_stan)
-
-    # if matplotlib is installed (optional, not required), a visual summary and
-    # traceplot are available
-    #print(fit_stan)
-    #import matplotlib.pyplot as plt
-    #fit.plot()
-    #plt.show()
 
 if __name__ == "__main__":
     test_validate_arr_expr_primitives()

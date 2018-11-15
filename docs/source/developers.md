@@ -1,19 +1,13 @@
 # For Developers
 
-To build the parser, you need to install [antlr](http://www.antlr.org/) before installing the package.
-You will also need to install the nose package to run the tests.
-For instance using homebrew:
+To build the parser, you need to install [antlr4](http://www.antlr.org/) before installing the package.
+To test your model with the Stan inference engine, you need to install [cmdstan](http://mc-stan.org/users/interfaces/cmdstan).
+Then install the dependencies.
+
 ```
-brew install antlr
-pip install nose astor graphviz antlr4-python3-runtime pystan
+pip install nose astor graphviz antlr4-python3-runtime pycmdstan
 make
-make test
-```
-Or equivalently on Ubuntu:
-```
-apt install antlr4
-pip install nose astor graphviz antlr4-python3-runtime pystan
-make
+export CMDSTAN='path/to/cmdstan-dir'
 make test
 ```
 
