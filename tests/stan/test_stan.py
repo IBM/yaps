@@ -14,31 +14,41 @@
 
 from pathlib import Path
 import yaps
-import pystan
+import pycmdstan
 import sys
+import tempfile
+import os
+
 
 def check_roundtrip(path):
     with open(path, 'r') as fin:
         code = fin.read()
+        print(code)
+    try:
+        pycmdstan.model.preprocess_model(path, overwrite=True)
         try:
-            pystan.stanc(model_code=code)
-            try:
-                source = yaps.from_stan(code_file=path)
-            except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError):
-                assert False, 'Error: Stan2Yaps'
-            try:
-                stan = yaps.to_stan(source)
-            except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError):
-                assert False, 'Error: Yaps2Stan'
-            try:
-                pystan.stanc(model_code=stan)
-            except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError):
-                assert False, 'Error: Invalid Compiled Stan code'
-        except (ValueError, RuntimeError):
-            assert True, 'Error: Invalid Original Stan code'
+            source = yaps.from_stan(code_file=path)
+        except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError):
+            assert False, 'Error: Stan2Yaps'
+        try:
+            stan = yaps.to_stan(source)
+        except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError):
+            assert False, 'Error: Yaps2Stan'
+        try:
+            stan_file = tempfile.NamedTemporaryFile(suffix='.stan')
+            stan_file.write(bytes(stan, 'utf-8'))
+            stan_file.flush()
+            pycmdstan.model.preprocess_model(stan_file.name)
+            stan_file.close()
+        except (AttributeError, SyntaxError, TypeError, AssertionError, ValueError):
+            assert False, 'Error: Invalid Compiled Stan code'
+    except (ValueError, RuntimeError):
+        assert True, 'Error: Invalid Original Stan code'
+
 
 def test_stan():
     pathlist = Path('tests/stan').glob('*.stan')
     for p in pathlist:
         path = str(p)
+        print(path)
         yield check_roundtrip, path
