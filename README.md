@@ -66,14 +66,16 @@ print(coin)
 ```
 
 Finally, it is possible to launch Bayesian inference on the defined model applied to some data.
-For example, if you have PyStan installed:
+The communication with the Stan inference engine is based on on [PyCmdStan](https://pycmdstan.readthedocs.io/en/latest/).
 ```python
 flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
-posterior = yaps.apply(pystan.stan, coin(x=flips), iter=1000)
+constrained_coin = coin(x=flips)
+constrained_coin.sample(data=constrained_coin.data)
 ```
-The resulting `posterior` is an object with fields for the latent model parameters:
+After the infernce the attribute `posterior` of the contrained model is an object with fields for the latent model parameters:
 ```python
-print("theta: {:.3f}".format(posterior.theta.mean()))
+theta_mean = constrained_coin.posterior.theta.mean()
+print("mean of theta: {:.3f}".format(theta_mean))
 ```
 
 Yaps provides a lighter syntax to Stan programs. Since Yaps uses Python syntax, users can take advantage of Python tooling
@@ -85,6 +87,7 @@ Yaps depends on the following python packages:
 - astor
 - graphviz
 - antlr4-python3-runtime
+- pycmdstan
 
 To install Yaps and all its dependencies run:
 ```

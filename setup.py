@@ -30,9 +30,9 @@ setup(
     packages=['yaps', ],
     license='Apache License 2.0',
     install_requires=[
-        'astor', 'graphviz', 'antlr4-python3-runtime'
+        'astor', 'graphviz', 'antlr4-python3-runtime', 'pycmdstan'
     ],
-    entry_points = {
+    entry_points={
         'console_scripts': ['stan2yaps=yaps.stan2yaps:main',
                             'yaps-roundtrip=yaps.roundtrip:main'],
     }

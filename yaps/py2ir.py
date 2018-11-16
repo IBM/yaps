@@ -19,14 +19,6 @@ import astor
 import re
 
 
-debug = False
-
-
-def log(*args):
-    if debug:
-        print(*args)
-
-
 class PythonVisitor(ast.NodeVisitor):
     def __init__(self):
         self.functions = []
@@ -75,7 +67,6 @@ class PythonVisitor(ast.NodeVisitor):
             elif isinstance(stmt, ast.FunctionDef):
                 self.functions.append(self.visit(stmt))
             elif not isinstance(stmt, ast.Pass):
-                log('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
 
     def visit_Block(self, node):
@@ -88,28 +79,22 @@ class PythonVisitor(ast.NodeVisitor):
         elif kind == 'data':
             for stmt in node.body:
                 data = self.visit(stmt)
-                log('Data:', id)
                 self.data.append(data)
         elif kind == 'transformed_data':
             for stmt in node.body:
-                log('T_Data:\n', astor.to_source(stmt))
                 self.transformed_data.append(self.visit(stmt))
         elif kind == 'parameters':
             for stmt in node.body:
                 param = self.visit(stmt)
-                log('Param:', param.id)
                 self.parameters.append(param)
         elif kind == 'transformed_parameters':
             for stmt in node.body:
-                log('T_Param:\n', astor.to_source(stmt))
                 self.transformed_parameters.append(self.visit(stmt))
         elif kind == 'model':
             for stmt in node.body:
-                log('Model:\n', astor.to_source(stmt))
                 self.model.append(self.visit(stmt))
         elif kind == 'generated_quantities':
             for stmt in node.body:
-                log('G_Quant:\n', astor.to_source(stmt))
                 self.generated_quantities.append(self.visit(stmt))
         elif kind == 'block':
             self.model.append(self.visit(node))
@@ -119,12 +104,10 @@ class PythonVisitor(ast.NodeVisitor):
     def visit_DataDecl(self, node):
         id = node.arg
         ty = self.visit_datatype(node.annotation)
-        log('Data:', id)
         self.data.append(IR.VariableDecl(id, ty).set_map(node))
 
     def visit_parameter(self, node):
         id = node.target.id
-        log('Param:', id)
         type_ast = node.annotation
         if isinstance(type_ast, ast.Compare):
             assert len(type_ast.ops) == 1

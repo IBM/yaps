@@ -18,25 +18,16 @@ import inspect as inspect
 import re as regex
 import sys
 from . import py2ir
+import pycmdstan
+import types
+from contextlib import redirect_stdout
+import io
 
-class FitModel(object):
-    def __init__(self, fit_model):
-        self.__model = fit_model
 
-    def __getattr__(self, key):
-        return self.__model.extract()[key]
+class Struct:
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
 
-    def __getitem__(self, key):
-        return self.__model.extract()[key]
-
-    def __dir__(self):
-        return self.__model.extract()
-
-    def __str__(self):
-        ret = ""
-        for k, v in self.__model.extract().items():
-            print("{}: {}".format(k, v))
-        return ret
 
 class model_with_args(object):
     def __init__(self, model, data):
@@ -47,6 +38,24 @@ class model_with_args(object):
         d = self.stored_data.copy()
         d.update(kwargs)
         return model_with_args(self.model, d)
+
+    def __getattr__(self, name):
+        cmdstan_model = pycmdstan.Model(code=str(self.model))
+        cmdstan_attr = getattr(cmdstan_model, name)
+        if type(cmdstan_attr) == types.MethodType:
+            def method(*args, **kwargs):
+                f = io.StringIO()
+                try:
+                    with redirect_stdout(f):
+                        result = cmdstan_attr(*args, **kwargs)
+                    self.posterior = Struct(**result.csv)
+                except Exception as err:
+                    e = ValueError(self.map_valueerror(f.getvalue()))
+                    e.__traceback__ = err.__traceback__
+                    raise e
+            return method
+        else:
+            return getattr(cmdstan_model, name)
 
     def map_valueerror(self, err):
         fileName = inspect.getsourcefile(self.model.func)
@@ -99,7 +108,7 @@ class model_with_args(object):
 
     def apply(self, func, **kwargs):
         try:
-            return FitModel(func(model_code=self.model.stan_code, model_name=self.model.func.__name__, data=self.stored_data, **kwargs))
+            return func(model_code=self.model.stan_code, model_name=self.model.func.__name__, data=self.stored_data, **kwargs)
         except ValueError as err:
             e = ValueError(self.map_valueerror(str(err)))
             e.__traceback__ = err.__traceback__
@@ -175,8 +184,10 @@ class model(object):
     def __repr__(self):
         return self.func
 
+
 def print_stan(ir):
     return str(ir.to_mapped_string())
+
 
 def to_stan(code_string=None, code_file=None):
     if not (code_string or code_file) or (code_string and code_file):
