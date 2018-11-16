@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps) [![PyPI version](https://badge.fury.io/py/yaps.svg)](https://badge.fury.io/py/yaps)
+[![Build Status](https://travis-ci.org/IBM/yaps.svg?branch=master)](https://travis-ci.org/IBM/yaps) [![PyPI version](https://badge.fury.io/py/yaps.svg)](https://badge.fury.io/py/yaps) [![Documentation Status](https://readthedocs.org/projects/yaps/badge/?version=latest)](https://yaps.readthedocs.io/en/latest/?badge=latest)
 
 # YAPS
 
