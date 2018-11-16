@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Inference &mdash; Yaps 0.1.1 documentation</title>
+  <title>Inference &mdash; Yaps 0.1.2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.1.1
+                0.1.2
               </div>
             
           
@@ -86,11 +86,8 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">YAPS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cheatsheet.html">Yaps Modeling Language</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Inference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#pystan-api">PyStan API</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#pycmdstan-api">PyCmdStan API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#yaps-infer">Yaps infer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pystan-wrapper">PyStan Wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#direct-api-use">Direct API use</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="developers.html">For Developers</a></li>
@@ -160,49 +157,58 @@
             
   <div class="section" id="inference">
 <span id="inference"></span><h1>Inference<a class="headerlink" href="#inference" title="Permalink to this headline">¶</a></h1>
-<p>Communication with the Stan inference engine is based on <a class="reference external" href="https://pystan.readthedocs.io/en/latest/">PyStan</a>.
-When a model is defined, the name of the model is linked to the compiled Stan code.
-You can then use existing APIs to communicate with the Stan inference engine:</p>
-<ul class="simple">
-<li><a class="reference external" href="https://pystan.readthedocs.io/en/latest/">PyStan</a>, or</li>
-<li><a class="reference external" href="https://pycmdstan.readthedocs.io/en/latest/">PyCmdStan</a></li>
-</ul>
-<div class="section" id="pystan-api">
-<span id="pystan-api"></span><h2>PyStan API<a class="headerlink" href="#pystan-api" title="Permalink to this headline">¶</a></h2>
-<p>The first option is to use the PyStan API to call the inference engine with <code class="docutils literal notranslate"><span class="pre">str(model)</span></code> for the model code.
-You will need to install PyStan.</p>
+<p>By default, communication with the Stan inference engine is based on <a class="reference external" href="https://pycmdstan.readthedocs.io/en/latest/">PyCmdStan</a>.
+A constrained model can be defined by passing concrete values for the data.
+This constrained model is linked to a PyCmdStan model.
+It is thus possible to invoke the pycmdstan methods <code class="docutils literal notranslate"><span class="pre">sample</span></code>, <code class="docutils literal notranslate"><span class="pre">run</span></code>, <code class="docutils literal notranslate"><span class="pre">optimize</span></code>, or <code class="docutils literal notranslate"><span class="pre">variational</span></code> to launch the inference.
+After the inference, the result is stored in the <code class="docutils literal notranslate"><span class="pre">posterior</span></code> attribute of the constrained model as an object with one field for each learned parameter.</p>
 <p>For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">yaps.lib</span> <span class="kn">import</span> <span class="nb">int</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">bernoulli</span>
-<span class="kn">import</span> <span class="nn">yaps</span> <span class="kn">as</span> <span class="nn">yaps</span>
-<span class="kn">import</span> <span class="nn">pystan</span>
-
-<span class="nd">@yaps.model</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@yaps</span><span class="o">.</span><span class="n">model</span>
 <span class="k">def</span> <span class="nf">coin</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">10</span><span class="p">]):</span>
     <span class="n">theta</span><span class="p">:</span> <span class="n">real</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span>
         <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 
-<span class="n">coin_dat</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]}</span>
-<span class="n">fit</span> <span class="o">=</span> <span class="n">pystan</span><span class="o">.</span><span class="n">stan</span><span class="p">(</span><span class="n">model_code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">coin</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">coin_dat</span><span class="p">,</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-<span class="n">theta_mean</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">permuted</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: {:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
+
+<span class="n">flips</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="n">constrained_coin</span> <span class="o">=</span> <span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">)</span>
+<span class="n">constrained_coin</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">constrained_coin</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="n">theta_mean</span> <span class="o">=</span> <span class="n">constrained_coin</span><span class="o">.</span><span class="n">posterior</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
 </pre></div>
 </div>
+<p>Errors detected by the Stan compiler and runtime are mapped to the original yaps code.</p>
+<p>Note that this interface takes full advantage of the features offered by PyCmdStan.
+In particular, models are cached and only recompiled when a change is detected even if the rest of the python script has changed.</p>
+<div class="section" id="pystan-wrapper">
+<span id="pystan-wrapper"></span><h2>PyStan Wrapper<a class="headerlink" href="#pystan-wrapper" title="Permalink to this headline">¶</a></h2>
+<p>Yaps also offer a limited wrapper for the <a class="reference external" href="https://pystan.readthedocs.io/en/latest/">PyStan</a> interface.
+For instance, the inference part of the previous example can be rewritten:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span> <span class="o">=</span> <span class="n">yaps</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pystan</span><span class="o">.</span><span class="n">stan</span><span class="p">,</span> <span class="n">constrained_coin</span><span class="p">)</span>
+<span class="n">theta_mean</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">extract</span><span class="p">()[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
+</pre></div>
 </div>
+<p>The wrapper is used to map the errors back to the original yaps code.</p>
 </div>
-<div class="section" id="pycmdstan-api">
-<span id="pycmdstan-api"></span><h1>PyCmdStan API<a class="headerlink" href="#pycmdstan-api" title="Permalink to this headline">¶</a></h1>
-<p>TODO</p>
-<div class="section" id="yaps-infer">
-<span id="yaps-infer"></span><h2>Yaps infer<a class="headerlink" href="#yaps-infer" title="Permalink to this headline">¶</a></h2>
-<p>Yaps also offer a wrapper <code class="docutils literal notranslate"><span class="pre">yaps.apply</span></code>. The first argument is the function used to communicate with Stan (e.g., <code class="docutils literal notranslate"><span class="pre">pystan.stan</span></code>).
-Observed data are passed to the model as keyword parameters.
-After the inference, <code class="docutils literal notranslate"><span class="pre">yaps.infer</span></code> returns an object with fields for learned latent parameters.
-For instance, the second part of the previous example can be rewritten:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">flips</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="n">posterior</span> <span class="o">=</span> <span class="n">yaps</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pystan</span><span class="o">.</span><span class="n">stan</span><span class="p">,</span> <span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">),</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-<span class="n">theta_mean</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: {:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
+<div class="section" id="direct-api-use">
+<span id="direct-api-use"></span><h2>Direct API use<a class="headerlink" href="#direct-api-use" title="Permalink to this headline">¶</a></h2>
+<p>Finally it is possible to use yaps only as a compiler and rely on the existing API for PyCmdStan or PyStan.
+For every decorated yaps model <code class="docutils literal notranslate"><span class="pre">model</span></code>, the string <code class="docutils literal notranslate"><span class="pre">str(model)</span></code> contains the compiled Stan code.</p>
+<p>Using PyCmdStan the previous example becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">coin_dat</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])}</span>
+<span class="n">coin_model</span> <span class="o">=</span> <span class="n">pycmdstan</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">coin</span><span class="p">))</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">coin_model</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">coin_dat</span><span class="p">)</span>
+<span class="n">theta_mean</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">csv</span><span class="p">[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>And using PyStan</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">coin_dat</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])}</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">pystan</span><span class="o">.</span><span class="n">stan</span><span class="p">(</span><span class="n">model_code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">coin</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">coin_dat</span><span class="p">)</span>
+<span class="n">theta_mean</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">permuted</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
