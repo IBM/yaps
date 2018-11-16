@@ -183,7 +183,7 @@ following Stan program, which models tosses <code class="docutils literal notran
 <span class="nd">@yaps.model</span>
 <span class="k">def</span> <span class="nf">coin</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">10</span><span class="p">]):</span>
     <span class="n">theta</span><span class="p">:</span> <span class="n">real</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;~</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">):</span>
         <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;~</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -200,6 +200,8 @@ the function. Their prior can be defined using the sampling operator
 is used for the imperative constructs of the model, like the <code class="docutils literal notranslate"><span class="pre">for</span></code>
 loop in the example. The operator <code class="docutils literal notranslate"><span class="pre">&lt;~</span></code> is used to represent sampling
 and <code class="docutils literal notranslate"><span class="pre">x.T[a,b]</span></code> for truncated distribution.</p>
+<p>Note that Stan array are 1-based. The range of the loop is thus <code class="docutils literal notranslate"><span class="pre">range(1,</span> <span class="pre">11)</span></code>,
+that is 1,2, … 10.</p>
 <p>Other Stan blocks can be introduced using the <code class="docutils literal notranslate"><span class="pre">with</span></code> syntax of Python.
 For example, the previous program could also be written as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@yaps.model</span>
@@ -218,12 +220,13 @@ For example, the previous program could also be written as follows:</p>
 </div>
 <p>Finally, it is possible to launch Bayesian inference on the defined model applied to some data.
 The communication with the Stan inference engine is based on on <a class="reference external" href="https://pycmdstan.readthedocs.io/en/latest/">PyCmdStan</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">flips</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">flips</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="n">constrained_coin</span> <span class="o">=</span> <span class="n">coin</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">flips</span><span class="p">)</span>
 <span class="n">constrained_coin</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">constrained_coin</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>After the infernce the attribute <code class="docutils literal notranslate"><span class="pre">posterior</span></code> of the contrained model is an object with fields for the latent model parameters:</p>
+<p>Note that arrays must be cast into numpy arrays (see pycmdstan documentation).</p>
+<p>After the inference the attribute <code class="docutils literal notranslate"><span class="pre">posterior</span></code> of the constrained model is an object with fields for the latent model parameters:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">theta_mean</span> <span class="o">=</span> <span class="n">constrained_coin</span><span class="o">.</span><span class="n">posterior</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;mean of theta: {:.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_mean</span><span class="p">))</span>
 </pre></div>

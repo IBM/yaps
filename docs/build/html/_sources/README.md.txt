@@ -26,7 +26,7 @@ from yaps.lib import int, real, uniform, bernoulli
 @yaps.model
 def coin(x: int(lower=0, upper=1)[10]):
     theta: real(lower=0, upper=1) <~ uniform(0, 1)
-    for i in range(10):
+    for i in range(1,11):
         x[i] <~ bernoulli(theta)
 ```
 
@@ -46,6 +46,9 @@ The body of the function corresponds to the Stan model. Python syntax
 is used for the imperative constructs of the model, like the `for`
 loop in the example. The operator `<~` is used to represent sampling
 and `x.T[a,b]` for truncated distribution.
+
+Note that Stan array are 1-based. The range of the loop is thus `range(1, 11)`,
+that is 1,2, ... 10.
 
 Other Stan blocks can be introduced using the `with` syntax of Python.
 For example, the previous program could also be written as follows:
@@ -68,11 +71,13 @@ print(coin)
 Finally, it is possible to launch Bayesian inference on the defined model applied to some data.
 The communication with the Stan inference engine is based on on [PyCmdStan](https://pycmdstan.readthedocs.io/en/latest/).
 ```python
-flips = [0, 1, 0, 0, 0, 0, 0, 0, 0, 1]
+flips = np.array([0, 1, 0, 0, 0, 0, 0, 0, 0, 1])
 constrained_coin = coin(x=flips)
 constrained_coin.sample(data=constrained_coin.data)
 ```
-After the infernce the attribute `posterior` of the contrained model is an object with fields for the latent model parameters:
+Note that arrays must be cast into numpy arrays (see pycmdstan documentation).
+
+After the inference the attribute `posterior` of the constrained model is an object with fields for the latent model parameters:
 ```python
 theta_mean = constrained_coin.posterior.theta.mean()
 print("mean of theta: {:.3f}".format(theta_mean))
