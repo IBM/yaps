@@ -18,18 +18,11 @@ yaps-roundtrip path/to/file.stan
 
 ## Documentation
 
-The documentation is written with Sphinx, using a Markdown parser, and the readthedoc theme.
-You thus need to install the following packages:
-```
-pip install sphinx sphinx_rtd_theme recommonmark
-```
-
-Then to generate the documentation:
+The documentation is hosted by [ReadTheDocs](https://yaps.readthedocs.io).
+To keep the README in sync with the doc:
 ```
 make doc
 ```
-The version number used in the documentation corresponds to the last installed version.
-You might want to run `pip install .` before generating the doc.
 
 ## Distribution
 
