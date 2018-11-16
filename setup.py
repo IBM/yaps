@@ -21,7 +21,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='yaps',
-    version='0.1.2',
+    version='0.1.3',
     author="Guillaume Baudart, Martin Hirzel, Kiran Kate, Louis Mandel, Avraham Shinnar",
     description="A surface language for programming Stan models using python syntax",
     long_description=long_description,

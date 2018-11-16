@@ -7,8 +7,7 @@ test:
 	nosetests -v tests/stan/test_stan.py .
 
 doc:
-	cp README.md docs/source/
-	cd docs; make clean html
+	cp README.md docs/
 
 distrib:
 	python setup.py sdist bdist_wheel
