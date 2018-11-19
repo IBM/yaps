@@ -27,7 +27,7 @@ x <~ Normal(0,1) # This is a comment
 ## Data Types and Variable Declarations
 
 ```python
-Yaps                                     # Stan
+# Yaps                                   # Stan
 ############################################################################
 x: int                                   # int x;
 x: real                                  # real x;
