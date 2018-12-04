@@ -104,6 +104,12 @@ To install from source, first clone the repo, then:
 pip install .
 ```
 
+By default, communication with the Stan inference engine is based on [PyCmdStan](https://pycmdstan.readthedocs.io/en/latest/). To run inference, you first need to install [CmdStan](http://mc-stan.org/users/interfaces/cmdstan) and set the CMDSTAN environment variable to point to your CmdStan directory.
+
+```
+export CMDSTAN=/path/to/cmdstan
+```
+
 ## Tools
 
 We provide a tool to compile Stan files to Yaps syntax.
