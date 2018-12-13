@@ -137,6 +137,20 @@ yaps.from_stan(code_string=None, code_file=None)  # Compile a Stan model to Yaps
 yaps.to_stan(code_string=None, code_file=None)    # Compile a Yaps model to Stan
 ```
 
+## Article
+
+You can find more details in the following article:
+```
+@article{2018-yaps-stan,
+  author = {Baudart, Guillaume and Hirzel, Martin and Kate, Kiran and Mandel, Louis and Shinnar, Avraham},
+  title = "{Yaps: Python Frontend to Stan}",
+  journal = {arXiv e-prints},
+  year = 2018,
+  month = Dec,
+  url = {https://arxiv.org/abs/1812.04125},
+}
+```
+
 
 ## License
 
