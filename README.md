@@ -137,9 +137,9 @@ yaps.from_stan(code_string=None, code_file=None)  # Compile a Stan model to Yaps
 yaps.to_stan(code_string=None, code_file=None)    # Compile a Yaps model to Stan
 ```
 
-## Article
+## Documentation
 
-You can find more details in the following [article](https://arxiv.org/abs/1812.04125):
+The full documentation is available at https://yaps.readthedocs.io. You can find more details in the following [article](https://arxiv.org/abs/1812.04125):
 ```
 @article{2018-yaps-stan,
   author = {Baudart, Guillaume and Hirzel, Martin and Kate, Kiran and Mandel, Louis and Shinnar, Avraham},
