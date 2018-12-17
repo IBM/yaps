@@ -26,7 +26,7 @@ setup(
     description="A surface language for programming Stan models using python syntax",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://ibm.github.io/yaps/",
+    url="https://github.com/IBM/yaps",
     packages=['yaps', ],
     license='Apache License 2.0',
     install_requires=[
