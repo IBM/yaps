@@ -70,7 +70,7 @@ class dummy_constrained_dim_type(dummy_full_type):
         if self.num_args == 1:
             if key is tuple:
                 raise TypeError("{} was given {} dimensions; {} expected".format(
-                    self.name, len(key), num_args))
+                    self.name, len(key), self.num_args))
             else:
                 return dummy_constrained_type("{}[{}]".format(self.name, self.print_dims(key)))
         else:
